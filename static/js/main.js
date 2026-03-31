@@ -255,8 +255,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => { window.location.href = href; }, 1200);
             } else {
                 // Tsukuyomi/Mangekyo eyelid close for opening challenges
+                if (link.classList.contains('mem-card')) {
+                    link.classList.add('clicked');
+                }
                 overlay.classList.add('closing');
-                setTimeout(() => { window.location.href = href; }, 1100);
+                setTimeout(() => { window.location.href = href; }, 1200);
             }
         });
     });

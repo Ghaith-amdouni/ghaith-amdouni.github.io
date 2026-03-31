@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ret2libc // Rogue_Net</title>
-    <meta name="description" content="## ret2libc ## Description Classic return-to-libc attack. The stack is non-executable, but libc is loaded and ready. Leak a libc address, calculate of">
+    <meta name="description" content="Classic return-to-libc attack. The stack is non-executable, but libc is loaded and ready. Leak a libc address, calculate offsets, and chain system(&#34;/b">
     <link rel="stylesheet" href="../../../../static/css/style.css">
 </head>
 <body>
@@ -49,7 +49,7 @@
                 <span class="tag">PWN</span>
                 <span>MOJO-JOJO CTF</span>
                 <span>0x008cae62</span>
-                
+                <span>by r3t0x</span>
                 
                 <span>
                     <span class="difficulty">
@@ -58,7 +58,7 @@
                         
                         <span class="diff-dot filled"></span>
                         
-                        <span class="diff-dot filled"></span>
+                        <span class="diff-dot "></span>
                         
                         <span class="diff-dot "></span>
                         
@@ -73,9 +73,19 @@
         <div class="pwndbg-section">
             <div class="pwndbg-title">DESCRIPTION</div>
             <div class="code-block">
-                ## ret2libc ## Description Classic return-to-libc attack. The stack is non-executable, but libc is loaded and ready. Leak a libc address, calculate offsets, and chain system(&#34;/bin/sh&#34;) to claim your shell.
+                Classic return-to-libc attack. The stack is non-executable, but libc is loaded and ready. Leak a libc address, calculate offsets, and chain system(&#34;/bin/sh&#34;) to claim your shell.
             </div>
         </div>
+
+        
+        <!-- Flag -->
+        <div class="pwndbg-section" style="margin-top: -15px;">
+            <div class="pwndbg-title" style="color: var(--amber);">[+] FLAG OBTAINED</div>
+            <div class="code-block" style="border-left-color: var(--gdb-green); color: var(--gdb-green); font-weight: bold;">
+                MOJO-JOJO{r3turn2l1bc_1s_2_34sy}
+            </div>
+        </div>
+        
 
         
 

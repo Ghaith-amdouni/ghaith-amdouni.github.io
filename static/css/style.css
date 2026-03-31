@@ -63,13 +63,13 @@ body {
 /* Amaterasu Particles */
 .ember {
     position: fixed; border-radius: 50%;
-    pointer-events: none; z-index: -1; filter: blur(1px);
+    pointer-events: none; z-index: -1; filter: blur(2px) contrast(1.2);
     animation: riseEmber linear infinite;
 }
 @keyframes riseEmber {
     0%   { transform: translateY(110vh) translateX(0) scale(0); opacity: 0; }
     10%  { opacity: 1; transform: translateY(90vh) translateX(10px) scale(1); }
-    50%  { opacity: 0.8; transform: translateY(50vh) translateX(-15px) scale(1.2); }
+    50%  { opacity: 0.8; transform: translateY(50vh) translateX(-15px) scale(1.5); }
     90%  { opacity: 0.5; transform: translateY(10vh) translateX(20px) scale(0.8); }
     100% { transform: translateY(-5vh) translateX(0) scale(0); opacity: 0; }
 }
@@ -77,8 +77,11 @@ body {
 /* 🔥 Amaterasu Cursor Trail */
 .cursor-flame {
     position: fixed; pointer-events: none; z-index: 9997;
-    border-radius: 50%; background: radial-gradient(circle, #ff2200 0%, #000 100%);
-    box-shadow: 0 0 8px #B20000; transform: none; transition: none;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, #000000 0%, #1a0000 50%, rgba(178,0,0,0) 100%);
+    box-shadow: 0 0 12px 3px #ff0000, inset 0 0 5px #000;
+    filter: blur(1px);
+    transform: none; transition: none;
 }
 
 /* Container */
@@ -381,4 +384,97 @@ h1 .cursor-blink { animation: blink 1s step-end infinite; color: var(--gdb-green
     .stats-bar { gap: 20px; }
     .stat-number { font-size: 2rem; }
     .chall-header h1 { font-size: 2rem; }
+}
+
+/* ===== Kamui Transition ===== */
+.kamui-overlay {
+    position: fixed;
+    top: 50%; left: 50%;
+    width: 250vw; height: 250vh;
+    background: radial-gradient(circle at center, #000 30%, #050505 70%, transparent 100%);
+    z-index: 10005;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0) rotate(0deg);
+    transition: none;
+    border-radius: 50%;
+}
+.kamui-overlay.kamui-active {
+    animation: kamuiSuck 1.2s cubic-bezier(0.5, 0, 0.1, 1) forwards;
+}
+
+@keyframes kamuiSuck {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0) rotate(0deg);
+        filter: blur(20px);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.5) rotate(360deg);
+        filter: blur(5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) rotate(720deg);
+        filter: blur(0px);
+    }
+}
+
+body.kamui-sucking .container {
+    animation: kamuiPageSuck 1.2s cubic-bezier(0.5, 0, 0.1, 1) forwards;
+}
+@keyframes kamuiPageSuck {
+    0% { transform: scale(1) rotate(0); filter: blur(0); opacity: 1; }
+    100% { transform: scale(0) rotate(-360deg); filter: blur(20px); opacity: 0; }
+}
+
+/* ===== Amaterasu Opening Transition ===== */
+.amaterasu-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: #000;
+    z-index: 10006;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.amaterasu-overlay::before {
+    content: '';
+    position: absolute;
+    width: 150vw; height: 150vh;
+    background: radial-gradient(circle at center, transparent 0%, #000 40%, #1a0000 80%, #b20000 100%);
+    filter: blur(20px) contrast(3);
+    mix-blend-mode: screen;
+    animation: blackFlamePulse 0.5s infinite alternate;
+}
+
+.amaterasu-overlay.burn-away {
+    animation: amaterasuBurn 1.5s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+}
+
+@keyframes blackFlamePulse {
+    0% { transform: scale(1) rotate(0deg); opacity: 1; }
+    100% { transform: scale(1.05) rotate(2deg); opacity: 0.9; }
+}
+
+@keyframes amaterasuBurn {
+    0% {
+        opacity: 1;
+        clip-path: circle(100% at 50% 50%);
+        filter: blur(0px);
+    }
+    50% {
+        opacity: 1;
+        filter: blur(10px);
+    }
+    100% {
+        opacity: 0;
+        clip-path: circle(0% at 50% 50%);
+        filter: blur(20px);
+    }
 }

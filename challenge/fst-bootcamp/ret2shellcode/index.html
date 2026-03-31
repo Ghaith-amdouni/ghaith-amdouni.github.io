@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ret2shellcode // Rogue_Net</title>
-    <meta name="description" content="## ret2shellcode ## Description NX is off — the stack is executable. Inject your shellcode, find the buffer address, and redirect execution straight i">
+    <meta name="description" content="NX is off — the stack is executable. Inject your shellcode, find the buffer address, and redirect execution straight into your payload. Raw shellcode ">
     <link rel="stylesheet" href="../../../static/css/style.css">
 </head>
 <body>
@@ -49,7 +49,7 @@
                 <span class="tag">PWN</span>
                 <span>FST Bootcamp</span>
                 <span>0x7afb1997</span>
-                
+                <span>by r3t0x</span>
                 
                 <span>
                     <span class="difficulty">
@@ -58,7 +58,7 @@
                         
                         <span class="diff-dot filled"></span>
                         
-                        <span class="diff-dot filled"></span>
+                        <span class="diff-dot "></span>
                         
                         <span class="diff-dot "></span>
                         
@@ -73,9 +73,19 @@
         <div class="pwndbg-section">
             <div class="pwndbg-title">DESCRIPTION</div>
             <div class="code-block">
-                ## ret2shellcode ## Description NX is off — the stack is executable. Inject your shellcode, find the buffer address, and redirect execution straight into your payload. Raw shellcode injection at its finest.
+                NX is off — the stack is executable. Inject your shellcode, find the buffer address, and redirect execution straight into your payload. Raw shellcode injection at its finest.
             </div>
         </div>
+
+        
+        <!-- Flag -->
+        <div class="pwndbg-section" style="margin-top: -15px;">
+            <div class="pwndbg-title" style="color: var(--amber);">[+] FLAG OBTAINED</div>
+            <div class="code-block" style="border-left-color: var(--gdb-green); color: var(--gdb-green); font-weight: bold;">
+                Securinets_fst{C0ngr4ts_2_U_St4ck_4buS3r_D4ddy_W0uld_B_Pr0ud}
+            </div>
+        </div>
+        
 
         
         <!-- Source Code / Disasm -->
@@ -162,7 +172,7 @@ int main() {
 <h2>Result</h2>
 <div class="codehilite"><pre><span></span><code>Hey, hacker! here is a small gift for u: 0x7fffffffdc70
 $ cat flag.txt
-FST{r3t2sh3llc0d3_cl4ss1c}
+Securinets_fst{C0ngr4ts_2_U_St4ck_4buS3r_D4ddy_W0uld_B_Pr0ud}
 </code></pre></div>
             </div>
         </div>

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>warmup // Rogue_Net</title>
-    <meta name="description" content="## Warmup ## Description A beginner-friendly buffer overflow warmup. Smash the stack, overwrite the return address, and redirect execution to the win ">
+    <title>Warmup // Rogue_Net</title>
+    <meta name="description" content="A beginner-friendly buffer overflow warmup. Smash the stack, overwrite the return address, and redirect execution to the win function. No protections,">
     <link rel="stylesheet" href="../../../../static/css/style.css">
 </head>
 <body>
@@ -44,12 +44,12 @@
         <a href="../../../../index.html" class="back-link">← pwndbg> back</a>
 
         <div class="chall-header">
-            <h1><span class="prefix">./</span>warmup<span class="cursor-blink">_</span></h1>
+            <h1><span class="prefix">./</span>Warmup<span class="cursor-blink">_</span></h1>
             <div class="chall-meta-row">
                 <span class="tag">PWN</span>
                 <span>MOJO-JOJO CTF</span>
                 <span>0x468bfe2b</span>
-                
+                <span>by r3t0x</span>
                 
                 <span>
                     <span class="difficulty">
@@ -58,7 +58,7 @@
                         
                         <span class="diff-dot filled"></span>
                         
-                        <span class="diff-dot filled"></span>
+                        <span class="diff-dot "></span>
                         
                         <span class="diff-dot "></span>
                         
@@ -73,9 +73,19 @@
         <div class="pwndbg-section">
             <div class="pwndbg-title">DESCRIPTION</div>
             <div class="code-block">
-                ## Warmup ## Description A beginner-friendly buffer overflow warmup. Smash the stack, overwrite the return address, and redirect execution to the win function. No protections, no tricks — just raw overflow.
+                A beginner-friendly buffer overflow warmup. Smash the stack, overwrite the return address, and redirect execution to the win function. No protections, no tricks — just raw overflow.
             </div>
         </div>
+
+        
+        <!-- Flag -->
+        <div class="pwndbg-section" style="margin-top: -15px;">
+            <div class="pwndbg-title" style="color: var(--amber);">[+] FLAG OBTAINED</div>
+            <div class="code-block" style="border-left-color: var(--gdb-green); color: var(--gdb-green); font-weight: bold;">
+                MOJO-JOJO{st4rt1ng_fr0m_z3r0_1s_th3_k3y}
+            </div>
+        </div>
+        
 
         
         <!-- Source Code / Disasm -->

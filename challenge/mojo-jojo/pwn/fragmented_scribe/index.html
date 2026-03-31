@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>fragmented_scribe // Rogue_Net</title>
-    <meta name="description" content="# The Fragmented Scribe ## Description The scribe is dying. The message is breaking.">
+    <title>The Fragmented Scribe // Rogue_Net</title>
+    <meta name="description" content="The scribe is dying. The message is breaking. Can you piece together the fragment that writes history? **AUTHOR:r3t0x** **Constraints:** - Max 100 byt">
     <link rel="stylesheet" href="../../../../static/css/style.css">
 </head>
 <body>
@@ -44,12 +44,12 @@
         <a href="../../../../index.html" class="back-link">← pwndbg> back</a>
 
         <div class="chall-header">
-            <h1><span class="prefix">./</span>fragmented_scribe<span class="cursor-blink">_</span></h1>
+            <h1><span class="prefix">./</span>The Fragmented Scribe<span class="cursor-blink">_</span></h1>
             <div class="chall-meta-row">
                 <span class="tag">PWN</span>
                 <span>MOJO-JOJO CTF</span>
                 <span>0x4674fb5e</span>
-                
+                <span>by r3t0x</span>
                 
                 <span>
                     <span class="difficulty">
@@ -60,7 +60,7 @@
                         
                         <span class="diff-dot filled"></span>
                         
-                        <span class="diff-dot "></span>
+                        <span class="diff-dot filled"></span>
                         
                         <span class="diff-dot "></span>
                         
@@ -73,9 +73,19 @@
         <div class="pwndbg-section">
             <div class="pwndbg-title">DESCRIPTION</div>
             <div class="code-block">
-                # The Fragmented Scribe ## Description The scribe is dying. The message is breaking.
+                The scribe is dying. The message is breaking. Can you piece together the fragment that writes history? **AUTHOR:r3t0x** **Constraints:** - Max 100 bytes of shellcode. - Strictly Printable ASCII (33-126). - No `syscall` (0F 05) or `int 80` (CD 80) bytes allowed.
             </div>
         </div>
+
+        
+        <!-- Flag -->
+        <div class="pwndbg-section" style="margin-top: -15px;">
+            <div class="pwndbg-title" style="color: var(--amber);">[+] FLAG OBTAINED</div>
+            <div class="code-block" style="border-left-color: var(--gdb-green); color: var(--gdb-green); font-weight: bold;">
+                Securinets_fst{pr1nt4bl3_sh3llc0d3_m4st3r!}
+            </div>
+        </div>
+        
 
         
         <!-- Source Code / Disasm -->

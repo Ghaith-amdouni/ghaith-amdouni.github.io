@@ -161,7 +161,7 @@ if (cards.length) {
 // ===== Amaterasu Cursor Trail =====
 (function() {
     const particles = [];
-    const MAX = 22;
+    const MAX = 25;
     for (let i = 0; i < MAX; i++) {
         const p = document.createElement('div');
         p.className = 'cursor-flame';
@@ -176,8 +176,12 @@ if (cards.length) {
         idx = (idx + 1) % MAX;
         particles.forEach((p, i) => {
             p.life = Math.max(0, p.life - 0.06);
-            const s = p.life * 10;
-            p.el.style.cssText = `left:${p.x - s/2}px;top:${p.y - s/2}px;width:${s}px;height:${s}px;opacity:${p.life * 0.9};`;
+            const s = p.life * 15;
+            p.el.style.left = (p.x - s/2) + 'px';
+            p.el.style.top = (p.y - s/2) + 'px';
+            p.el.style.width = s + 'px';
+            p.el.style.height = s + 'px';
+            p.el.style.opacity = p.life * 0.9;
         });
     }, 30);
 })();
@@ -185,14 +189,30 @@ if (cards.length) {
 // ===== Genjutsu Transitions =====
 document.addEventListener('DOMContentLoaded', () => {
     const overlay = document.getElementById('genjutsuOverlay');
+    
+    // Create Kamui overlay
+    const kamuiOverlay = document.createElement('div');
+    kamuiOverlay.className = 'kamui-overlay';
+    document.body.appendChild(kamuiOverlay);
+
     if (!overlay) return;
 
-    // Reset overlay if page is restored from browser bfcache (back/forward button)
-    // Without this, the black eyelids stay closed when using browser back button
+    // Reset overlay if page is restored from browser bfcache
     window.addEventListener('pageshow', (e) => {
         if (e.persisted) {
             overlay.classList.remove('closing', 'initial-closed');
             overlay.classList.add('opening');
+            kamuiOverlay.classList.remove('kamui-active');
+            document.body.classList.remove('kamui-sucking');
+            
+            // Re-trigger amaterasu opening
+            let amaterasu = document.getElementById('amaterasuOverlay');
+            if (amaterasu) {
+                amaterasu.classList.remove('burn-away');
+                void amaterasu.offsetWidth; // trigger reflow
+                amaterasu.classList.add('burn-away');
+            }
+
             setTimeout(() => overlay.classList.remove('opening'), 700);
         }
     });
@@ -202,11 +222,25 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(() => {
             overlay.classList.remove('initial-closed');
             overlay.classList.add('opening');
-            setTimeout(() => overlay.classList.remove('opening'), 700);
+            
+            // Add Amaterasu Screen Burn
+            let amaterasu = document.createElement('div');
+            amaterasu.id = 'amaterasuOverlay';
+            amaterasu.className = 'amaterasu-overlay';
+            document.body.appendChild(amaterasu);
+            
+            setTimeout(() => {
+                amaterasu.classList.add('burn-away');
+            }, 100);
+
+            setTimeout(() => {
+                overlay.classList.remove('opening');
+                if(amaterasu.parentNode) amaterasu.parentNode.removeChild(amaterasu);
+            }, 1500);
         });
     });
 
-    // Intercept ONLY internal navigation links (mem-card and back-link)
+    // Intercept internal navigation links
     document.querySelectorAll('.mem-card, .back-link, a[href^="/"]').forEach(link => {
         const href = link.href;
         if (!href || link.getAttribute('href') === '#') return;
@@ -214,8 +248,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         link.addEventListener('click', (e) => {
             e.preventDefault();
-            overlay.classList.add('closing');
-            setTimeout(() => { window.location.href = href; }, 1100);
+            if (link.classList.contains('back-link')) {
+                // Kamui Space-Time suction for going back
+                kamuiOverlay.classList.add('kamui-active');
+                document.body.classList.add('kamui-sucking');
+                setTimeout(() => { window.location.href = href; }, 1200);
+            } else {
+                // Tsukuyomi/Mangekyo eyelid close for opening challenges
+                overlay.classList.add('closing');
+                setTimeout(() => { window.location.href = href; }, 1100);
+            }
         });
     });
 });

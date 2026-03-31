@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>暁 // Rogue_Net Exploit Portfolio</title>
+    <meta name="description" content="CTF Challenge Portfolio — Binary Exploitation, Pwn, Misc writeups by Ghaith Amdouni">
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+
+    <div class="scanlines"></div>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    <div class="scroll-addr" id="scrollAddr">0x00000000</div>
+    <div class="pwndbg-bg" id="pwndbgBg"></div>
+
+    <div class="container">
+        <header>
+            <svg class="sharingan-svg" viewBox="0 0 200 200">
+                <circle class="outer-ring" cx="100" cy="100" r="90" />
+                <circle class="outer-ring" cx="100" cy="100" r="70" stroke-dasharray="6 8" />
+                <circle cx="100" cy="100" r="15" fill="var(--blood-red)" opacity="0.6" />
+                <g class="tomoe">
+                    <circle cx="100" cy="40" r="10" />
+                    <path d="M100,40 Q130,55 100,100" fill="none" stroke="var(--blood-red)" stroke-width="5" stroke-linecap="round"/>
+                </g>
+                <g class="tomoe" style="animation-delay: -2s;">
+                    <circle cx="148" cy="128" r="10" />
+                    <path d="M148,128 Q120,150 100,100" fill="none" stroke="var(--blood-red)" stroke-width="5" stroke-linecap="round"/>
+                </g>
+                <g class="tomoe" style="animation-delay: -4s;">
+                    <circle cx="52" cy="128" r="10" />
+                    <path d="M52,128 Q75,105 100,100" fill="none" stroke="var(--blood-red)" stroke-width="5" stroke-linecap="round"/>
+                </g>
+            </svg>
+
+            <h1><span class="prefix">./</span>r3t0x<span class="cursor-blink">_</span></h1>
+            <div class="typewriter">[+] Ghaith Amdouni | Exploit Dev &amp; Vulnerability Research...</div>
+
+            <div class="about-section" style="margin-top: 40px; max-width: 700px; text-align: left; line-height: 1.9; color: var(--text-light); border: 1px solid #222; background: rgba(10,10,10,0.9); padding: 25px 30px; box-shadow: 0 0 15px rgba(178,0,0,0.1); font-size: 0.9rem;">
+                <div style="color: var(--gdb-green); margin-bottom: 15px;"><span style="color: var(--blood-red);">r3t0x</span>@akatsuki<span style="color: var(--text-muted);">:~$</span> whoami</div>
+                <div style="padding-left: 10px; border-left: 2px solid var(--blood-red);">
+                    <div><span style="color: var(--amber);">uid</span><span style="color: var(--text-muted);">=</span><span style="color: #fff;">1337(r3t0x)</span></div>
+                    <div><span style="color: var(--amber);">name</span><span style="color: var(--text-muted);">=</span><span style="color: #fff;">Ghaith Amdouni</span></div>
+                    <div><span style="color: var(--amber);">class</span><span style="color: var(--text-muted);">=</span><span style="color: #fff;">Exploit Dev &amp; Vulnerability Research</span></div>
+                    <div><span style="color: var(--amber);">interests</span><span style="color: var(--text-muted);">=</span><span style="color: #fff;">{binary_exploitation, reverse_engineering, low_level_systems}</span></div>
+                    <div><span style="color: var(--amber);">status</span><span style="color: var(--text-muted);">=</span><span style="color: var(--gdb-green);">active</span></div>
+                </div>
+                <div style="color: var(--text-muted); margin-top: 15px; font-size: 0.82rem;">// Welcome to my archive of exploits, CTF challenges, and proof-of-concepts.</div>
+            </div>
+        </header>
+
+        <!-- Genjutsu Transition Overlay -->
+        <div class="genjutsu-overlay initial-closed" id="genjutsuOverlay">
+            <div class="eyelid eyelid-top"></div>
+            <div class="eyelid eyelid-bottom"></div>
+            <div class="genjutsu-eye">
+                <svg viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="94" fill="var(--blood-red)" stroke="#000" stroke-width="10"/>
+                    <!-- Base 3-Tomoe -->
+                    <g class="base-sharingan" style="transform-origin: 100px 100px;">
+                        <circle cx="100" cy="100" r="16" fill="#000"/>
+                        <circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/>
+                        <g class="tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(120deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(240deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                    </g>
+                    <!-- Uploaded Image Mangekyo -->
+                    <defs>
+                        <clipPath id="circleClip">
+                            <circle cx="100" cy="100" r="98" />
+                        </clipPath>
+                    </defs>
+                    <image href="static/img/mangekyou.png" x="0" y="0" height="200" width="200" class="mangekyo" style="transform-origin: 100px 100px; opacity: 0; clip-path: url(#circleClip);" />
+                </svg>
+            </div>
+        </div>
+
+        
+        <section id="mojo-jojo">
+            <h2 class="section-title">
+                <span class="kanji-inline">暁</span> MOJO-JOJO CTF
+            </h2>
+            <div class="grid">
+                
+                <a href="challenge/mojo-jojo/pwn/CS_12.6/index.html" class="mem-card">
+                    <div class="card-meta">
+                        <span>[PWN]</span>
+                        <div class="difficulty">
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                        </div>
+                    </div>
+                    <h3 class="card-title"><span class="func">CS_12.6</span>()</h3>
+                    <p class="card-desc">## CS 12.06 - SYSTEM 2.0 ## Description XIIVI ONCE SAID &#34;IINEK DIMA AL HOLILA&#34;</p>
+                    <div style="margin-top: 10px; font-size: 0.75rem; color: var(--gdb-blue);">0xf80a2f7b</div>
+                    <div class="kanji-mark">暁</div>
+                </a>
+                
+                <a href="challenge/mojo-jojo/pwn/HIP-HOP/index.html" class="mem-card">
+                    <div class="card-meta">
+                        <span>[PWN]</span>
+                        <div class="difficulty">
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                        </div>
+                    </div>
+                    <h3 class="card-title"><span class="func">HIP-HOP</span>()</h3>
+                    <p class="card-desc"></p>
+                    <div style="margin-top: 10px; font-size: 0.75rem; color: var(--gdb-blue);">0x48cae02c</div>
+                    <div class="kanji-mark">暁</div>
+                </a>
+                
+                <a href="challenge/mojo-jojo/pwn/MOJO_LAB/index.html" class="mem-card">
+                    <div class="card-meta">
+                        <span>[PWN]</span>
+                        <div class="difficulty">
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                        </div>
+                    </div>
+                    <h3 class="card-title"><span class="func">MOJO_LAB</span>()</h3>
+                    <p class="card-desc"># MOJO_LAB ``</p>
+                    <div style="margin-top: 10px; font-size: 0.75rem; color: var(--gdb-blue);">0xc199e3d4</div>
+                    <div class="kanji-mark">暁</div>
+                </a>
+                
+                <a href="challenge/mojo-jojo/pwn/dl/index.html" class="mem-card">
+                    <div class="card-meta">
+                        <span>[PWN]</span>
+                        <div class="difficulty">
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                        </div>
+                    </div>
+                    <h3 class="card-title"><span class="func">dl</span>()</h3>
+                    <p class="card-desc">## dl ## Description A dynamic loader exploitation challenge. Abuse the linker&#39;s resolution mechanism to hijack control ...</p>
+                    <div style="margin-top: 10px; font-size: 0.75rem; color: var(--gdb-blue);">0x01a120c7</div>
+                    <div class="kanji-mark">暁</div>
+                </a>
+                
+                <a href="challenge/mojo-jojo/pwn/fragmented_scribe/index.html" class="mem-card">
+                    <div class="card-meta">
+                        <span>[PWN]</span>
+                        <div class="difficulty">
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                        </div>
+                    </div>
+                    <h3 class="card-title"><span class="func">fragmented_scribe</span>()</h3>
+                    <p class="card-desc"># The Fragmented Scribe ## Description The scribe is dying. The message is breaking.</p>
+                    <div style="margin-top: 10px; font-size: 0.75rem; color: var(--gdb-blue);">0x4674fb5e</div>
+                    <div class="kanji-mark">暁</div>
+                </a>
+                
+                <a href="challenge/mojo-jojo/pwn/oracle/index.html" class="mem-card">
+                    <div class="card-meta">
+                        <span>[PWN]</span>
+                        <div class="difficulty">
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                        </div>
+                    </div>
+                    <h3 class="card-title"><span class="func">oracle</span>()</h3>
+                    <p class="card-desc">## Oracle ## Description The Oracle knows all — but can you make it speak? Exploit a format string vulnerability to leak...</p>
+                    <div style="margin-top: 10px; font-size: 0.75rem; color: var(--gdb-blue);">0xa189c633</div>
+                    <div class="kanji-mark">暁</div>
+                </a>
+                
+                <a href="challenge/mojo-jojo/pwn/oracle_Revenge/index.html" class="mem-card">
+                    <div class="card-meta">
+                        <span>[PWN]</span>
+                        <div class="difficulty">
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                        </div>
+                    </div>
+                    <h3 class="card-title"><span class="func">oracle_Revenge</span>()</h3>
+                    <p class="card-desc"># Two Echoes - Revenge The silence has deepened, and the echoes have turned hostile. The orchestra is gone, leaving only...</p>
+                    <div style="margin-top: 10px; font-size: 0.75rem; color: var(--gdb-blue);">0xe230d4f4</div>
+                    <div class="kanji-mark">暁</div>
+                </a>
+                
+                <a href="challenge/mojo-jojo/pwn/ret2libc/index.html" class="mem-card">
+                    <div class="card-meta">
+                        <span>[PWN]</span>
+                        <div class="difficulty">
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                        </div>
+                    </div>
+                    <h3 class="card-title"><span class="func">ret2libc</span>()</h3>
+                    <p class="card-desc">## ret2libc ## Description Classic return-to-libc attack. The stack is non-executable, but libc is loaded and ready. Lea...</p>
+                    <div style="margin-top: 10px; font-size: 0.75rem; color: var(--gdb-blue);">0x008cae62</div>
+                    <div class="kanji-mark">暁</div>
+                </a>
+                
+                <a href="challenge/mojo-jojo/pwn/warmup/index.html" class="mem-card">
+                    <div class="card-meta">
+                        <span>[PWN]</span>
+                        <div class="difficulty">
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                        </div>
+                    </div>
+                    <h3 class="card-title"><span class="func">warmup</span>()</h3>
+                    <p class="card-desc">## Warmup ## Description A beginner-friendly buffer overflow warmup. Smash the stack, overwrite the return address, and ...</p>
+                    <div style="margin-top: 10px; font-size: 0.75rem; color: var(--gdb-blue);">0x468bfe2b</div>
+                    <div class="kanji-mark">暁</div>
+                </a>
+                
+            </div>
+        </section>
+        
+        <section id="fst-bootcamp">
+            <h2 class="section-title">
+                <span class="kanji-inline">禁</span> FST Bootcamp
+            </h2>
+            <div class="grid">
+                
+                <a href="challenge/fst-bootcamp/b0f/index.html" class="mem-card">
+                    <div class="card-meta">
+                        <span>[PWN]</span>
+                        <div class="difficulty">
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                        </div>
+                    </div>
+                    <h3 class="card-title"><span class="func">b0f</span>()</h3>
+                    <p class="card-desc">## b0f ## Description Buffer overflow 101. A straightforward stack smashing exercise — overflow the input buffer and tak...</p>
+                    <div style="margin-top: 10px; font-size: 0.75rem; color: var(--gdb-blue);">0x5a842f2d</div>
+                    <div class="kanji-mark">禁</div>
+                </a>
+                
+                <a href="challenge/fst-bootcamp/captchahell/index.html" class="mem-card">
+                    <div class="card-meta">
+                        <span>[PWN]</span>
+                        <div class="difficulty">
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                        </div>
+                    </div>
+                    <h3 class="card-title"><span class="func">captchahell</span>()</h3>
+                    <p class="card-desc">## captchahell ## Description Bypass a CAPTCHA-protected service by exploiting a binary vulnerability lurking behind the...</p>
+                    <div style="margin-top: 10px; font-size: 0.75rem; color: var(--gdb-blue);">0x2666fb2d</div>
+                    <div class="kanji-mark">禁</div>
+                </a>
+                
+                <a href="challenge/fst-bootcamp/expertly_secured/index.html" class="mem-card">
+                    <div class="card-meta">
+                        <span>[PWN]</span>
+                        <div class="difficulty">
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                        </div>
+                    </div>
+                    <h3 class="card-title"><span class="func">expertly_secured</span>()</h3>
+                    <p class="card-desc"># Expertly Secured ## Description Our system is so secure, it&#39;s actually insulting that you&#39;re even trying to look at it...</p>
+                    <div style="margin-top: 10px; font-size: 0.75rem; color: var(--gdb-blue);">0x8c87852c</div>
+                    <div class="kanji-mark">禁</div>
+                </a>
+                
+                <a href="challenge/fst-bootcamp/fragmented_scribe/index.html" class="mem-card">
+                    <div class="card-meta">
+                        <span>[PWN]</span>
+                        <div class="difficulty">
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                        </div>
+                    </div>
+                    <h3 class="card-title"><span class="func">fragmented_scribe</span>()</h3>
+                    <p class="card-desc"># The Fragmented Scribe ## Description The scribe is dying. The message is breaking.</p>
+                    <div style="margin-top: 10px; font-size: 0.75rem; color: var(--gdb-blue);">0x4674fb5e</div>
+                    <div class="kanji-mark">禁</div>
+                </a>
+                
+                <a href="challenge/fst-bootcamp/please/index.html" class="mem-card">
+                    <div class="card-meta">
+                        <span>[PWN]</span>
+                        <div class="difficulty">
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                        </div>
+                    </div>
+                    <h3 class="card-title"><span class="func">please</span>()</h3>
+                    <p class="card-desc">## please ## Description Sometimes all you have to do is ask nicely... or exploit the binary&#39;s trust. Manipulate the inp...</p>
+                    <div style="margin-top: 10px; font-size: 0.75rem; color: var(--gdb-blue);">0x6050ce63</div>
+                    <div class="kanji-mark">禁</div>
+                </a>
+                
+                <a href="challenge/fst-bootcamp/ret2shellcode/index.html" class="mem-card">
+                    <div class="card-meta">
+                        <span>[PWN]</span>
+                        <div class="difficulty">
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                        </div>
+                    </div>
+                    <h3 class="card-title"><span class="func">ret2shellcode</span>()</h3>
+                    <p class="card-desc">## ret2shellcode ## Description NX is off — the stack is executable. Inject your shellcode, find the buffer address, and...</p>
+                    <div style="margin-top: 10px; font-size: 0.75rem; color: var(--gdb-blue);">0x7afb1997</div>
+                    <div class="kanji-mark">禁</div>
+                </a>
+                
+                <a href="challenge/fst-bootcamp/ret2vault/index.html" class="mem-card">
+                    <div class="card-meta">
+                        <span>[PWN]</span>
+                        <div class="difficulty">
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot filled"></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                            <span class="diff-dot "></span>
+                            
+                        </div>
+                    </div>
+                    <h3 class="card-title"><span class="func">ret2vault</span>()</h3>
+                    <p class="card-desc">## ret2vault ## Description The vault function holds the treasure but no direct path leads there. Overflow the buffer, c...</p>
+                    <div style="margin-top: 10px; font-size: 0.75rem; color: var(--gdb-blue);">0x436e15b0</div>
+                    <div class="kanji-mark">禁</div>
+                </a>
+                
+            </div>
+        </section>
+        
+
+        <div style="height: 80px;"></div>
+    </div>
+
+    <script src="static/js/main.js"></script>
+</body>
+</html>

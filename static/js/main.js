@@ -231,12 +231,12 @@ document.addEventListener('DOMContentLoaded', () => {
             
             setTimeout(() => {
                 amaterasu.classList.add('burn-away');
-            }, 100);
+            }, 80);
 
             setTimeout(() => {
                 overlay.classList.remove('opening');
                 if(amaterasu.parentNode) amaterasu.parentNode.removeChild(amaterasu);
-            }, 1100);
+            }, 1200);
         });
     });
 
@@ -252,14 +252,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Kamui Space-Time suction for going back
                 kamuiOverlay.classList.add('kamui-active');
                 document.body.classList.add('kamui-sucking');
-                setTimeout(() => { window.location.href = href; }, 1200);
+                setTimeout(() => { window.location.href = href; }, 900);
             } else {
                 // Tsukuyomi/Mangekyo eyelid close for opening challenges
-                if (link.classList.contains('mem-card')) {
-                    link.classList.add('clicked');
-                }
                 overlay.classList.add('closing');
-                setTimeout(() => { window.location.href = href; }, 800);
+                setTimeout(() => { window.location.href = href; }, 850);
             }
         });
     });

@@ -195,14 +195,6 @@ document.addEventListener('DOMContentLoaded', () => {
     kamuiOverlay.className = 'kamui-overlay';
     document.body.appendChild(kamuiOverlay);
 
-    // Create Chidori overlay
-    const chidoriOverlay = document.createElement('div');
-    chidoriOverlay.className = 'chidori-overlay';
-    const bolt = document.createElement('div');
-    bolt.className = 'chidori-bolt';
-    chidoriOverlay.appendChild(bolt);
-    document.body.appendChild(chidoriOverlay);
-
     if (!overlay) return;
 
     // Reset overlay if page is restored from browser bfcache
@@ -211,7 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
             overlay.classList.remove('closing', 'initial-closed');
             overlay.classList.add('opening');
             kamuiOverlay.classList.remove('kamui-active');
-            chidoriOverlay.classList.remove('active');
             document.body.classList.remove('kamui-sucking');
             
             // Re-trigger amaterasu opening
@@ -222,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 amaterasu.classList.add('burn-away');
             }
 
-            setTimeout(() => overlay.classList.remove('opening'), 500);
+            setTimeout(() => overlay.classList.remove('opening'), 700);
         }
     });
 
@@ -245,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 overlay.classList.remove('opening');
                 if(amaterasu.parentNode) amaterasu.parentNode.removeChild(amaterasu);
-            }, 1000);
+            }, 1100);
         });
     });
 
@@ -258,18 +249,17 @@ document.addEventListener('DOMContentLoaded', () => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             if (link.classList.contains('back-link')) {
-                // Chidori Electric effect for going back
-                chidoriOverlay.classList.add('active');
+                // Kamui Space-Time suction for going back
                 kamuiOverlay.classList.add('kamui-active');
                 document.body.classList.add('kamui-sucking');
-                setTimeout(() => { window.location.href = href; }, 800);
+                setTimeout(() => { window.location.href = href; }, 1200);
             } else {
                 // Tsukuyomi/Mangekyo eyelid close for opening challenges
                 if (link.classList.contains('mem-card')) {
                     link.classList.add('clicked');
                 }
                 overlay.classList.add('closing');
-                setTimeout(() => { window.location.href = href; }, 600);
+                setTimeout(() => { window.location.href = href; }, 800);
             }
         });
     });

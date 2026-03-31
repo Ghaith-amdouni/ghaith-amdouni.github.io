@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     link.classList.add('clicked');
                 }
                 overlay.classList.add('closing');
-                setTimeout(() => { window.location.href = href; }, 1200);
+                setTimeout(() => { window.location.href = href; }, 1000);
             }
         });
     });

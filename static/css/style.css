@@ -110,8 +110,35 @@ header {
 
 h1 {
     font-size: 4.5rem; font-weight: 700; color: #fff;
-    text-shadow: 0 0 15px var(--blood-red);
     letter-spacing: 2px; margin-bottom: 20px;
+    animation: amaterasuTextGlow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes amaterasuTextGlow {
+    0% {
+        text-shadow: 
+            0 2px 5px #000,
+            0 -2px 10px var(--blood-red),
+            0 -5px 15px #0a0000,
+            0 -8px 20px var(--blood-red);
+        color: #e2e8f0;
+    }
+    50% {
+        text-shadow: 
+            0 2px 5px #000,
+            0 -5px 15px var(--blood-red),
+            0 -10px 25px #0a0000,
+            0 -15px 35px var(--blood-red);
+        color: #ffffff;
+    }
+    100% {
+        text-shadow: 
+            0 2px 5px #000,
+            0 -8px 20px var(--blood-red),
+            0 -15px 35px #0a0000,
+            0 -25px 45px var(--blood-red);
+        color: #ffcccc;
+    }
 }
 h1 .prefix { color: var(--blood-red); }
 h1 .cursor-blink { animation: blink 1s step-end infinite; color: var(--gdb-green); }

@@ -109,36 +109,22 @@ header {
 @keyframes spinTomoe { 100% { transform: rotate(360deg); } }
 
 h1 {
-    font-size: 4.5rem; font-weight: 700; color: #fff;
-    letter-spacing: 2px; margin-bottom: 20px;
-    animation: amaterasuTextGlow 1.5s ease-in-out infinite alternate;
+    font-size: 4.5rem; font-weight: 700;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+    
+    /* Amaterasu fire text masking */
+    background: linear-gradient(0deg, #000000 5%, #1a0000 25%, var(--blood-red) 50%, #000000 80%, #000000 100%);
+    background-size: 100% 300%;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: amaterasuBurnText 2s ease-in-out infinite alternate;
 }
 
-@keyframes amaterasuTextGlow {
-    0% {
-        text-shadow: 
-            0 2px 5px #000,
-            0 -2px 10px var(--blood-red),
-            0 -5px 15px #0a0000,
-            0 -8px 20px var(--blood-red);
-        color: #e2e8f0;
-    }
-    50% {
-        text-shadow: 
-            0 2px 5px #000,
-            0 -5px 15px var(--blood-red),
-            0 -10px 25px #0a0000,
-            0 -15px 35px var(--blood-red);
-        color: #ffffff;
-    }
-    100% {
-        text-shadow: 
-            0 2px 5px #000,
-            0 -8px 20px var(--blood-red),
-            0 -15px 35px #0a0000,
-            0 -25px 45px var(--blood-red);
-        color: #ffcccc;
-    }
+@keyframes amaterasuBurnText {
+    0% { background-position: 0% 100%; filter: drop-shadow(0 0 8px rgba(178,0,0,0.6)); }
+    100% { background-position: 0% 0%; filter: drop-shadow(0 0 20px rgba(178,0,0,1)); }
 }
 h1 .prefix { color: var(--blood-red); }
 h1 .cursor-blink { animation: blink 1s step-end infinite; color: var(--gdb-green); }

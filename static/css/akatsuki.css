@@ -4,15 +4,15 @@
 :focus-visible { outline: 2px solid var(--red); outline-offset: 5px; }
 main, .site-footer { position: relative; z-index: 1; }
 body { isolation: isolate; }
-.archive-transition { position: fixed; inset: 0; z-index: 5000; display: grid; place-items: center; overflow: hidden; visibility: hidden; opacity: 0; background: rgba(4,4,7,.96); pointer-events: none; }
+.archive-transition { position: fixed; inset: 0; z-index: 5000; display: grid; place-items: center; overflow: hidden; visibility: hidden; opacity: 0; background: #040407; pointer-events: none; }
 .archive-transition::before,.archive-transition::after { content: ""; position: absolute; inset: 0; }
-.archive-transition::before { background: radial-gradient(circle at center,#c61f3026 0 15%,#3c0a1240 31%,transparent 56%),repeating-conic-gradient(from 0deg,transparent 0 28deg,#ef2b3609 29deg 30deg); }
-.archive-transition::after { background: repeating-linear-gradient(0deg,transparent 0 4px,#0008 5px),radial-gradient(circle at center,transparent 0 18%,#0000 34%,#000b 82%); }
+.archive-transition::before { background: radial-gradient(circle at center,rgba(198,31,48,.15) 0 15%,rgba(60,10,18,.25) 31%,transparent 56%),repeating-conic-gradient(from 0deg,transparent 0 28deg,rgba(239,43,54,.035) 29deg 30deg); }
+.archive-transition::after { background: repeating-linear-gradient(0deg,transparent 0 4px,rgba(0,0,0,.5) 5px),radial-gradient(circle at center,transparent 0 18%,transparent 34%,rgba(0,0,0,.68) 82%); }
 .archive-transition.is-active { visibility: visible; animation: vault-veil .88s ease-out both; }
 .archive-transition .vault-eye { position: relative; z-index: 2; display: grid; place-items: center; width: min(36vw,320px); aspect-ratio: 1; }
 .archive-transition .vault-eye::before,.archive-transition .vault-eye::after { content: ""; position: absolute; inset: -16%; border: 1px dashed #e9485666; border-radius: 50%; animation: vault-ring .88s var(--ease) both; }
 .archive-transition .vault-eye::after { inset: 5%; border-style: solid; border-color: #ff6d7845; animation-delay: .08s; }
-.archive-transition .vault-eye img { width: 100%; height: 100%; transform-origin: center; filter: drop-shadow(0 0 36px #ef2b3670); animation: vault-eye .88s cubic-bezier(.35,.1,.25,1) both; }
+.archive-transition .vault-eye img { display: block; width: 100%; height: 100%; transform-origin: center center; -webkit-transform-origin: center center; background: transparent; filter: none; -webkit-backface-visibility: hidden; backface-visibility: hidden; animation: vault-eye .88s cubic-bezier(.35,.1,.25,1) both; }
 .archive-transition .vault-eye i { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #fff; box-shadow: 0 0 14px #fff; animation: vault-node .88s ease both; }
 .archive-transition .vault-eye i:nth-child(2) { top: 2%; left: 50%; }
 .archive-transition .vault-eye i:nth-child(3) { right: 8%; bottom: 25%; }
@@ -148,11 +148,11 @@ body.vault-opening { overflow: hidden; }
 .search-trigger { min-width: 42px; min-height: 42px; }
 @keyframes cloud-drift { to { translate: 30px -50px; } }
 @keyframes telemetry-ping { 0% { scale: .45; opacity: 0; } 35% { opacity: 1; } 100% { scale: 2.6; opacity: 0; } }
-@keyframes vault-veil { from { opacity: 0; backdrop-filter: blur(0); } to { opacity: 1; backdrop-filter: blur(8px); } }
-@keyframes vault-ring { 0% { scale: .35; opacity: 0; rotate: 180deg; } 65% { opacity: 1; } 100% { scale: 1; opacity: .55; rotate: -180deg; } }
-@keyframes vault-eye { 0% { scale: .68; rotate: 0deg; opacity: .2; filter: blur(3px) drop-shadow(0 0 12px #ef2b3630); } 48% { scale: 1.06; rotate: 180deg; opacity: 1; } 100% { scale: 1; rotate: 360deg; opacity: .96; filter: blur(0) drop-shadow(0 0 36px #ef2b3670); } }
-@keyframes vault-node { 0%,35% { opacity: 0; scale: 0; } 100% { opacity: 1; scale: 1; } }
-@keyframes vault-caption { 0%,48% { opacity: 0; translate: 0 8px; } 100% { opacity: 1; translate: 0 0; } }
+@keyframes vault-veil { from { opacity: 0; } to { opacity: 1; } }
+@keyframes vault-ring { 0% { transform: scale(.35) rotate(180deg); opacity: 0; } 65% { opacity: 1; } 100% { transform: scale(1) rotate(-180deg); opacity: .55; } }
+@keyframes vault-eye { 0% { transform: scale(.68) rotate(0deg); opacity: .2; } 48% { transform: scale(1.06) rotate(180deg); opacity: 1; } 100% { transform: scale(1) rotate(360deg); opacity: .96; } }
+@keyframes vault-node { 0%,35% { opacity: 0; transform: scale(0); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes vault-caption { 0%,48% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
 @media (max-width: 1050px) {
   .archive-card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hero { grid-template-columns: minmax(0,1fr) 360px; gap: 24px; }

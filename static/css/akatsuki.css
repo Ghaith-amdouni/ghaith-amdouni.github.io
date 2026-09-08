@@ -147,7 +147,7 @@ body.vault-opening { overflow: hidden; }
 @keyframes telemetry-ping { 0% { scale: .45; opacity: 0; } 35% { opacity: 1; } 100% { scale: 2.6; opacity: 0; } }
 @keyframes vault-veil { from { opacity: 0; backdrop-filter: blur(0); } to { opacity: 1; backdrop-filter: blur(8px); } }
 @keyframes vault-ring { 0% { scale: .35; opacity: 0; rotate: 180deg; } 65% { opacity: 1; } 100% { scale: 1; opacity: .55; rotate: -180deg; } }
-@keyframes vault-eye { 0% { scale: .3; rotate: -90deg; opacity: 0; filter: blur(8px) drop-shadow(0 0 0 transparent); } 58% { scale: 1.08; rotate: 300deg; opacity: 1; } 100% { scale: 1; rotate: 540deg; opacity: .96; filter: blur(0) drop-shadow(0 0 36px #ef2b3670); } }
+@keyframes vault-eye { 0% { scale: .3; rotate: -90deg; opacity: 0; filter: blur(8px) drop-shadow(0 0 0 transparent); } 58% { scale: 1.08; rotate: 210deg; opacity: 1; } 100% { scale: 1; rotate: 360deg; opacity: .96; filter: blur(0) drop-shadow(0 0 36px #ef2b3670); } }
 @keyframes vault-node { 0%,35% { opacity: 0; scale: 0; } 100% { opacity: 1; scale: 1; } }
 @keyframes vault-caption { 0%,48% { opacity: 0; translate: 0 8px; } 100% { opacity: 1; translate: 0 0; } }
 @media (max-width: 1050px) {

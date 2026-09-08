@@ -319,5 +319,5 @@ document.addEventListener('click', (event) => {
   if (addressElement) addressElement.textContent = address;
   document.body.classList.add('vault-opening');
   transition.classList.add('is-active');
-  setTimeout(() => location.assign(target.href), 740);
+  setTimeout(() => location.assign(target.href), 1250);
 });

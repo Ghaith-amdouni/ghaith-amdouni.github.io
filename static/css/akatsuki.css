@@ -8,16 +8,16 @@ body { isolation: isolate; }
 .archive-transition::before,.archive-transition::after { content: ""; position: absolute; inset: 0; }
 .archive-transition::before { background: radial-gradient(circle at center,#c61f3026 0 15%,#3c0a1240 31%,transparent 56%),repeating-conic-gradient(from 0deg,transparent 0 28deg,#ef2b3609 29deg 30deg); }
 .archive-transition::after { background: repeating-linear-gradient(0deg,transparent 0 4px,#0008 5px),radial-gradient(circle at center,transparent 0 18%,#0000 34%,#000b 82%); }
-.archive-transition.is-active { visibility: visible; animation: vault-veil .9s ease-out both; }
+.archive-transition.is-active { visibility: visible; animation: vault-veil .72s ease-out both; }
 .archive-transition .vault-eye { position: relative; z-index: 2; display: grid; place-items: center; width: min(36vw,320px); aspect-ratio: 1; }
-.archive-transition .vault-eye::before,.archive-transition .vault-eye::after { content: ""; position: absolute; inset: -16%; border: 1px dashed #e9485666; border-radius: 50%; animation: vault-ring .9s var(--ease) both; }
+.archive-transition .vault-eye::before,.archive-transition .vault-eye::after { content: ""; position: absolute; inset: -16%; border: 1px dashed #e9485666; border-radius: 50%; animation: vault-ring .72s var(--ease) both; }
 .archive-transition .vault-eye::after { inset: 5%; border-style: solid; border-color: #ff6d7845; animation-delay: .08s; }
-.archive-transition .vault-eye img { width: 100%; height: 100%; transform-origin: center; filter: drop-shadow(0 0 36px #ef2b3670); animation: vault-eye .9s cubic-bezier(.2,.7,.1,1) both; }
-.archive-transition .vault-eye i { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #fff; box-shadow: 0 0 14px #fff; animation: vault-node .9s ease both; }
+.archive-transition .vault-eye img { width: 100%; height: 100%; transform-origin: center; filter: drop-shadow(0 0 36px #ef2b3670); animation: vault-eye .72s cubic-bezier(.35,.1,.25,1) both; }
+.archive-transition .vault-eye i { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #fff; box-shadow: 0 0 14px #fff; animation: vault-node .72s ease both; }
 .archive-transition .vault-eye i:nth-child(2) { top: 2%; left: 50%; }
 .archive-transition .vault-eye i:nth-child(3) { right: 8%; bottom: 25%; }
 .archive-transition .vault-eye i:nth-child(4) { left: 8%; bottom: 25%; }
-.archive-transition p { position: absolute; z-index: 3; bottom: 9vh; margin: 0; color: #d8a0a6; font: 700 9px var(--mono); letter-spacing: .24em; animation: vault-caption .9s ease both; }
+.archive-transition p { position: absolute; z-index: 3; bottom: 9vh; margin: 0; color: #d8a0a6; font: 700 9px var(--mono); letter-spacing: .24em; animation: vault-caption .72s ease both; }
 .archive-transition p b { font: inherit; }
 .archive-transition p span { color: #ff4d59; margin: 0 14px; }
 body.vault-opening { overflow: hidden; }

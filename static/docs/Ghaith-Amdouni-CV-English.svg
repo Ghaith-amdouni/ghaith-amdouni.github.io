@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="210mm" height="297mm" viewBox="0 0 595 842">
+  <rect width="595" height="842" fill="#fff"/>
+  <style>
+    text{font-family:"DejaVu Serif",Georgia,serif;fill:#111}
+    .name{font-size:26px;font-weight:700;fill:#123d55}
+    .role{font-size:15px;font-style:italic;fill:#123d55}
+    .contact{font-size:7.7px}
+    .heading{font-size:10.2px;font-weight:700;letter-spacing:.15px}
+    .body{font-size:8.25px}
+    .small{font-size:7.75px}
+    .item{font-size:8.35px;font-weight:700}
+    .date{font-size:7.8px;font-style:italic}
+    .blue{fill:#123d55}
+    .rule{stroke:#123d55;stroke-width:1.25}
+    .link{fill:#111}
+  </style>
+
+  <text x="28" y="42" class="name">Amdouni Ghaith</text>
+  <text x="224" y="41" class="role">Networks &amp; Telecommunications Student</text>
+
+  <g class="contact">
+    <text x="28" y="63">✉  ghaith.amdouni@insat.ucar.tn</text>
+    <text x="212" y="63">☎  +216 55 808 439</text>
+    <text x="320" y="63">●  Tunis</text>
+    <a xlink:href="https://github.com/Ghaith-amdouni"><text x="380" y="63" class="link">◆  github.com/Ghaith-amdouni</text></a>
+    <a xlink:href="https://www.credly.com/users/ghaith-amdouni"><text x="28" y="81" class="link">Credly  credly.com/users/ghaith-amdouni</text></a>
+    <a xlink:href="https://www.linkedin.com/in/amdouni-ghaith"><text x="284" y="81" class="link">in  linkedin.com/in/amdouni-ghaith</text></a>
+  </g>
+
+  <text x="28" y="105" class="heading">PROFILE</text><path d="M28 110H567" class="rule"/>
+  <text x="28" y="123" class="body">
+    <tspan x="28" dy="0">SecuriNets Technical Team Instructor and Networks and Telecommunications student at INSAT, passionate about</tspan>
+    <tspan x="28" dy="10">cybersecurity, networking, DevOps, DevSecOps, and web development. Skilled, motivated, curious, and versatile, I am</tspan>
+    <tspan x="28" dy="10">eager to apply my knowledge to concrete and innovative projects.</tspan>
+  </text>
+
+  <text x="28" y="161" class="heading">PROFESSIONAL EXPERIENCE</text><path d="M28 166H567" class="rule"/>
+  <text x="28" y="179" class="item">SecuriNets — Technical Team Instructor</text>
+  <text x="520" y="179" class="date">Current</text>
+  <text x="28" y="190" class="body">• Teach technical workshops and guide learners through practical cybersecurity and binary exploitation.</text>
+  <text x="28" y="203" class="item">Digital Forensics Police Internship — FACEIS</text>
+  <text x="458" y="203" class="date">1 — 31 August 2026</text>
+  <text x="28" y="214" class="body">• Designed and built a facial investigation platform using RetinaFace, ArcFace, FAISS, FastAPI, and audited workflows.</text>
+  <text x="28" y="227" class="item">Zedka Services — Web Development Intern / Contributor</text>
+  <text x="420" y="227" class="date">June 2024 — August 2024</text>
+  <text x="28" y="238" class="body">• Contributed across full-stack development, page optimization, content integration, configuration, and maintenance.</text>
+
+  <text x="28" y="252" class="heading">PROJECTS</text><path d="M28 257H567" class="rule"/>
+  <text x="28" y="270" class="item">MOJO-JOJO CTF — Challenge Author</text>
+  <text x="28" y="281" class="body">• Designed advanced binary-exploitation challenges covering stack pivoting, heap overflows, SROP, and related techniques.</text>
+  <text x="28" y="298" class="item">FST Bootcamp CTF Challenges — Binary Exploitation</text>
+  <text x="28" y="309" class="body">• Created Dockerized ROP, ret2shellcode, and format-string challenges for the FST bootcamp.</text>
+  <text x="28" y="326" class="item">TaskManager DevOps Pipeline</text>
+  <text x="28" y="337" class="body">• Built a Spring Boot/PostgreSQL task manager, containerized with Docker, deployed on Kubernetes, integrated through</text>
+  <text x="38" y="347" class="body">GitHub Actions, and monitored with Prometheus and Grafana.</text>
+  <text x="28" y="364" class="item">Tor Network Simulation</text>
+  <text x="28" y="375" class="body">• Modeled onion routing with multilayer encryption, relay nodes, and circuit-based TCP/IP traffic tunneling.</text>
+  <text x="28" y="392" class="item">5G Mesh Network Simulation with OMNeT++</text>
+  <text x="28" y="403" class="body">• Developed a simulation environment for studying the behavior of a 5G mesh network.</text>
+
+  <text x="28" y="438" class="heading">SKILLS</text><path d="M28 443H567" class="rule"/>
+  <text x="28" y="456" class="body"><tspan font-weight="700">Networks &amp; Telecommunications: </tspan><tspan>Network configuration, troubleshooting, Cisco Packet Tracer simulations, and security concepts.</tspan></text>
+  <text x="28" y="472" class="body"><tspan font-weight="700">Cybersecurity: </tspan><tspan>Vulnerability analysis, system hardening, Linux security administration, binary exploitation, and reverse engineering.</tspan></text>
+  <text x="28" y="488" class="body"><tspan font-weight="700">Programming &amp; Web: </tspan><tspan>HTML, CSS, JavaScript, TypeScript, React, PHP/Symfony, Python/Flask, WordPress, MySQL,</tspan></text>
+  <text x="28" y="498" class="body">C, C++, and Java/Spring Boot.</text>
+  <text x="28" y="514" class="body"><tspan font-weight="700">Systems, Tools &amp; Environments: </tspan><tspan>Linux, Docker, Git/GitHub, GitHub Actions, Jenkins, Kubernetes, Terraform, Ansible,</tspan></text>
+  <text x="28" y="524" class="body">Prometheus, and Grafana.</text>
+
+  <text x="28" y="548" class="heading">DISTINCTIONS</text><path d="M28 553H567" class="rule"/>
+  <g class="body">
+    <text x="28" y="567">• 4th place in Africa — SecuriNets international qualifiers</text>
+    <text x="28" y="579">• 7th place — SecuriNets international final</text>
+    <text x="28" y="591">• 1st place — SecuriNets ISI qualifications</text>
+    <text x="307" y="567">• 1st place — SecuriNets ISI national final</text>
+    <text x="307" y="579">• Top 8 — Claw The Flag CTF</text>
+    <text x="307" y="591">• 1st place — Friendly CTF ENIT</text>
+  </g>
+
+  <text x="28" y="616" class="heading">CERTIFICATIONS</text><path d="M28 621H567" class="rule"/>
+  <g class="small">
+    <text x="28" y="635">• CCNA: Introduction to Networks — Cisco</text>
+    <text x="28" y="647">• CCNA: Switching, Routing &amp; Wireless</text><text x="37" y="657">Essentials — Cisco</text>
+    <text x="304" y="635">• Google Cybersecurity — Coursera</text>
+    <text x="304" y="647">• CS50's Introduction to Computer Science</text><text x="313" y="657">— Harvard University</text>
+    <text x="28" y="672">• Certified Red Team Operations Management</text>
+  </g>
+
+  <text x="28" y="699" class="heading">LANGUAGES</text><path d="M28 704H567" class="rule"/>
+  <g class="body">
+    <text x="28" y="720"><tspan font-weight="700">Arabic: </tspan>Native</text>
+    <text x="167" y="720"><tspan font-weight="700">English: </tspan>Fluent</text>
+    <text x="307" y="720"><tspan font-weight="700">French: </tspan>Fluent</text>
+    <text x="446" y="720"><tspan font-weight="700">German: </tspan>B1</text>
+  </g>
+
+  <text x="28" y="805" class="small blue">Amdouni Ghaith · English résumé</text>
+  <text x="567" y="805" text-anchor="end" class="small blue">ghaith-amdouni.github.io</text>
+</svg>

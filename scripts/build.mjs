@@ -1,7 +1,13 @@
 import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { posts } from '../content/posts.mjs';
 import { projects } from '../content/projects.mjs';
 const site = 'https://ghaith-amdouni.github.io';
+const assetVersion = createHash('sha256')
+  .update(await readFile('static/css/site.css'))
+  .update(await readFile('static/css/akatsuki.css'))
+  .update(await readFile('static/js/site.js'))
+  .digest('hex').slice(0, 12);
 const esc = s => String(s).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
 const decode = s => s.replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n)).replaceAll('&amp;', '&').replaceAll('&quot;', '"');
 const challenges = [];
@@ -23,7 +29,7 @@ const cloud = `<svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="tr
 const icon = `<img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32">`;
 const arrow = '<span aria-hidden="true">↗</span>';
 function shell(title, description, body, {url='/', active='home', type='website'}={}) {
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>${esc(title)} — r3t0x</title><meta name="description" content="${esc(description)}"><link rel="canonical" href="${site}${url}"><meta property="og:type" content="${type}"><meta property="og:title" content="${esc(title)} — r3t0x"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${site}${url}"><meta property="og:image" content="${site}/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css"><link rel="stylesheet" href="/static/css/akatsuki.css"><script src="/static/js/site.js" defer></script></head><body>
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>${esc(title)} — r3t0x</title><meta name="description" content="${esc(description)}"><link rel="canonical" href="${site}${url}"><meta property="og:type" content="${type}"><meta property="og:title" content="${esc(title)} — r3t0x"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${site}${url}"><meta property="og:image" content="${site}/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=${assetVersion}"><link rel="stylesheet" href="/static/css/akatsuki.css?v=${assetVersion}"><script src="/static/js/site.js?v=${assetVersion}" defer></script></head><body>
   <a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div>
   <div class="systembar"><div><span class="arch-mini" aria-hidden="true">Λ</span> archlinux <span class="bar-sep">/</span> r3t0x@portfolio <span class="system-workspaces" aria-hidden="true"><b>01</b> 02 03</span></div><div><span class="online-dot"></span> ALL SYSTEMS NOMINAL <span class="bar-sep">/</span> <time id="clock">UTC</time></div></div>
   <header class="site-header"><a class="brand" href="/" aria-label="r3t0x home">${icon}<span>r3t0x<span class="muted">@arch</span></span></a><nav aria-label="Main navigation"><a href="/" ${active==='home'?'aria-current="page"':''}>~/home</a><a href="/blog/" ${active==='blog'?'aria-current="page"':''}>~/archive</a><a href="/projects/" ${active==='projects'?'aria-current="page"':''}>~/projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>CV ↓</a></nav><button class="search-trigger" data-open-search aria-label="Search site"><span>⌕</span><kbd>Ctrl K</kbd></button></header>

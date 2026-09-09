@@ -89,7 +89,10 @@ if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: re
 const dialog = $('#search-dialog');
 const searchInput = $('#site-search');
 const searchResults = $('#search-results');
+const searchCount = $('#search-count');
+const searchScopeButtons = $$('[data-search-scope]');
 let searchIndex = [];
+let activeSearchScope = 'All';
 const escapeHtml = (value) => String(value).replace(/[&<>"]/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char]);
 const loadSearch = async () => {
   if (searchIndex.length) return searchIndex;
@@ -110,10 +113,24 @@ const loadSearch = async () => {
 const renderSearch = (query = '') => {
   if (!searchResults) return;
   const needle = query.trim().toLowerCase();
-  const matches = searchIndex.filter((item) => `${item.title} ${item.category} ${item.description || ''} ${item.collection || ''}`.toLowerCase().includes(needle)).slice(0, 9);
+  const kindOf = (item) => item.category === 'Pwn' ? 'Challenge' : item.category || 'Page';
+  let matches = searchIndex.filter((item) => {
+    const scopeMatch = activeSearchScope === 'All' || kindOf(item) === activeSearchScope;
+    const textMatch = `${item.title} ${item.category} ${item.description || ''} ${item.collection || ''}`.toLowerCase().includes(needle);
+    return scopeMatch && textMatch;
+  });
+  if (!needle && activeSearchScope === 'All') matches = matches.filter((item) => ['Challenge', 'Project'].includes(kindOf(item)));
+  const total = matches.length;
+  matches = matches.slice(0, 10);
+  if (searchCount) searchCount.textContent = `${total} ${total === 1 ? 'address' : 'addresses'}`;
   searchResults.innerHTML = matches.length
-    ? matches.map((item) => `<a class="search-result" href="${escapeHtml(item.url)}"><span class="tag">${escapeHtml(item.category || 'Page')}</span><span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.description || item.collection || '')}</small></span><span>↗</span></a>`).join('')
-    : '<div class="search-result"><span class="red">0x0</span><span><strong>No matching address.</strong><small>Try pwn, project, resume, or a challenge name.</small></span></div>';
+    ? matches.map((item, index) => {
+      const kind = kindOf(item);
+      const sigil = kind === 'Challenge' ? 'PWN' : kind === 'Project' ? 'GIT' : kind === 'PDF' ? 'CV' : 'SYS';
+      const address = `0x${(0x401000 + index * 0x100).toString(16)}`;
+      return `<a class="search-result" data-kind="${escapeHtml(kind)}" href="${escapeHtml(item.url)}"><span class="result-address">${address}</span><span class="result-sigil">${sigil}</span><span class="result-copy"><em>${escapeHtml(kind)} // ${escapeHtml(item.collection || item.category || 'INDEX')}</em><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.description || item.collection || '')}</small></span><span class="result-arrow">↗</span></a>`;
+    }).join('')
+    : '<div class="search-result search-empty"><span class="result-sigil">失</span><span class="result-copy"><em>TRACE FAILED // 0x0</em><strong>No matching signature.</strong><small>Try pwn, project, Kubernetes, FACEIS, or a challenge name.</small></span></div>';
   $$('a[href$=".pdf"]', searchResults).forEach(link => link.setAttribute('download', ''));
 };
 const openSearch = async () => {
@@ -126,6 +143,12 @@ const openSearch = async () => {
 $$('[data-open-search]').forEach((button) => button.addEventListener('click', openSearch));
 $$('[data-close-dialog]').forEach((button) => button.addEventListener('click', () => dialog?.close()));
 searchInput?.addEventListener('input', () => renderSearch(searchInput.value));
+searchScopeButtons.forEach((button) => button.addEventListener('click', () => {
+  activeSearchScope = button.dataset.searchScope;
+  searchScopeButtons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+  renderSearch(searchInput?.value || '');
+  searchInput?.focus();
+}));
 dialog?.addEventListener('click', (event) => {
   if (event.target !== dialog) return;
   const bounds = dialog.getBoundingClientRect();
@@ -257,6 +280,37 @@ if (archiveEntries.length) {
 }
 $('#archive-form')?.addEventListener('submit', (event) => { event.preventDefault(); filterArchive(); });
 
+// Project case files can be traced by title, stack, or system without leaving the page.
+const projectCases = $$('.project-case');
+const projectSearch = $('#project-search');
+const projectResultCount = $('#project-result-count');
+const projectEmpty = $('#project-empty');
+const resetProjectSearch = () => {
+  if (projectSearch) projectSearch.value = '';
+  filterProjects();
+  projectSearch?.focus();
+};
+const filterProjects = () => {
+  if (!projectCases.length) return;
+  const query = (projectSearch?.value || '').trim().toLowerCase();
+  const visible = projectCases.filter((project) => {
+    const match = !query || `${project.dataset.title} ${project.dataset.search}`.toLowerCase().includes(query);
+    project.hidden = !match;
+    return match;
+  });
+  if (projectResultCount) projectResultCount.textContent = `${visible.length} ${visible.length === 1 ? 'case file' : 'case files'}`;
+  if (projectEmpty) projectEmpty.hidden = visible.length !== 0;
+  const clear = $('#reset-project-search');
+  if (clear) clear.hidden = !query;
+};
+if (projectCases.length) {
+  projectSearch?.addEventListener('input', filterProjects);
+  $('#project-form')?.addEventListener('submit', (event) => { event.preventDefault(); filterProjects(); });
+  $('#reset-project-search')?.addEventListener('click', resetProjectSearch);
+  $('#reset-project-empty')?.addEventListener('click', resetProjectSearch);
+  filterProjects();
+}
+
 // Project links open the matching case notes without creating another page.
 const openLinkedProject = () => {
   if (!location.hash) return;
@@ -317,7 +371,10 @@ document.addEventListener('click', (event) => {
   const addressElement = $('#transition-address');
   if (labelElement) labelElement.textContent = label;
   if (addressElement) addressElement.textContent = address;
+  transition.dataset.route = targetRoute === '/projects/' ? 'projects' : 'archive';
+  const routeCode = $('.vault-coordinates span:last-child', transition);
+  if (routeCode) routeCode.textContent = targetRoute === '/projects/' ? '0x00500000' : '0x00401000';
   document.body.classList.add('vault-opening');
   transition.classList.add('is-active');
-  setTimeout(() => location.assign(target.href), 1250);
+  setTimeout(() => location.assign(target.href), 1480);
 });

@@ -212,56 +212,73 @@ terminalForm?.addEventListener('submit', (event) => {
   terminalOutput.scrollTop = terminalOutput.scrollHeight;
 });
 
-// Archive search, categories, collections, sort, and sharable URL state.
+// Archive jump prompt, difficulty/collection filters, sorting, and sharable URL state.
 const archiveEntries = $$('.archive-entry');
 const archiveSearch = $('#archive-search');
 const archiveSort = $('#archive-sort');
 const collectionFilter = $('#collection-filter');
-const categoryButtons = $$('.archive-filters button');
+const levelButtons = $$('.archive-filters [data-level]');
 const resultCount = $('#result-count');
+const resultHint = $('#result-hint');
 const archiveEmpty = $('#archive-empty');
 const archiveResults = $('#archive-results');
-let activeCategory = 'All';
+let activeLevel = 'All';
+const normalizeMemoryAddress = (value) => {
+  const match = value.trim().toLowerCase().match(/^0x([0-9a-f]+)$/);
+  if (!match) return '';
+  const number = Number.parseInt(match[1], 16);
+  return Number.isFinite(number) ? `0x${number.toString(16).padStart(8, '0')}` : '';
+};
 const filterArchive = ({ updateUrl = true } = {}) => {
-  if (!archiveEntries.length) return;
+  if (!archiveEntries.length) return [];
   const query = (archiveSearch?.value || '').trim().toLowerCase();
+  const queryAddress = normalizeMemoryAddress(query);
   const collection = collectionFilter?.value || 'All';
   let visible = archiveEntries.filter((entry) => {
-    const categoryMatch = activeCategory === 'All' || entry.dataset.category === activeCategory;
+    const levelMatch = activeLevel === 'All' || entry.dataset.level === activeLevel;
     const collectionMatch = collection === 'All' || entry.dataset.collection === collection;
-    const text = `${entry.dataset.title} ${entry.dataset.search} ${entry.dataset.collection}`.toLowerCase();
-    const searchMatch = !query || text.includes(query);
-    entry.hidden = !(categoryMatch && collectionMatch && searchMatch);
+    const text = `${entry.dataset.title} ${entry.dataset.search} ${entry.dataset.collection} ${entry.dataset.address}`.toLowerCase();
+    const searchMatch = !query || text.includes(query) || (queryAddress && entry.dataset.address === queryAddress);
+    const filterMatch = queryAddress ? true : levelMatch && collectionMatch;
+    entry.hidden = !(filterMatch && searchMatch);
     return !entry.hidden;
   });
   const sort = archiveSort?.value;
-  if (sort === 'az' || sort === 'za') {
-    visible = visible.sort((a, b) => a.dataset.title.localeCompare(b.dataset.title) * (sort === 'za' ? -1 : 1));
-  }
+  visible.sort((a, b) => {
+    if (sort === 'az' || sort === 'za') return a.dataset.title.localeCompare(b.dataset.title) * (sort === 'za' ? -1 : 1);
+    if (sort === 'difficulty-asc' || sort === 'difficulty-desc') return (Number(a.dataset.difficulty) - Number(b.dataset.difficulty)) * (sort === 'difficulty-desc' ? -1 : 1);
+    return Number(a.dataset.index) - Number(b.dataset.index);
+  });
   visible.forEach((entry) => archiveResults.appendChild(entry));
   if (resultCount) resultCount.textContent = `${visible.length} ${visible.length === 1 ? 'challenge' : 'challenges'}`;
+  if (resultHint) {
+    const exact = queryAddress && archiveEntries.find((entry) => entry.dataset.address === queryAddress);
+    resultHint.textContent = exact ? 'EXACT ADDRESS · ENTER TO JMP' : query && visible.length === 1 ? 'ONE TARGET · ENTER TO OPEN' : 'TYPE ADDRESS + ENTER TO JMP';
+    resultHint.classList.toggle('is-match', Boolean(exact || (query && visible.length === 1)));
+  }
   if (archiveEmpty) archiveEmpty.hidden = visible.length !== 0;
   if (updateUrl) {
     const params = new URLSearchParams();
     if (query) params.set('q', archiveSearch.value.trim());
-    if (activeCategory !== 'All') params.set('category', activeCategory);
+    if (activeLevel !== 'All') params.set('level', activeLevel);
     if (collection !== 'All') params.set('collection', collection);
     if (sort && sort !== 'default') params.set('sort', sort);
     history.replaceState({}, '', `${location.pathname}${params.size ? `?${params}` : ''}${location.hash}`);
   }
+  return visible;
 };
 if (archiveEntries.length) {
   const params = new URLSearchParams(location.search);
   if (archiveSearch) archiveSearch.value = params.get('q') || '';
-  const requestedCategory = params.get('category');
-  if (requestedCategory && categoryButtons.some((button) => button.dataset.category === requestedCategory)) activeCategory = requestedCategory;
+  const requestedLevel = params.get('level');
+  if (requestedLevel && levelButtons.some((button) => button.dataset.level === requestedLevel)) activeLevel = requestedLevel;
   if (collectionFilter && [...collectionFilter.options].some((option) => option.value === params.get('collection'))) collectionFilter.value = params.get('collection');
   if (archiveSort && [...archiveSort.options].some((option) => option.value === params.get('sort'))) archiveSort.value = params.get('sort');
-  categoryButtons.forEach((button) => {
-    button.setAttribute('aria-pressed', String(button.dataset.category === activeCategory));
+  levelButtons.forEach((button) => {
+    button.setAttribute('aria-pressed', String(button.dataset.level === activeLevel));
     button.addEventListener('click', () => {
-      activeCategory = button.dataset.category;
-      categoryButtons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+      activeLevel = button.dataset.level;
+      levelButtons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
       filterArchive();
     });
   });
@@ -269,16 +286,24 @@ if (archiveEntries.length) {
   archiveSort?.addEventListener('change', () => filterArchive());
   collectionFilter?.addEventListener('change', () => filterArchive());
   $('#reset-filters')?.addEventListener('click', () => {
-    activeCategory = 'All';
+    activeLevel = 'All';
     if (archiveSearch) archiveSearch.value = '';
     if (archiveSort) archiveSort.value = 'default';
     if (collectionFilter) collectionFilter.value = 'All';
-    categoryButtons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.category === 'All')));
+    levelButtons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.level === 'All')));
     filterArchive();
   });
   filterArchive({ updateUrl: false });
 }
-$('#archive-form')?.addEventListener('submit', (event) => { event.preventDefault(); filterArchive(); });
+$('#archive-form')?.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const query = (archiveSearch?.value || '').trim();
+  const address = normalizeMemoryAddress(query);
+  const exact = address && archiveEntries.find((entry) => entry.dataset.address === address);
+  const visible = filterArchive();
+  const target = exact || (query && visible.length === 1 ? visible[0] : null);
+  target?.querySelector('a')?.click();
+});
 
 // Project case files can be traced by title, stack, or system without leaving the page.
 const projectCases = $$('.project-case');
@@ -346,8 +371,17 @@ if (tocLinks.length && 'IntersectionObserver' in window) {
   headings.forEach((heading) => tocObserver.observe(heading));
 }
 
-// Keep native navigation, downloads, and browser Back/Forward behavior.
-addEventListener('pageshow', () => document.body.classList.remove('page-leaving'));
+// Reset animation state on bfcache restoration so native Back/Forward stays usable.
+let routeTimer;
+const clearRouteTransition = () => {
+  clearTimeout(routeTimer);
+  document.body.classList.remove('page-leaving', 'vault-opening');
+  const transition = $('#archive-transition');
+  transition?.classList.remove('is-active');
+  transition?.removeAttribute('data-route');
+};
+addEventListener('pageshow', clearRouteTransition);
+addEventListener('popstate', clearRouteTransition);
 document.addEventListener('click', (event) => {
   const link = event.target.closest('a[href]');
   if (!link) return;
@@ -376,5 +410,6 @@ document.addEventListener('click', (event) => {
   if (routeCode) routeCode.textContent = targetRoute === '/projects/' ? '0x00500000' : '0x00401000';
   document.body.classList.add('vault-opening');
   transition.classList.add('is-active');
-  setTimeout(() => location.assign(target.href), 1480);
+  clearTimeout(routeTimer);
+  routeTimer = setTimeout(() => location.assign(target.href), 1480);
 });

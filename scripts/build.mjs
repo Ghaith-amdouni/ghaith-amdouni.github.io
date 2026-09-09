@@ -8,8 +8,16 @@ const assetVersion = createHash('sha256')
   .update(await readFile('static/css/akatsuki.css'))
   .update(await readFile('static/js/site.js'))
   .digest('hex').slice(0, 12);
+const challengeAssetVersion = createHash('sha256')
+  .update(await readFile('static/css/style.css'))
+  .update(await readFile('static/js/main.js'))
+  .digest('hex').slice(0, 12);
 const esc = s => String(s).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
-const decode = s => s.replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n)).replaceAll('&amp;', '&').replaceAll('&quot;', '"');
+const decode = s => s.replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n)).replaceAll('&amp;', '&').replaceAll('&quot;', '"').replaceAll('&lt;', '<').replaceAll('&gt;', '>');
+const summarize = s => {
+  const clipped = s.length > 138 ? s.slice(0, 138).replace(/\s+\S*$/, '') : s;
+  return clipped && !/[.!?…]$/.test(clipped) ? `${clipped.replace(/[\s,;:—-]+$/, '')}…` : clipped;
+};
 const challenges = [];
 async function walk(dir) {
   for (const e of await readdir(dir, { withFileTypes: true })) {
@@ -17,9 +25,15 @@ async function walk(dir) {
     if (e.isDirectory()) await walk(file);
     else if (e.name === 'index.html') {
       const html = await readFile(file, 'utf8');
+      let versionedHtml = html
+        .replace(/(static\/css\/style\.css)(?:\?v=[a-f0-9]+)?/g, `$1?v=${challengeAssetVersion}`)
+        .replace(/(static\/js\/main\.js)(?:\?v=[a-f0-9]+)?/g, `$1?v=${challengeAssetVersion}`);
+      if (!/<link\s+rel="icon"/i.test(versionedHtml)) versionedHtml = versionedHtml.replace('</title>', '</title>\n    <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">');
+      if (versionedHtml !== html) await writeFile(file, versionedHtml);
       const title = decode(html.match(/<title>(.*?)\s*\/\/[^<]+<\/title>/)?.[1] || file.split('/').at(-2));
       const collection = file.includes('mojo-jojo') ? 'MOJO-JOJO' : 'FST Bootcamp';
-      challenges.push({ title, url: '/' + file, category: 'Pwn', collection, description: `${collection} · Authored challenge by r3t0x`, difficulty: Math.min(5, (html.split('<!-- Description -->')[0].match(/diff-dot filled/g) || []).length) });
+      const meta = decode(html.match(/<meta\s+name="description"\s+content="([^"]*)"/i)?.[1] || '').replaceAll('**', '').replace(/\s+/g, ' ').trim();
+      challenges.push({ title, url: '/' + file, category: 'Pwn', collection, description: summarize(meta) || `${collection} binary-exploitation lab authored by r3t0x.`, difficulty: Math.min(5, (html.split('<!-- Description -->')[0].match(/diff-dot filled/g) || []).length) });
     }
   }
 }
@@ -33,7 +47,7 @@ function shell(title, description, body, {url='/', active='home', type='website'
   <a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div>
   <div class="systembar"><div><span class="arch-mini" aria-hidden="true">Λ</span> archlinux <span class="bar-sep">/</span> r3t0x@portfolio <span class="system-workspaces" aria-hidden="true"><b>01</b> 02 03</span></div><div><span class="online-dot"></span> ALL SYSTEMS NOMINAL <span class="bar-sep">/</span> <time id="clock">UTC</time></div></div>
   <header class="site-header"><a class="brand" href="/" aria-label="r3t0x home">${icon}<span>r3t0x<span class="muted">@arch</span></span></a><nav aria-label="Main navigation"><a href="/" ${active==='home'?'aria-current="page"':''}>~/home</a><a href="/blog/" ${active==='blog'?'aria-current="page"':''}>~/archive</a><a href="/projects/" ${active==='projects'?'aria-current="page"':''}>~/projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>CV ↓</a></nav><button class="search-trigger" data-open-search aria-label="Search site"><span>⌕</span><kbd>Ctrl K</kbd></button></header>
-  <div class="archive-transition" id="archive-transition" aria-hidden="true"><div class="route-eyelid route-eyelid-top"></div><div class="route-eyelid route-eyelid-bottom"></div><div class="vault-coordinates"><span>00:00:01</span><span>ROUTE // LOCKED</span><span>0x00401337</span></div><div class="vault-eye"><span class="vault-symbol"></span><span class="vault-reticle"></span><i></i><i></i><i></i></div><div class="vault-caption"><span class="vault-kana">暁</span><p><small>TSUKUYOMI ROUTE SHIFT</small><b id="transition-label">ENTERING THE MEMORY VAULT</b><span id="transition-address">~/archive</span></p></div></div>
+  <div class="archive-transition" id="archive-transition" aria-hidden="true"><div class="route-eyelid route-eyelid-top"></div><div class="route-eyelid route-eyelid-bottom"></div><div class="vault-coordinates"><span>00:00:01</span><span>0x00401337</span></div><div class="vault-eye"><span class="vault-symbol"></span><span class="vault-reticle"></span><i></i><i></i><i></i></div><div class="vault-caption"><p><small>TSUKUYOMI ROUTE SHIFT</small><b id="transition-label">ENTERING THE MEMORY VAULT</b><span id="transition-address">~/archive</span></p></div></div>
   <div class="ambient-clouds" aria-hidden="true">${cloud}${cloud}</div><div class="scroll-address" aria-hidden="true">RIP <span id="scroll-address">0x00000000</span></div><main id="main">${body}</main>
   <footer class="site-footer"><div class="footer-top"><a class="brand" href="/">${icon}<span>r3t0x<span class="muted">@arch</span></span></a><p>Always curious. Always one layer deeper.</p><a href="#main" class="text-link">Back to top ↑</a></div><div class="footer-bottom"><span>© ${new Date().getUTCFullYear()} Ghaith Amdouni <span class="red">·</span> Made with curiosity & caffeine.</span><div><a href="/projects/">Projects ↗</a><a href="https://github.com/Ghaith-amdouni">GitHub ↗</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn ↗</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>Résumé ↗</a><a href="/feed.xml">RSS ↗</a><button id="motion-toggle" aria-pressed="false">Motion: on</button></div></div></footer>
   <dialog id="search-dialog" class="search-vault" aria-labelledby="search-title"><div class="search-vault-mark" aria-hidden="true"><span></span><small>眼 // TRACE</small></div><div class="dialog-top"><div><span class="dialog-address">0xSEARCH_INDEX</span><h2 id="search-title">Trace a memory.</h2></div><button data-close-dialog aria-label="Close search">ESC</button></div><label for="site-search" class="search-command"><span aria-hidden="true">❯</span><span class="sr-only">Search challenges, projects, and pages</span><input id="site-search" type="search" placeholder="type a challenge, project, primitive…" autocomplete="off" spellcheck="false"></label><div class="search-scopes" role="group" aria-label="Search scope"><button type="button" data-search-scope="All" aria-pressed="true">ALL MEMORY</button><button type="button" data-search-scope="Challenge" aria-pressed="false">CHALLENGES</button><button type="button" data-search-scope="Project" aria-pressed="false">PROJECTS</button></div><div class="search-readout"><span><i></i> INDEX ONLINE</span><b id="search-count">0 addresses</b></div><div id="search-results" aria-live="polite"></div><div class="dialog-bottom"><span>↑↓ TRACE</span><span>ENTER OPEN</span><span>ESC DISMISS</span></div></dialog>
@@ -52,7 +66,7 @@ const homeProjects = projects.filter(project => project.featured);
 const home = `<section class="hero wrap"><div class="hero-copy"><p class="eyebrow"><span class="online-dot"></span> AKATSUKI SPIRIT. DEBUGGER MIND.</p><h1><span class="hero-prefix">./</span>r3t0x<span class="cursor">_</span></h1><h2>Ghaith Amdouni<span class="red">.</span></h2><p class="hero-role">Binary exploitation <span>×</span> Systems <span>×</span> Curiosity</p><p class="hero-description">I pull things apart to understand how they work.<br>SecuriNets Technical Team Instructor, CTF player, and Networks & Telecommunications student at INSAT.</p><div class="hero-actions"><a class="button primary" href="/blog/">Explore the archive <span>↗</span></a><a class="button" href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>English CV <span>↓</span></a></div><div class="hero-links"><a href="https://github.com/Ghaith-amdouni">GitHub ↗</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn ↗</a><a href="mailto:ghaith.amdouni@insat.ucar.tn">Email ↗</a><span><span class="online-dot"></span> Tunis, Tunisia</span></div></div>
   <div class="hero-visual"><img class="hero-sharingan" src="/static/img/mangekyou.png" width="290" height="290" alt="" aria-hidden="true"><div class="orbit orbit-one" aria-hidden="true"></div><div class="orbit orbit-two" aria-hidden="true"></div><span class="visual-addr" aria-hidden="true">0x00401337 · rwx</span><div class="portrait-window"><div class="window-title"><span class="window-dots"><i></i><i></i><i></i></span><span>~/r3t0x/whoami</span><span class="red">暁</span></div><div class="portrait-image"><img src="/static/img/ghaith.webp" alt="Ghaith Amdouni working on his laptop at a technology event" width="800" height="1200" fetchpriority="high"><div class="portrait-caption"><span><i class="online-dot"></i> GHAITH AMDOUNI</span><span>aka. r3t0x</span></div></div><div class="portrait-bottom"><span><b>OS</b> Arch Linux</span><span><b>FOCUS</b> Pwn & systems</span></div></div><div class="floating-tag"><span class="red">❯</span> curiosity <span class="muted">--always</span><span class="cursor">▌</span></div></div></section>
   <div class="specialties"><div class="wrap"><span><i>01</i> BINARY EXPLOITATION</span><b>✳</b><span><i>02</i> REVERSE ENGINEERING</span><b>✳</b><span><i>03</i> NETWORKS & SYSTEMS</span><b>✳</b><span><i>04</i> ARCH LINUX</span></div></div>
-  <section class="section wrap" id="journal">${heading('01','The latest bytes.','THE JOURNAL',`<a class="text-link" href="/blog/">View the archive ${arrow}</a>`)}<div class="posts-grid">${posts.map(postCard).join('')}</div><a class="archive-callout" href="/blog/?category=Pwn"><div><span class="red">❯</span> <strong>Looking for CTF challenges?</strong><span class="muted"> ${challenges.length} authored challenges across MOJO-JOJO & FST Bootcamp.</span></div><span>Open archive ↗</span></a></section>
+  <section class="section wrap" id="journal">${heading('01','The latest bytes.','THE JOURNAL',`<a class="text-link" href="/blog/">View the archive ${arrow}</a>`)}<div class="posts-grid">${posts.map(postCard).join('')}</div><a class="archive-callout" href="/blog/"><div><span class="red">❯</span> <strong>Looking for CTF challenges?</strong><span class="muted"> ${challenges.length} authored challenges across MOJO-JOJO & FST Bootcamp.</span></div><span>Open archive ↗</span></a></section>
   <section class="section wrap" id="about">${heading('02','More than a handle.','WHOAMI')}<div class="about-grid"><div class="about-copy"><p class="large-copy">Somewhere between a packet trace and a debugger, <span>I feel at home.</span></p><p>I'm a SecuriNets Technical Team Instructor and a Networks & Telecommunications student at <a href="https://insat.rnu.tn/">INSAT</a>, based in Tunis. My work connects cybersecurity, Linux, networking, and software development.</p><p>I build challenges, compete in CTFs, and explore the layers underneath the interface. From network simulations to cloud-native applications, I like understanding the whole system.</p><div class="skill-tags"><span>Binary exploitation</span><span>C / C++</span><span>Python</span><span>Linux</span><span>Docker</span><span>Kubernetes</span><span>Networking</span><span>DevSecOps</span></div><a class="text-link" href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>Download my English CV ↓</a></div>
   <div class="terminal"><div class="window-title"><span class="window-dots"><i></i><i></i><i></i></span><span>r3t0x@arch: ~</span><span>zsh</span></div><div class="terminal-content"><div class="terminal-fetch"><pre class="arch-ascii" aria-hidden="true">       /\\
       /  \\
@@ -73,7 +87,7 @@ await writeFile('resume/index.html', `<!doctype html><html lang="en"><head><meta
 
 function projectCase(project, index) {
   return `<details id="${project.slug}" class="project-case" data-title="${esc(project.title)}" data-search="${esc(`${project.description} ${project.kicker} ${project.stack.join(' ')}`)}">
-    <summary><div class="project-case-art" aria-hidden="true"><span>${project.icon}</span><small>0x${(0x5000 + index * 0x100).toString(16).padStart(8,'0')}</small>${cloud}</div><div class="project-case-copy"><div class="entry-meta"><span class="tag">${project.kicker}</span><span>PUBLIC REPOSITORY</span></div><h2>${project.title}</h2><p>${project.description}</p><div class="project-stack">${project.stack.map(item=>`<span>${item}</span>`).join('')}</div><div class="note-toggle"><span>Open case notes</span><span aria-hidden="true">＋</span></div></div></summary>
+    <summary><div class="project-case-art" aria-hidden="true"><small>CASE // ${String(index+1).padStart(2,'0')}</small><span>${project.icon}</span>${cloud}<b><i></i> SOURCE AVAILABLE</b></div><div class="project-case-copy"><div class="entry-meta"><span class="tag">${project.kicker}</span><span>0x${(0x5000 + index * 0x100).toString(16).padStart(8,'0')}</span></div><h2>${project.title}</h2><p>${project.description}</p><div class="project-stack">${project.stack.map(item=>`<span>${item}</span>`).join('')}</div><div class="note-toggle"><span>Inspect case notes</span><span aria-hidden="true">＋</span></div></div></summary>
     <div class="prose project-note-body">${project.body}<div class="project-note-actions"><a class="button primary" href="${project.repo}">View source on GitHub ↗</a><button class="button" data-close-project>Close notes ↑</button></div></div>
   </details>`;
 }
@@ -84,23 +98,30 @@ await writeFile('projects/index.html',shell('Projects','Selected security, syste
 function challengeCard(c, i) {
   const address = '0x' + (0x401000 + i * 0x100).toString(16).padStart(8, '0');
   const level = ['','Entry','Getting started','Intermediate','Advanced','Expert'][c.difficulty] || 'Challenge';
-  return `<article class="archive-entry challenge-card" data-title="${esc(c.title)}" data-category="Pwn" data-collection="${c.collection}" data-search="${esc(c.description)}">
+  const tier = c.difficulty <= 2 ? 'entry' : c.difficulty === 3 ? 'intermediate' : 'advanced';
+  return `<article class="archive-entry challenge-card" data-index="${i}" data-title="${esc(c.title)}" data-category="Pwn" data-collection="${c.collection}" data-search="${esc(c.description)}" data-address="${address}" data-difficulty="${c.difficulty}" data-level="${tier}">
     <a href="${c.url}" aria-labelledby="challenge-title-${i}">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address">${address}</span><span class="hex-watermark">48 89 e5<br>31 c0 c3</span>${cloud}<span class="card-collection">${c.collection === 'MOJO-JOJO' ? 'MOJO // ' : 'FST // '}${String(i+1).padStart(2,'0')}</span></div>
-      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>${c.collection}</span></div>
+      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY POINT</small><b>${address}</b></span><span class="hex-watermark">48 89 e5<br>31 c0 c3</span>${cloud}<span class="card-collection">${c.collection === 'MOJO-JOJO' ? 'MOJO' : 'FST'} // ${String(i+1).padStart(2,'0')}</span></div>
+      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>${c.collection}</span><span>AUTHORED LAB</span></div>
       <h2 id="challenge-title-${i}">${esc(c.title)}<span class="function-suffix">()</span></h2>
       <p>${esc(c.description)}</p>
       <div class="card-difficulty"><span>${level}</span><span class="difficulty-blocks" aria-label="Difficulty ${c.difficulty} of 5">${Array.from({length:5},(_,n)=>`<i class="${n<c.difficulty?'filled':''}"></i>`).join('')}</span></div>
-      <div class="challenge-card-footer"><span>Read challenge</span><span class="red" aria-hidden="true">↗</span></div></div>
+      <div class="challenge-card-footer"><span>Open challenge</span><code>jmp *${address}</code><span class="red" aria-hidden="true">↗</span></div></div>
     </a>
   </article>`;
 }
+const difficultyFilters = [
+  ['All','All levels',challenges.length],
+  ['entry','Entry',challenges.filter(c=>c.difficulty<=2).length],
+  ['intermediate','Intermediate',challenges.filter(c=>c.difficulty===3).length],
+  ['advanced','Advanced',challenges.filter(c=>c.difficulty>=4).length]
+];
 const archiveBody = `<div class="wrap archive-page">
   <a class="text-link" href="/">← Back to home</a>
   <div class="archive-hero"><div><p class="eyebrow">~/ARCHIVE <span>/</span> THE MEMORY VAULT</p><h1>Every byte.<br>A new story<span class="red">.</span></h1><div class="archive-manifest" aria-label="Archive themes"><span><b>MOJO</b> stack · heap · linker</span><span><b>FST</b> ROP · shellcode · format strings</span><span><b>MODE</b> read · reason · exploit</span></div></div><div class="archive-sigil" aria-hidden="true"><img src="/static/img/mangekyou.png" alt="" width="290" height="290"><span>暁 / MEMORY VAULT</span></div></div>
-  <form class="archive-toolbar" id="archive-form" role="search"><label class="archive-search"><span aria-hidden="true">❯</span><span class="sr-only">Search the archive</span><input type="search" id="archive-search" name="q" placeholder="trace a challenge, primitive, or collection…" autocomplete="off" spellcheck="false"></label><label class="sort-control"><span>SORT //</span><select id="archive-sort" name="sort"><option value="default">Memory order</option><option value="az">Title: A–Z</option><option value="za">Title: Z–A</option></select></label></form>
-  <div class="archive-filters" aria-label="Filter category">${['All','Pwn'].map((c,i)=>`<button data-category="${c}" aria-pressed="${i===0}">${c}<span>${challenges.length}</span></button>`).join('')}</div>
-  <div class="archive-subbar"><label>Collection <select id="collection-filter"><option value="All">All collections</option><option>MOJO-JOJO</option><option>FST Bootcamp</option></select></label><span id="result-count" role="status">${challenges.length} challenges</span></div>
+  <form class="archive-toolbar" id="archive-form" role="search"><label class="archive-search"><span class="archive-opcode" aria-hidden="true">jmp *</span><span class="sr-only">Search by challenge name or memory address</span><input type="search" id="archive-search" name="q" placeholder="0x00401000 or challenge name" autocomplete="off" spellcheck="false"><kbd>ENTER</kbd></label><label class="sort-control"><span>SORT //</span><select id="archive-sort" name="sort"><option value="default">Memory order</option><option value="difficulty-asc">Difficulty: low first</option><option value="difficulty-desc">Difficulty: high first</option><option value="az">Title: A–Z</option><option value="za">Title: Z–A</option></select></label></form>
+  <div class="archive-filters" role="group" aria-label="Filter difficulty">${difficultyFilters.map(([id,label,count],i)=>`<button type="button" data-level="${id}" aria-pressed="${i===0}">${label}<span>${count}</span></button>`).join('')}</div>
+  <div class="archive-subbar"><label>Collection <select id="collection-filter"><option value="All">All collections</option><option>MOJO-JOJO</option><option>FST Bootcamp</option></select></label><div class="archive-readout"><span id="result-hint">TYPE ADDRESS + ENTER TO JMP</span><b id="result-count" role="status">${challenges.length} challenges</b></div></div>
   <div id="archive-results" class="archive-card-grid">${challenges.map(challengeCard).join('')}</div>
   <div id="archive-empty" hidden><span class="red">0x00000000</span><h2>No matching bytes.</h2><p>Try another search or reset the filters.</p><button class="button" id="reset-filters">Reset filters ↺</button></div>
 </div>`;

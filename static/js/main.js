@@ -197,24 +197,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!overlay) return;
 
-    // Reset overlay if page is restored from browser bfcache
+    // Always clear exit-state when browser Back/Forward restores this page.
     window.addEventListener('pageshow', (e) => {
-        if (e.persisted) {
-            overlay.classList.remove('closing', 'initial-closed');
-            overlay.classList.add('opening');
-            kamuiOverlay.classList.remove('kamui-active');
-            document.body.classList.remove('kamui-sucking');
-            
-            // Re-trigger amaterasu opening
-            let amaterasu = document.getElementById('amaterasuOverlay');
-            if (amaterasu) {
-                amaterasu.classList.remove('burn-away');
-                void amaterasu.offsetWidth; // trigger reflow
-                amaterasu.classList.add('burn-away');
-            }
+        overlay.classList.remove('closing');
+        kamuiOverlay.classList.remove('kamui-active');
+        document.body.classList.remove('kamui-sucking');
+        if (!e.persisted) return;
+        overlay.classList.remove('initial-closed');
+        overlay.classList.add('opening');
 
-            setTimeout(() => overlay.classList.remove('opening'), 700);
+        // Re-trigger the opening burn only for a bfcache restoration.
+        const amaterasu = document.getElementById('amaterasuOverlay');
+        if (amaterasu) {
+            amaterasu.classList.remove('burn-away');
+            void amaterasu.offsetWidth;
+            amaterasu.classList.add('burn-away');
         }
+
+        setTimeout(() => overlay.classList.remove('opening'), 700);
     });
 
     // Open animation fires immediately on fresh page load

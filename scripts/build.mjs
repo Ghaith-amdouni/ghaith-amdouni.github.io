@@ -59,7 +59,7 @@ function art(post) {
   return `<div class="post-art hello-art" aria-hidden="true"><span class="ghost-code">48 65 6c 6c 6f 20 77 6f 72 6c 64</span><strong><span>./</span>hello_world<span class="cursor">_</span></strong><small>PROCESS STARTED. CURIOSITY LOADED.</small></div>`;
 }
 const postUrl = post => post.slug === 'taskmanager' ? '/projects/#taskpilot-devops' : post.slug === 'network-simulations' ? '/projects/#omnetpp-mesh-5g' : '/#about';
-function postCard(post) { return `<a class="post-card" href="${postUrl(post)}">${art(post)}<div class="post-card-body"><div class="post-meta"><span class="tag">${post.category}</span><span>${new Date(post.date).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'})} · project note</span></div><h3>${post.title} ${arrow}</h3><p>${post.description}</p></div></a>`; }
+function postCard(post) { return `<a class="post-card" href="${postUrl(post)}">${art(post)}<div class="post-card-body"><div class="post-meta"><span class="tag">${post.category}</span><span>${new Date(post.date).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'})} · project note</span></div><h3>${post.title}</h3><p>${post.description}</p></div></a>`; }
 const heading=(n,title,sub,link='')=>`<div class="section-heading"><div><p class="eyebrow">${n} <span>/</span> ${sub}</p><h2>${title}</h2></div>${link}</div>`;
 const awards = [ ['01','SecuriNets ISI','National finals'], ['01','SecuriNets ISI','Qualifications'], ['01','Friendly CTF ENIT','Competition'], ['04','SecuriNets International','Qualifications · Africa'], ['07','SecuriNets International','International finals'], ['08','Claw The Flag','Top 8 finish'] ];
 const homeProjects = projects.filter(project => project.featured);

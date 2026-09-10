@@ -42,13 +42,21 @@ setInterval(updateClock, 1000);
 
 const progress = $('.reading-progress');
 const address = $('#scroll-address');
+const scrollRegister = $('.scroll-address');
+let scrollRegisterTimer;
 const updateProgress = () => {
-  if (!progress) return;
   const max = document.documentElement.scrollHeight - innerHeight;
-  progress.style.width = `${max > 0 ? (scrollY / max) * 100 : 0}%`;
-  if (address) address.textContent = '0x' + Math.floor((max > 0 ? Math.min(scrollY / max, 1) : 0) * 0x7fffffff).toString(16).padStart(8, '0');
+  const ratio = max > 0 ? Math.min(Math.max(scrollY / max, 0), 1) : 0;
+  if (progress) progress.style.width = `${ratio * 100}%`;
+  if (address) address.textContent = '0x' + Math.floor(ratio * 0x7fffffff).toString(16).padStart(8, '0');
+  scrollRegister?.style.setProperty('--scroll-progress', `${ratio * 100}%`);
 };
-addEventListener('scroll', updateProgress, { passive: true });
+addEventListener('scroll', () => {
+  updateProgress();
+  scrollRegister?.classList.add('is-scrolling');
+  clearTimeout(scrollRegisterTimer);
+  scrollRegisterTimer = setTimeout(() => scrollRegister?.classList.remove('is-scrolling'), 180);
+}, { passive: true });
 updateProgress();
 
 // Motion is optional and the preference persists between pages.

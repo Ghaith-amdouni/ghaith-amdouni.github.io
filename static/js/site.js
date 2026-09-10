@@ -221,7 +221,7 @@ const levelButtons = $$('.archive-filters [data-level]');
 const resultCount = $('#result-count');
 const resultHint = $('#result-hint');
 const archiveEmpty = $('#archive-empty');
-const archiveResults = $('#archive-results');
+const archiveGroups = $$('.challenge-collection');
 let activeLevel = 'All';
 const normalizeMemoryAddress = (value) => {
   const match = value.trim().toLowerCase().match(/^0x([0-9a-f]+)$/);
@@ -249,7 +249,16 @@ const filterArchive = ({ updateUrl = true } = {}) => {
     if (sort === 'difficulty-asc' || sort === 'difficulty-desc') return (Number(a.dataset.difficulty) - Number(b.dataset.difficulty)) * (sort === 'difficulty-desc' ? -1 : 1);
     return Number(a.dataset.index) - Number(b.dataset.index);
   });
-  visible.forEach((entry) => archiveResults.appendChild(entry));
+  visible.forEach((entry) => {
+    const group = archiveGroups.find((item) => item.dataset.collectionGroup === entry.dataset.collection);
+    group?.querySelector('[data-collection-grid]')?.appendChild(entry);
+  });
+  archiveGroups.forEach((group) => {
+    const groupCount = visible.filter((entry) => entry.dataset.collection === group.dataset.collectionGroup).length;
+    group.hidden = groupCount === 0;
+    const label = group.querySelector('[data-collection-count]');
+    if (label) label.textContent = `${groupCount} ${groupCount === 1 ? 'challenge' : 'challenges'}`;
+  });
   if (resultCount) resultCount.textContent = `${visible.length} ${visible.length === 1 ? 'challenge' : 'challenges'}`;
   if (resultHint) {
     const exact = queryAddress && archiveEntries.find((entry) => entry.dataset.address === queryAddress);

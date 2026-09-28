@@ -362,8 +362,22 @@ const index = [
   { title: 'Writeups', url: '/blog/', kind: 'page', meta: `${writeups.length} entries`, description: 'Every CTF writeup, filterable by collection, category, and difficulty.' },
   { title: 'Projects', url: '/projects/', kind: 'page', meta: `${projects.length} entries`, description: 'Security, systems, and networking projects.' },
   { title: 'English CV', url: site.cv, kind: 'file', meta: 'pdf', description: 'Résumé download.' },
-  ...projects.map(project => ({ title: project.title, url: `/projects/#${project.slug}`, kind: 'project', meta: project.kicker.toLowerCase(), description: project.description })),
-  ...writeups.map(entry => ({ title: entry.title, url: entry.url, kind: 'writeup', meta: `${entry.collection} · ${entry.category.toLowerCase()}`, description: entry.summary })),
+  ...projects.map(project => ({
+    title: project.title,
+    url: `/projects/#${project.slug}`,
+    kind: 'project',
+    meta: project.kicker.toLowerCase(),
+    description: project.description,
+    tags: project.stack.join(' '),
+  })),
+  ...writeups.map(entry => ({
+    title: entry.title,
+    url: entry.url,
+    kind: 'writeup',
+    meta: `${entry.collection} · ${entry.category.toLowerCase()}`,
+    description: entry.summary,
+    tags: entry.tags.join(' '),
+  })),
 ];
 await mkdir('static/data', { recursive: true });
 await writeFile('static/data/search.json', JSON.stringify(index));

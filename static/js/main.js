@@ -116,7 +116,7 @@ if (dialog) {
     const matches = !needle
       ? index.filter((item) => item.kind === 'page')
       : index
-          .filter((item) => `${item.title} ${item.meta} ${item.description}`.toLowerCase().includes(needle))
+          .filter((item) => `${item.title} ${item.meta} ${item.description} ${item.tags || ''}`.toLowerCase().includes(needle))
           .slice(0, 40);
     cursor = 0;
     results.innerHTML = matches

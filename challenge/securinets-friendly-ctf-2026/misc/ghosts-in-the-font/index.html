@@ -1,189 +1,134 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0c0c0e">
-<title>PAID IN FULL — Securinets Friendly CTF 2026 — r3t0x</title>
-<meta name="description" content="Accounting insists this invoice is ordinary. It looks right, prints right, and even copy-pastes right. Still, something in the type does not add up.">
-<meta name="author" content="Ghaith Amdouni">
-<link rel="canonical" href="https://r3t0x.me/challenge/securinets-friendly-ctf-2026/misc/ghosts-in-the-font/">
-<meta property="og:type" content="article">
-<meta property="og:title" content="PAID IN FULL — Securinets Friendly CTF 2026 — r3t0x">
-<meta property="og:description" content="Accounting insists this invoice is ordinary. It looks right, prints right, and even copy-pastes right. Still, something in the type does not add up.">
-<meta property="og:url" content="https://r3t0x.me/challenge/securinets-friendly-ctf-2026/misc/ghosts-in-the-font/">
-<meta property="og:image" content="https://r3t0x.me/static/img/social-card.png">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
-<link rel="alternate" type="application/rss+xml" title="r3t0x — writeups" href="/feed.xml">
-<link rel="stylesheet" href="/static/css/main.css?v=405b62c3d8">
-<script src="/static/js/main.js?v=405b62c3d8" defer></script>
-</head>
-<body>
-<a class="skip" href="#main">Skip to content</a>
-<header class="masthead">
-  <div class="shell">
-    <a class="brand" href="/"><img class="mark" src="/static/img/mangekyou.png" alt="" width="20" height="20" loading="lazy" decoding="async"><span>r3t0x</span></a>
-    <nav aria-label="Main"><a href="/">home</a><a href="/blog/" aria-current="page">writeups</a><a href="/projects/">projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>cv</a></nav>
-    <button type="button" class="search-open" data-open-search aria-label="Search the site">search<kbd>/</kbd></button>
-  </div>
-</header>
-<main id="main"><div class="shell narrow"><article class="writeup">
-  <header class="page-head">
-    <p class="kicker"><a href="/blog/#securinets-friendly-ctf-2026">Securinets Friendly CTF 2026</a> / misc</p>
-    <h1>PAID IN FULL</h1>
-    <p class="lede">Accounting insists this invoice is ordinary. It looks right, prints right, and even copy-pastes right. Still, something in the type does not add up.</p>
-    <dl class="facts">
-      <div><dt>difficulty</dt><dd>medium</dd></div>
-      <div><dt>points</dt><dd>500</dd></div>
-      <div><dt>published</dt><dd><time datetime="2026-09-28">28 Sept 2026</time></dd></div>
-      <div><dt>author</dt><dd>r3t0x</dd></div>
-    </dl>
-    <p class="tags"><span>pdf</span><span>steganography</span><span>fonts</span></p>
-  </header>
-  <nav class="toc" aria-label="On this page"><p>contents</p><ol><li><a href="#challenge">Challenge</a></li><li><a href="#concept">Concept</a></li><li><a href="#reconnaissance">Reconnaissance</a></li><li><a href="#solution">Solution</a></li><li><a href="#solver">Reference solver</a></li><li><a href="#flag">Flag</a></li></ol></nav>
-  <div class="prose">
-    <h2 id="challenge">Challenge</h2>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>PAID IN FULL · Misc writeup — r3t0x</title><meta name="description" content="Accounting insists this invoice is ordinary. It looks right, prints right, and even copy-pastes right. Still, something in the type does…"><link rel="canonical" href="https://ghaith-amdouni.github.io/challenge/securinets-friendly-ctf-2026/misc/ghosts-in-the-font/"><meta property="og:type" content="article"><meta property="og:title" content="PAID IN FULL · Misc writeup — r3t0x"><meta property="og:description" content="Accounting insists this invoice is ordinary. It looks right, prints right, and even copy-pastes right. Still, something in the type does…"><meta property="og:url" content="https://ghaith-amdouni.github.io/challenge/securinets-friendly-ctf-2026/misc/ghosts-in-the-font/"><meta property="og:image" content="https://ghaith-amdouni.github.io/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=bf0d9f4f9c97"><link rel="stylesheet" href="/static/css/akatsuki.css?v=bf0d9f4f9c97"><script src="/static/js/site.js?v=bf0d9f4f9c97" defer></script></head><body>
+  <a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div>
+  <div class="systembar"><div><span class="arch-mini" aria-hidden="true">Λ</span> archlinux <span class="bar-sep">/</span> r3t0x@portfolio <span class="system-workspaces" aria-hidden="true"><b>01</b> 02 03</span></div><div><span class="online-dot"></span> ALL SYSTEMS NOMINAL <span class="bar-sep">/</span> <time id="clock">UTC</time></div></div>
+  <header class="site-header"><a class="brand" href="/" aria-label="r3t0x home"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><nav aria-label="Main navigation"><a href="/" >~/home</a><a href="/blog/" aria-current="page">~/archive</a><a href="/projects/" >~/projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>CV ↓</a></nav><button class="search-trigger" data-open-search aria-label="Search site"><span>⌕</span><kbd>Ctrl K</kbd></button></header>
+  <div class="archive-transition" id="archive-transition" aria-hidden="true"><div class="route-eyelid route-eyelid-top"></div><div class="route-eyelid route-eyelid-bottom"></div><div class="vault-coordinates"><span>00:00:01</span><span>0x00401337</span></div><div class="vault-eye"><span class="vault-symbol"></span><span class="vault-reticle"></span><i></i><i></i><i></i></div><div class="vault-caption"><p><small>TSUKUYOMI ROUTE SHIFT</small><b id="transition-label">ENTERING THE MEMORY VAULT</b><span id="transition-address">~/archive</span></p></div></div>
+  <div class="ambient-clouds" aria-hidden="true"><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg></div><div class="scroll-address" aria-hidden="true"><b>RIP</b><span id="scroll-address">0x00000000</span><i><em></em></i><small>PTR</small></div><main id="main"><article class="wrap article-page writeup-page">
+    <a class="text-link" href="/blog/?collection=Securinets%20Friendly%20CTF%202026">← Back to the archive</a>
+    <header class="article-heading"><p class="eyebrow">Securinets Friendly CTF 2026 <span>/</span> Misc WRITEUP</p><h1>PAID IN FULL</h1><p>Accounting insists this invoice is ordinary. It looks right, prints right, and even copy-pastes right. Still, something in the type does…</p>
+      <div class="article-author"><img src="/static/img/ghaith.webp" alt="" width="44" height="44"><span><strong>r3t0x</strong><small>2026-09-28 · 500 points · medium</small></span><a class="button" href="#solver">Jump to solver ↓</a></div>
+    </header>
+    <div class="writeup-facts" aria-label="Challenge metadata"><span><small>EVENT</small>Securinets Friendly CTF 2026</span><span><small>CATEGORY</small>Misc</span><span><small>DIFFICULTY</small>medium</span><span><small>POINTS</small>500</span></div>
+    <div class="article-layout"><aside class="article-toc"><p class="eyebrow">ON THIS PAGE</p><nav><a href="#summary">Summary</a><a href="#walkthrough">Walkthrough</a><a href="#solver">Reference solver</a><a href="#flag">Flag</a></nav><div class="writeup-tags"><span>pdf</span><span>steganography</span><span>fonts</span></div></aside>
+      <div class="prose writeup-prose"><h2 id="summary">Summary</h2><p class="lead">Accounting insists this invoice is ordinary. It looks right, prints right, and even copy-pastes right. Still, something in the type does…</p><h2 id="walkthrough">Walkthrough</h2><h3 id="challenge">Challenge</h3>
 <p>The player receives only <code>invoice.pdf</code>. It renders as an ordinary archival invoice, and copying the document or running <code>pdftotext</code> returns the same innocent text that is visible on the page.</p>
-<h2 id="concept">Concept</h2>
+<h3 id="concept">Concept</h3>
 <p>PDF text has three separate identities:</p>
 <ul><li>the character code stored in the page content stream;</li><li>the glyph selected by the font encoding and drawn by the viewer;</li><li>the Unicode character returned through the font's <code>ToUnicode</code> map.</li></ul>
 <p>The invoice uses a custom encoding for its embedded FreeMono font. Every printable ASCII character has two valid codes:</p>
-<figure class="code"><figcaption><span>text</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-text">normal code     = ASCII byte       -&gt; hidden bit 0
-alternate code  = ASCII byte | 80h -&gt; hidden bit 1</code></pre></figure>
+<pre><code class="language-text">normal code     = ASCII byte       -&gt; hidden bit 0
+alternate code  = ASCII byte | 80h -&gt; hidden bit 1</code></pre>
 <p>For example, both <code>0x41</code> and <code>0xC1</code> are mapped to the glyph named <code>A</code>, and the <code>ToUnicode</code> CMap maps both codes to Unicode <code>U+0041</code>. They therefore look and copy identically even though their stored codes differ.</p>
-<h2 id="reconnaissance">Reconnaissance</h2>
+<h3 id="reconnaissance">Reconnaissance</h3>
 <p>Normal inspection is deliberately unhelpful:</p>
-<figure class="code"><figcaption><span>bash</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-bash">file invoice.pdf
+<pre><code class="language-bash">file invoice.pdf
 pdfinfo invoice.pdf
 pdftotext invoice.pdf -
-pdffonts invoice.pdf</code></pre></figure>
+pdffonts invoice.pdf</code></pre>
 <p><code>pdffonts</code> reveals the unusual embedded font. Expanding the PDF makes its font objects and content stream easier to inspect:</p>
-<figure class="code"><figcaption><span>bash</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-bash">qpdf --qdf --object-streams=disable invoice.pdf unpacked.pdf</code></pre></figure>
+<pre><code class="language-bash">qpdf --qdf --object-streams=disable invoice.pdf unpacked.pdf</code></pre>
 <p>The <code>/Differences</code> array maps codes <code>0xA0</code> through <code>0xFE</code> back onto the same glyph names used by printable ASCII. The <code>/ToUnicode</code> CMap performs the same double mapping for text extraction.</p>
-<h2 id="solution">Solution</h2>
+<h3 id="solution">Solution</h3>
 <p>Decompress the page content stream and collect the hexadecimal strings rendered with the <code>/FG</code> font. For every byte, its high bit is the hidden bit; masking that bit away produces the innocent visible character.</p>
 <p>The hidden bits are packed most-significant-bit first. Their byte structure is:</p>
-<figure class="code"><figcaption><span>text</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-text">&quot;GFNT&quot; | two-byte flag length | flag | CRC32(flag)</code></pre></figure>
+<pre><code class="language-text">&quot;GFNT&quot; | two-byte flag length | flag | CRC32(flag)</code></pre>
 <p>The marker fixes the alignment, the length determines when to stop, and the CRC confirms that the glyph stream was decoded correctly.</p>
 <p>Run the included solver:</p>
-<figure class="code"><figcaption><span>bash</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-bash">python3 solver.py</code></pre></figure>
+<pre><code class="language-bash">python3 solver.py</code></pre>
 <p>Output:</p>
-<figure class="code"><figcaption><span>text</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-text">Securinets{wow_y0u_c4n_t3ll_1d3nt1c4l_l3tt3rs_4p4rt}</code></pre></figure>
-<p>Run <code>python3 make.py</code> whenever the flag or invoice cover text changes. The generator requires GNU FreeMono at <code>/usr/share/fonts/gnu-free/FreeMono.otf</code>, or an alternate path supplied through the <code>GHOST_FONT</code> environment variable.</p>
-    <h2 id="solver">Reference solver</h2>
-    <figure class="code"><figcaption><span>solve.py</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-python"><span class="t-c">#!/usr/bin/env python3</span>
+<pre><code class="language-text">Securinets{wow_y0u_c4n_t3ll_1d3nt1c4l_l3tt3rs_4p4rt}</code></pre>
+<p>Run <code>python3 make.py</code> whenever the flag or invoice cover text changes. The generator requires GNU FreeMono at <code>/usr/share/fonts/gnu-free/FreeMono.otf</code>, or an alternate path supplied through the <code>GHOST_FONT</code> environment variable.</p><h2 id="solver">Reference solver</h2><p>The complete solver used to validate the challenge:</p><pre><code class="language-python">#!/usr/bin/env python3
 
-<span class="t-k">from</span> __future__ <span class="t-k">import</span> annotations
+from __future__ import annotations
 
-<span class="t-k">from</span> pathlib <span class="t-k">import</span> Path
-<span class="t-k">import</span> re
-<span class="t-k">import</span> struct
-<span class="t-k">import</span> zlib
+from pathlib import Path
+import re
+import struct
+import zlib
 
 
-MAGIC = b<span class="t-s">&quot;GFNT&quot;</span>
+MAGIC = b&quot;GFNT&quot;
 
 
-<span class="t-k">def</span> <span class="t-f">decoded_streams</span>(pdf: bytes):
-    pattern = re.<span class="t-f">compile</span>(
-        rb<span class="t-s">&quot;&lt;&lt;(.*?)&gt;&gt;\s*stream\r?\n(.*?)\r?\nendstream&quot;</span>,
+def decoded_streams(pdf: bytes):
+    pattern = re.compile(
+        rb&quot;&lt;&lt;(.*?)&gt;&gt;\s*stream\r?\n(.*?)\r?\nendstream&quot;,
         re.DOTALL,
     )
-    <span class="t-k">for</span> dictionary, stream <span class="t-k">in</span> pattern.<span class="t-f">findall</span>(pdf):
-        <span class="t-k">if</span> b<span class="t-s">&quot;/FlateDecode&quot;</span> <span class="t-k">in</span> dictionary:
-            <span class="t-k">try</span>:
-                <span class="t-k">yield</span> zlib.<span class="t-f">decompress</span>(stream)
-            <span class="t-k">except</span> zlib.error:
-                <span class="t-k">continue</span>
-        <span class="t-k">else</span>:
-            <span class="t-k">yield</span> stream
+    for dictionary, stream in pattern.findall(pdf):
+        if b&quot;/FlateDecode&quot; in dictionary:
+            try:
+                yield zlib.decompress(stream)
+            except zlib.error:
+                continue
+        else:
+            yield stream
 
 
-<span class="t-k">def</span> <span class="t-f">extract_ghost_codes</span>(pdf: bytes) -&gt; bytes:
-    line_pattern = re.<span class="t-f">compile</span>(
-        rb<span class="t-s">&quot;BT\s+/FG\s+[-0-9.]+\s+Tf\s+[-0-9.]+\s+[-0-9.]+\s+Td\s+&quot;</span>
-        rb<span class="t-s">&quot;&lt;([0-9A-Fa-f]+)&gt;\s+Tj\s+ET&quot;</span>
+def extract_ghost_codes(pdf: bytes) -&gt; bytes:
+    line_pattern = re.compile(
+        rb&quot;BT\s+/FG\s+[-0-9.]+\s+Tf\s+[-0-9.]+\s+[-0-9.]+\s+Td\s+&quot;
+        rb&quot;&lt;([0-9A-Fa-f]+)&gt;\s+Tj\s+ET&quot;
     )
 
-    codes = <span class="t-f">bytearray</span>()
-    <span class="t-k">for</span> stream <span class="t-k">in</span> <span class="t-f">decoded_streams</span>(pdf):
-        <span class="t-k">for</span> encoded_hex <span class="t-k">in</span> line_pattern.<span class="t-f">findall</span>(stream):
-            codes.<span class="t-f">extend</span>(bytes.<span class="t-f">fromhex</span>(encoded_hex.<span class="t-f">decode</span>(<span class="t-s">&quot;ascii&quot;</span>)))
+    codes = bytearray()
+    for stream in decoded_streams(pdf):
+        for encoded_hex in line_pattern.findall(stream):
+            codes.extend(bytes.fromhex(encoded_hex.decode(&quot;ascii&quot;)))
 
-    <span class="t-k">if</span> <span class="t-k">not</span> codes:
-        <span class="t-k">raise</span> <span class="t-f">ValueError</span>(<span class="t-s">&quot;no text rendered with the /FG font was found&quot;</span>)
+    if not codes:
+        raise ValueError(&quot;no text rendered with the /FG font was found&quot;)
 
-    <span class="t-k">for</span> code <span class="t-k">in</span> codes:
-        visible = code &amp; <span class="t-m">0x7F</span>
-        <span class="t-k">if</span> <span class="t-k">not</span> <span class="t-m">0x20</span> &lt;= visible &lt;= <span class="t-m">0x7E</span>:
-            <span class="t-k">raise</span> <span class="t-f">ValueError</span>(f<span class="t-s">&quot;unexpected ghost character code: 0x{code:02x}&quot;</span>)
+    for code in codes:
+        visible = code &amp; 0x7F
+        if not 0x20 &lt;= visible &lt;= 0x7E:
+            raise ValueError(f&quot;unexpected ghost character code: 0x{code:02x}&quot;)
 
-    <span class="t-k">return</span> <span class="t-f">bytes</span>(codes)
+    return bytes(codes)
 
 
-<span class="t-k">def</span> <span class="t-f">decode_payload</span>(codes: bytes) -&gt; bytes:
-    bits = [(code &gt;&gt; <span class="t-m">7</span>) &amp; <span class="t-m">1</span> <span class="t-k">for</span> code <span class="t-k">in</span> codes]
-    packed = <span class="t-f">bytearray</span>()
-    <span class="t-k">for</span> offset <span class="t-k">in</span> <span class="t-f">range</span>(<span class="t-m">0</span>, <span class="t-f">len</span>(bits) - <span class="t-m">7</span>, <span class="t-m">8</span>):
-        value = <span class="t-m">0</span>
-        <span class="t-k">for</span> bit <span class="t-k">in</span> bits[offset:offset + <span class="t-m">8</span>]:
-            value = (value &lt;&lt; <span class="t-m">1</span>) | bit
-        packed.<span class="t-f">append</span>(value)
+def decode_payload(codes: bytes) -&gt; bytes:
+    bits = [(code &gt;&gt; 7) &amp; 1 for code in codes]
+    packed = bytearray()
+    for offset in range(0, len(bits) - 7, 8):
+        value = 0
+        for bit in bits[offset:offset + 8]:
+            value = (value &lt;&lt; 1) | bit
+        packed.append(value)
 
-    <span class="t-k">if</span> <span class="t-k">not</span> packed.<span class="t-f">startswith</span>(MAGIC):
-        <span class="t-k">raise</span> <span class="t-f">ValueError</span>(<span class="t-s">&quot;the hidden stream does not start with the GFNT marker&quot;</span>)
-    <span class="t-k">if</span> <span class="t-f">len</span>(packed) &lt; <span class="t-m">6</span>:
-        <span class="t-k">raise</span> <span class="t-f">ValueError</span>(<span class="t-s">&quot;truncated payload header&quot;</span>)
+    if not packed.startswith(MAGIC):
+        raise ValueError(&quot;the hidden stream does not start with the GFNT marker&quot;)
+    if len(packed) &lt; 6:
+        raise ValueError(&quot;truncated payload header&quot;)
 
-    flag_length = struct.<span class="t-f">unpack</span>(<span class="t-s">&quot;&gt;H&quot;</span>, packed[<span class="t-m">4</span>:<span class="t-m">6</span>])[<span class="t-m">0</span>]
-    payload_end = <span class="t-m">6</span> + flag_length
-    crc_end = payload_end + <span class="t-m">4</span>
-    <span class="t-k">if</span> <span class="t-f">len</span>(packed) &lt; crc_end:
-        <span class="t-k">raise</span> <span class="t-f">ValueError</span>(<span class="t-s">&quot;truncated hidden payload&quot;</span>)
+    flag_length = struct.unpack(&quot;&gt;H&quot;, packed[4:6])[0]
+    payload_end = 6 + flag_length
+    crc_end = payload_end + 4
+    if len(packed) &lt; crc_end:
+        raise ValueError(&quot;truncated hidden payload&quot;)
 
-    flag = <span class="t-f">bytes</span>(packed[<span class="t-m">6</span>:payload_end])
-    stored_crc = struct.<span class="t-f">unpack</span>(<span class="t-s">&quot;&gt;I&quot;</span>, packed[payload_end:crc_end])[<span class="t-m">0</span>]
-    actual_crc = zlib.<span class="t-f">crc32</span>(flag) &amp; <span class="t-m">0xFFFFFFFF</span>
-    <span class="t-k">if</span> stored_crc != actual_crc:
-        <span class="t-k">raise</span> <span class="t-f">ValueError</span>(
-            f<span class="t-s">&quot;CRC mismatch: stored 0x{stored_crc:08x}, calculated 0x{actual_crc:08x}&quot;</span>
+    flag = bytes(packed[6:payload_end])
+    stored_crc = struct.unpack(&quot;&gt;I&quot;, packed[payload_end:crc_end])[0]
+    actual_crc = zlib.crc32(flag) &amp; 0xFFFFFFFF
+    if stored_crc != actual_crc:
+        raise ValueError(
+            f&quot;CRC mismatch: stored 0x{stored_crc:08x}, calculated 0x{actual_crc:08x}&quot;
         )
 
-    <span class="t-k">return</span> flag
+    return flag
 
 
-<span class="t-k">def</span> <span class="t-f">main</span>() -&gt; <span class="t-k">None</span>:
-    path = <span class="t-f">Path</span>(__file__).<span class="t-f">with_name</span>(<span class="t-s">&quot;invoice.pdf&quot;</span>)
-    flag = <span class="t-f">decode_payload</span>(<span class="t-f">extract_ghost_codes</span>(path.<span class="t-f">read_bytes</span>()))
-    <span class="t-f">print</span>(flag.<span class="t-f">decode</span>(<span class="t-s">&quot;ascii&quot;</span>))
+def main() -&gt; None:
+    path = Path(__file__).with_name(&quot;invoice.pdf&quot;)
+    flag = decode_payload(extract_ghost_codes(path.read_bytes()))
+    print(flag.decode(&quot;ascii&quot;))
 
 
-<span class="t-k">if</span> __name__ == <span class="t-s">&quot;__main__&quot;</span>:
-    <span class="t-f">main</span>()</code></pre></figure>
-    <h2 id="flag">Flag</h2>
-    <p class="flag"><code>Securinets{wow_y0u_c4n_t3ll_1d3nt1c4l_l3tt3rs_4p4rt}</code><button type="button" class="copy" data-copy>copy</button></p>
-  </div>
-  <nav class="pager" aria-label="More writeups">
-    <a href="/challenge/securinets-friendly-ctf-2026/misc/human-after-all/"><span>previous</span><strong>Human After All</strong></a>
-    <a class="next" href="/challenge/securinets-friendly-ctf-2026/misc/are-math-ding/"><span>next</span><strong>are MATH D'ING</strong></a>
-  </nav>
-</article></div></main>
-<footer class="colophon">
-  <div class="shell">
-    <p><strong>Ghaith Amdouni</strong> · Binary exploitation &amp; systems · Tunis, Tunisia</p>
-    <nav aria-label="Elsewhere"><a href="https://github.com/Ghaith-amdouni">GitHub</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn</a><a href="https://www.credly.com/users/ghaith-amdouni">Credly</a><a href="/feed.xml">RSS</a><a href="mailto:ghaith.amdouni@insat.ucar.tn">email</a></nav>
-    <p class="fine">© 2026 Ghaith Amdouni · <a href="https://github.com/Ghaith-amdouni/ghaith-amdouni.github.io">site source</a><img class="hits" src="https://hits.sh/r3t0x.me.svg?view=total&style=flat-square&label=visits&color=161619&labelColor=0c0c0e" alt="" width="88" height="20" loading="lazy"></p>
-  </div>
-</footer>
-<dialog id="search" aria-label="Search">
-  <form method="dialog" class="search-head">
-    <label for="search-input"><span aria-hidden="true">&gt;</span><span class="sr-only">Search writeups, projects and pages</span></label>
-    <input id="search-input" type="search" placeholder="search writeups, projects, pages" autocomplete="off" spellcheck="false">
-    <button value="close" aria-label="Close search">esc</button>
-  </form>
-  <ul id="search-results"></ul>
-  <p class="search-foot"><span id="search-count">start typing</span><span>&uarr;&darr; move · enter open</span></p>
-</dialog>
-</body>
-</html>
+if __name__ == &quot;__main__&quot;:
+    main()</code></pre><h2 id="flag">Flag</h2><pre class="flag-output"><code>Securinets{wow_y0u_c4n_t3ll_1d3nt1c4l_l3tt3rs_4p4rt}</code></pre>
+      <div class="article-end"><span>Published 2026-09-28 · by r3t0x</span><a class="text-link" href="/blog/?collection=Securinets%20Friendly%20CTF%202026">More Securinets Friendly CTF 2026 writeups ↗</a></div></div>
+    </div>
+  </article></main>
+  <footer class="site-footer"><div class="footer-top"><a class="brand" href="/"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><p>Always curious. Always one layer deeper.</p><a href="#main" class="text-link">Back to top ↑</a></div><div class="footer-bottom"><span>© 2026 Ghaith Amdouni <span class="red">·</span> Made with curiosity & caffeine.</span><div><a href="/projects/">Projects ↗</a><a href="https://github.com/Ghaith-amdouni">GitHub ↗</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn ↗</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>Résumé ↗</a><a href="/feed.xml">RSS ↗</a><button id="motion-toggle" aria-pressed="false">Motion: on</button></div></div></footer>
+  <dialog id="search-dialog" class="search-vault" aria-labelledby="search-title"><div class="search-vault-mark" aria-hidden="true"><span></span><small>眼 // TRACE</small></div><div class="dialog-top"><div><span class="dialog-address">0xSEARCH_INDEX</span><h2 id="search-title">Trace a memory.</h2></div><button data-close-dialog aria-label="Close search">ESC</button></div><label for="site-search" class="search-command"><span aria-hidden="true">❯</span><span class="sr-only">Search challenges, projects, and pages</span><input id="site-search" type="search" placeholder="type a challenge, project, primitive…" autocomplete="off" spellcheck="false"></label><div class="search-scopes" role="group" aria-label="Search scope"><button type="button" data-search-scope="All" aria-pressed="true">ALL MEMORY</button><button type="button" data-search-scope="Challenge" aria-pressed="false">CHALLENGES</button><button type="button" data-search-scope="Project" aria-pressed="false">PROJECTS</button></div><div class="search-readout"><span><i></i> INDEX ONLINE</span><b id="search-count">0 addresses</b></div><div id="search-results" aria-live="polite"></div><div class="dialog-bottom"><span>↑↓ TRACE</span><span>ENTER OPEN</span><span>ESC DISMISS</span></div></dialog>
+  <div class="toast" id="toast" role="status"></div></body></html>

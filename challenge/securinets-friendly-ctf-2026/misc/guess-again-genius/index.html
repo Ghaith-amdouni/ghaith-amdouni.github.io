@@ -1,143 +1,88 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0c0c0e">
-<title>UNIX — Securinets Friendly CTF 2026 — r3t0x</title>
-<meta name="description" content="Two codes are already on the screen. Predict the next one, Professor Probability. Go on. The machine could use a laugh.">
-<meta name="author" content="Ghaith Amdouni">
-<link rel="canonical" href="https://r3t0x.me/challenge/securinets-friendly-ctf-2026/misc/guess-again-genius/">
-<meta property="og:type" content="article">
-<meta property="og:title" content="UNIX — Securinets Friendly CTF 2026 — r3t0x">
-<meta property="og:description" content="Two codes are already on the screen. Predict the next one, Professor Probability. Go on. The machine could use a laugh.">
-<meta property="og:url" content="https://r3t0x.me/challenge/securinets-friendly-ctf-2026/misc/guess-again-genius/">
-<meta property="og:image" content="https://r3t0x.me/static/img/social-card.png">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
-<link rel="alternate" type="application/rss+xml" title="r3t0x — writeups" href="/feed.xml">
-<link rel="stylesheet" href="/static/css/main.css?v=405b62c3d8">
-<script src="/static/js/main.js?v=405b62c3d8" defer></script>
-</head>
-<body>
-<a class="skip" href="#main">Skip to content</a>
-<header class="masthead">
-  <div class="shell">
-    <a class="brand" href="/"><img class="mark" src="/static/img/mangekyou.png" alt="" width="20" height="20" loading="lazy" decoding="async"><span>r3t0x</span></a>
-    <nav aria-label="Main"><a href="/">home</a><a href="/blog/" aria-current="page">writeups</a><a href="/projects/">projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>cv</a></nav>
-    <button type="button" class="search-open" data-open-search aria-label="Search the site">search<kbd>/</kbd></button>
-  </div>
-</header>
-<main id="main"><div class="shell narrow"><article class="writeup">
-  <header class="page-head">
-    <p class="kicker"><a href="/blog/#securinets-friendly-ctf-2026">Securinets Friendly CTF 2026</a> / misc</p>
-    <h1>UNIX</h1>
-    <p class="lede">Two codes are already on the screen. Predict the next one, Professor Probability. Go on. The machine could use a laugh.</p>
-    <dl class="facts">
-      <div><dt>difficulty</dt><dd>easy</dd></div>
-      <div><dt>points</dt><dd>200</dd></div>
-      <div><dt>published</dt><dd><time datetime="2026-09-28">28 Sept 2026</time></dd></div>
-      <div><dt>author</dt><dd>r3t0x</dd></div>
-    </dl>
-    <p class="tags"><span>misc</span></p>
-  </header>
-  <nav class="toc" aria-label="On this page"><p>contents</p><ol><li><a href="#player-facing-content">Player-facing content</a></li><li><a href="#construction">Construction</a></li><li><a href="#intended-solution">Intended solution</a></li><li><a href="#solver">Reference solver</a></li><li><a href="#flag">Flag</a></li></ol></nav>
-  <div class="prose">
-    <h2 id="player-facing-content">Player-facing content</h2>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>UNIX · Misc writeup — r3t0x</title><meta name="description" content="Two codes are already on the screen. Predict the next one, Professor Probability. Go on. The machine could use a laugh."><link rel="canonical" href="https://ghaith-amdouni.github.io/challenge/securinets-friendly-ctf-2026/misc/guess-again-genius/"><meta property="og:type" content="article"><meta property="og:title" content="UNIX · Misc writeup — r3t0x"><meta property="og:description" content="Two codes are already on the screen. Predict the next one, Professor Probability. Go on. The machine could use a laugh."><meta property="og:url" content="https://ghaith-amdouni.github.io/challenge/securinets-friendly-ctf-2026/misc/guess-again-genius/"><meta property="og:image" content="https://ghaith-amdouni.github.io/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=bf0d9f4f9c97"><link rel="stylesheet" href="/static/css/akatsuki.css?v=bf0d9f4f9c97"><script src="/static/js/site.js?v=bf0d9f4f9c97" defer></script></head><body>
+  <a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div>
+  <div class="systembar"><div><span class="arch-mini" aria-hidden="true">Λ</span> archlinux <span class="bar-sep">/</span> r3t0x@portfolio <span class="system-workspaces" aria-hidden="true"><b>01</b> 02 03</span></div><div><span class="online-dot"></span> ALL SYSTEMS NOMINAL <span class="bar-sep">/</span> <time id="clock">UTC</time></div></div>
+  <header class="site-header"><a class="brand" href="/" aria-label="r3t0x home"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><nav aria-label="Main navigation"><a href="/" >~/home</a><a href="/blog/" aria-current="page">~/archive</a><a href="/projects/" >~/projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>CV ↓</a></nav><button class="search-trigger" data-open-search aria-label="Search site"><span>⌕</span><kbd>Ctrl K</kbd></button></header>
+  <div class="archive-transition" id="archive-transition" aria-hidden="true"><div class="route-eyelid route-eyelid-top"></div><div class="route-eyelid route-eyelid-bottom"></div><div class="vault-coordinates"><span>00:00:01</span><span>0x00401337</span></div><div class="vault-eye"><span class="vault-symbol"></span><span class="vault-reticle"></span><i></i><i></i><i></i></div><div class="vault-caption"><p><small>TSUKUYOMI ROUTE SHIFT</small><b id="transition-label">ENTERING THE MEMORY VAULT</b><span id="transition-address">~/archive</span></p></div></div>
+  <div class="ambient-clouds" aria-hidden="true"><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg></div><div class="scroll-address" aria-hidden="true"><b>RIP</b><span id="scroll-address">0x00000000</span><i><em></em></i><small>PTR</small></div><main id="main"><article class="wrap article-page writeup-page">
+    <a class="text-link" href="/blog/?collection=Securinets%20Friendly%20CTF%202026">← Back to the archive</a>
+    <header class="article-heading"><p class="eyebrow">Securinets Friendly CTF 2026 <span>/</span> Misc WRITEUP</p><h1>UNIX</h1><p>Two codes are already on the screen. Predict the next one, Professor Probability. Go on. The machine could use a laugh.</p>
+      <div class="article-author"><img src="/static/img/ghaith.webp" alt="" width="44" height="44"><span><strong>r3t0x</strong><small>2026-09-28 · 200 points · easy</small></span><a class="button" href="#solver">Jump to solver ↓</a></div>
+    </header>
+    <div class="writeup-facts" aria-label="Challenge metadata"><span><small>EVENT</small>Securinets Friendly CTF 2026</span><span><small>CATEGORY</small>Misc</span><span><small>DIFFICULTY</small>easy</span><span><small>POINTS</small>200</span></div>
+    <div class="article-layout"><aside class="article-toc"><p class="eyebrow">ON THIS PAGE</p><nav><a href="#summary">Summary</a><a href="#walkthrough">Walkthrough</a><a href="#solver">Reference solver</a><a href="#flag">Flag</a></nav><div class="writeup-tags"><span>misc</span></div></aside>
+      <div class="prose writeup-prose"><h2 id="summary">Summary</h2><p class="lead">Two codes are already on the screen. Predict the next one, Professor Probability. Go on. The machine could use a laugh.</p><h2 id="walkthrough">Walkthrough</h2><h3 id="player-facing-content">Player-facing content</h3>
 <p>The player receives only the remote endpoint. There are no downloadable files, technical clues, or hints. The service prints two six-digit verification codes and accepts one prediction for the next code.</p>
 <p>The public description is intentionally sarcastic:</p>
-<blockquote>Two codes are already on the screen. Predict the next one, Professor Probability.</blockquote>
+<blockquote><p>Two codes are already on the screen. Predict the next one, Professor Probability.</p></blockquote>
 <p>&gt;</p>
-<blockquote>Go on. The machine could use a laugh.</blockquote>
-<h2 id="construction">Construction</h2>
+<blockquote><p>Go on. The machine could use a laugh.</p></blockquote>
+<h3 id="construction">Construction</h3>
 <p>Each connection creates an independent Python <code>random.Random</code> instance seeded with <code>int(time.time())</code>. It draws exactly three values using <code>randint(100000, 999999)</code>, discloses the first two, and checks the player's input against the third.</p>
 <p>The seed has one-second granularity. A solver records its local time when it connects and tests nearby timestamps. For each candidate it reproduces the first two calls. Matching both visible codes identifies the seed with overwhelming confidence, after which the third call predicts the required answer.</p>
 <p>The weakness is the predictable seed, not a statistical defect in the displayed six-digit values. Two outputs are exposed so the correct nearby timestamp can be identified without ambiguity.</p>
-<h2 id="intended-solution">Intended solution</h2>
+<h3 id="intended-solution">Intended solution</h3>
 <ol><li>Connect and record the two displayed codes.</li><li>Enumerate Unix timestamps near the connection time.</li><li>For each timestamp, create <code>random.Random(timestamp)</code>.</li><li>Reproduce two <code>randint(100000, 999999)</code> calls.</li><li>When both values match, generate the third value and submit it.</li></ol>
-<p>The included organizer solver uses a ten-minute window to tolerate clock skew and manual delays.</p>
-    <h2 id="solver">Reference solver</h2>
-    <figure class="code"><figcaption><span>solve.py</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-python"><span class="t-c">#!/usr/bin/env python3</span>
+<p>The included organizer solver uses a ten-minute window to tolerate clock skew and manual delays.</p><h2 id="solver">Reference solver</h2><p>The complete solver used to validate the challenge:</p><pre><code class="language-python">#!/usr/bin/env python3
 
-<span class="t-k">import</span> random
-<span class="t-k">import</span> re
-<span class="t-k">import</span> socket
-<span class="t-k">import</span> sys
-<span class="t-k">import</span> time
+import random
+import re
+import socket
+import sys
+import time
 
 
-host = sys.argv[<span class="t-m">1</span>] <span class="t-k">if</span> <span class="t-f">len</span>(sys.argv) &gt; <span class="t-m">1</span> <span class="t-k">else</span> <span class="t-s">&quot;127.0.0.1&quot;</span>
-port = <span class="t-f">int</span>(sys.argv[<span class="t-m">2</span>]) <span class="t-k">if</span> <span class="t-f">len</span>(sys.argv) &gt; <span class="t-m">2</span> <span class="t-k">else</span> <span class="t-m">20046</span>
+host = sys.argv[1] if len(sys.argv) &gt; 1 else &quot;127.0.0.1&quot;
+port = int(sys.argv[2]) if len(sys.argv) &gt; 2 else 20046
 
-connection_time = <span class="t-f">int</span>(time.<span class="t-f">time</span>())
-connection = socket.<span class="t-f">create_connection</span>((host, port), timeout=<span class="t-m">10</span>)
+connection_time = int(time.time())
+connection = socket.create_connection((host, port), timeout=10)
 
-banner = b<span class="t-s">&quot;&quot;</span>
-<span class="t-k">while</span> b<span class="t-s">&quot;&gt; &quot;</span> <span class="t-k">not</span> <span class="t-k">in</span> banner:
-    chunk = connection.<span class="t-f">recv</span>(<span class="t-m">4096</span>)
-    <span class="t-k">if</span> <span class="t-k">not</span> chunk:
-        <span class="t-k">raise</span> <span class="t-f">SystemExit</span>(<span class="t-s">&quot;The service disconnected before sending its codes.&quot;</span>)
+banner = b&quot;&quot;
+while b&quot;&gt; &quot; not in banner:
+    chunk = connection.recv(4096)
+    if not chunk:
+        raise SystemExit(&quot;The service disconnected before sending its codes.&quot;)
     banner += chunk
 
-visible_codes = re.<span class="t-f">findall</span>(rb<span class="t-s">&quot;(?m)^(\d{6})\r?$&quot;</span>, banner)
-<span class="t-k">if</span> <span class="t-f">len</span>(visible_codes) != <span class="t-m">2</span>:
-    <span class="t-k">raise</span> <span class="t-f">SystemExit</span>(<span class="t-s">&quot;Could not find the two verification codes.&quot;</span>)
+visible_codes = re.findall(rb&quot;(?m)^(\d{6})\r?$&quot;, banner)
+if len(visible_codes) != 2:
+    raise SystemExit(&quot;Could not find the two verification codes.&quot;)
 
-first_code = <span class="t-f">int</span>(visible_codes[<span class="t-m">0</span>])
-second_code = <span class="t-f">int</span>(visible_codes[<span class="t-m">1</span>])
-current_time = <span class="t-f">int</span>(time.<span class="t-f">time</span>())
-prediction = <span class="t-k">None</span>
-recovered_seed = <span class="t-k">None</span>
+first_code = int(visible_codes[0])
+second_code = int(visible_codes[1])
+current_time = int(time.time())
+prediction = None
+recovered_seed = None
 
-<span class="t-k">for</span> seed <span class="t-k">in</span> <span class="t-f">range</span>(connection_time - <span class="t-m">600</span>, current_time + <span class="t-m">6</span>):
-    rng = random.<span class="t-f">Random</span>(seed)
-    <span class="t-k">if</span> rng.<span class="t-f">randint</span>(<span class="t-m">100000</span>, <span class="t-m">999999</span>) != first_code:
-        <span class="t-k">continue</span>
-    <span class="t-k">if</span> rng.<span class="t-f">randint</span>(<span class="t-m">100000</span>, <span class="t-m">999999</span>) != second_code:
-        <span class="t-k">continue</span>
+for seed in range(connection_time - 600, current_time + 6):
+    rng = random.Random(seed)
+    if rng.randint(100000, 999999) != first_code:
+        continue
+    if rng.randint(100000, 999999) != second_code:
+        continue
     recovered_seed = seed
-    prediction = rng.<span class="t-f">randint</span>(<span class="t-m">100000</span>, <span class="t-m">999999</span>)
-    <span class="t-k">break</span>
+    prediction = rng.randint(100000, 999999)
+    break
 
-<span class="t-k">if</span> prediction <span class="t-k">is</span> <span class="t-k">None</span>:
-    <span class="t-k">raise</span> <span class="t-f">SystemExit</span>(<span class="t-s">&quot;No matching seed was found.&quot;</span>)
+if prediction is None:
+    raise SystemExit(&quot;No matching seed was found.&quot;)
 
-<span class="t-f">print</span>(f<span class="t-s">&quot;seed: {recovered_seed}&quot;</span>)
-<span class="t-f">print</span>(f<span class="t-s">&quot;next code: {prediction:06d}&quot;</span>)
-connection.<span class="t-f">sendall</span>(f<span class="t-s">&quot;{prediction:06d}\n&quot;</span>.<span class="t-f">encode</span>())
+print(f&quot;seed: {recovered_seed}&quot;)
+print(f&quot;next code: {prediction:06d}&quot;)
+connection.sendall(f&quot;{prediction:06d}\n&quot;.encode())
 
-response = b<span class="t-s">&quot;&quot;</span>
-<span class="t-k">while</span> <span class="t-k">True</span>:
-    chunk = connection.<span class="t-f">recv</span>(<span class="t-m">4096</span>)
-    <span class="t-k">if</span> <span class="t-k">not</span> chunk:
-        <span class="t-k">break</span>
+response = b&quot;&quot;
+while True:
+    chunk = connection.recv(4096)
+    if not chunk:
+        break
     response += chunk
 
-connection.<span class="t-f">close</span>()
-<span class="t-f">print</span>(response.<span class="t-f">decode</span>(), end=<span class="t-s">&quot;&quot;</span>)</code></pre></figure>
-    <h2 id="flag">Flag</h2>
-    <p class="flag"><code>Securinets{y0u_c4nt_h1d3_th3_s33d_fr0m_t1m3}</code><button type="button" class="copy" data-copy>copy</button></p>
-  </div>
-  <nav class="pager" aria-label="More writeups">
-    <a href="/challenge/securinets-friendly-ctf-2026/misc/js-1-0/"><span>previous</span><strong>JS 1.0</strong></a>
-    <a class="next" href="/challenge/securinets-friendly-ctf-2026/misc/approved/"><span>next</span><strong>APPROVED</strong></a>
-  </nav>
-</article></div></main>
-<footer class="colophon">
-  <div class="shell">
-    <p><strong>Ghaith Amdouni</strong> · Binary exploitation &amp; systems · Tunis, Tunisia</p>
-    <nav aria-label="Elsewhere"><a href="https://github.com/Ghaith-amdouni">GitHub</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn</a><a href="https://www.credly.com/users/ghaith-amdouni">Credly</a><a href="/feed.xml">RSS</a><a href="mailto:ghaith.amdouni@insat.ucar.tn">email</a></nav>
-    <p class="fine">© 2026 Ghaith Amdouni · <a href="https://github.com/Ghaith-amdouni/ghaith-amdouni.github.io">site source</a><img class="hits" src="https://hits.sh/r3t0x.me.svg?view=total&style=flat-square&label=visits&color=161619&labelColor=0c0c0e" alt="" width="88" height="20" loading="lazy"></p>
-  </div>
-</footer>
-<dialog id="search" aria-label="Search">
-  <form method="dialog" class="search-head">
-    <label for="search-input"><span aria-hidden="true">&gt;</span><span class="sr-only">Search writeups, projects and pages</span></label>
-    <input id="search-input" type="search" placeholder="search writeups, projects, pages" autocomplete="off" spellcheck="false">
-    <button value="close" aria-label="Close search">esc</button>
-  </form>
-  <ul id="search-results"></ul>
-  <p class="search-foot"><span id="search-count">start typing</span><span>&uarr;&darr; move · enter open</span></p>
-</dialog>
-</body>
-</html>
+connection.close()
+print(response.decode(), end=&quot;&quot;)</code></pre><h2 id="flag">Flag</h2><pre class="flag-output"><code>Securinets{y0u_c4nt_h1d3_th3_s33d_fr0m_t1m3}</code></pre>
+      <div class="article-end"><span>Published 2026-09-28 · by r3t0x</span><a class="text-link" href="/blog/?collection=Securinets%20Friendly%20CTF%202026">More Securinets Friendly CTF 2026 writeups ↗</a></div></div>
+    </div>
+  </article></main>
+  <footer class="site-footer"><div class="footer-top"><a class="brand" href="/"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><p>Always curious. Always one layer deeper.</p><a href="#main" class="text-link">Back to top ↑</a></div><div class="footer-bottom"><span>© 2026 Ghaith Amdouni <span class="red">·</span> Made with curiosity & caffeine.</span><div><a href="/projects/">Projects ↗</a><a href="https://github.com/Ghaith-amdouni">GitHub ↗</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn ↗</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>Résumé ↗</a><a href="/feed.xml">RSS ↗</a><button id="motion-toggle" aria-pressed="false">Motion: on</button></div></div></footer>
+  <dialog id="search-dialog" class="search-vault" aria-labelledby="search-title"><div class="search-vault-mark" aria-hidden="true"><span></span><small>眼 // TRACE</small></div><div class="dialog-top"><div><span class="dialog-address">0xSEARCH_INDEX</span><h2 id="search-title">Trace a memory.</h2></div><button data-close-dialog aria-label="Close search">ESC</button></div><label for="site-search" class="search-command"><span aria-hidden="true">❯</span><span class="sr-only">Search challenges, projects, and pages</span><input id="site-search" type="search" placeholder="type a challenge, project, primitive…" autocomplete="off" spellcheck="false"></label><div class="search-scopes" role="group" aria-label="Search scope"><button type="button" data-search-scope="All" aria-pressed="true">ALL MEMORY</button><button type="button" data-search-scope="Challenge" aria-pressed="false">CHALLENGES</button><button type="button" data-search-scope="Project" aria-pressed="false">PROJECTS</button></div><div class="search-readout"><span><i></i> INDEX ONLINE</span><b id="search-count">0 addresses</b></div><div id="search-results" aria-live="polite"></div><div class="dialog-bottom"><span>↑↓ TRACE</span><span>ENTER OPEN</span><span>ESC DISMISS</span></div></dialog>
+  <div class="toast" id="toast" role="status"></div></body></html>

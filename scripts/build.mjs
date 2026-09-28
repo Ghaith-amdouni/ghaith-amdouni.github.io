@@ -1,5 +1,6 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
+import hljs from 'highlight.js';
 import { posts } from '../content/posts.mjs';
 import { projects } from '../content/projects.mjs';
 const site = 'https://ghaith-amdouni.github.io';
@@ -9,6 +10,11 @@ const assetVersion = createHash('sha256')
   .update(await readFile('static/js/site.js'))
   .digest('hex').slice(0, 12);
 const esc = s => String(s).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
+const renderCode = (code, language = '') => hljs.getLanguage(language)
+  ? hljs.highlight(code, { language, ignoreIllegals: true }).value
+  : esc(code);
+const archiveUrl = challenge => `/blog/?${new URLSearchParams({ collection: challenge.collection, category: challenge.category })}`;
+const collectionOrder = ['Securinets Friendly CTF 2026', 'MOJO-JOJO CTF', 'FST Bootcamp'];
 const summarize = s => {
   const clipped = s.length > 138 ? s.slice(0, 138).replace(/\s+\S*$/, '') : s;
   return clipped && !/[.!?…]$/.test(clipped) ? `${clipped.replace(/[\s,;:—-]+$/, '')}…` : clipped;
@@ -18,7 +24,7 @@ async function loadFriendly(category) {
     const entries = JSON.parse(await readFile(`content/friendly-ctf-2026-${category}.json`, 'utf8'));
     return entries.map(entry => ({
       ...entry,
-      description: summarize(entry.description.replace(/\s+/g, ' ').trim()),
+      description: entry.description.replace(/\s+/g, ' ').trim(),
       url: `/challenge/securinets-friendly-ctf-2026/${category}/${entry.slug}/index.html`,
       source: 'friendly',
     }));
@@ -100,7 +106,7 @@ function renderMarkdown(markdown) {
     const fenceMatch = line.match(/^(```|~~~)([a-zA-Z0-9_+-]*)\s*$/);
     if (fence) {
       if (fenceMatch?.[1] === fence) {
-        output.push(`<pre><code${fenceLanguage ? ` class="language-${esc(fenceLanguage)}"` : ''}>${esc(fenceLines.join('\n'))}</code></pre>`);
+        output.push(`<pre><code${fenceLanguage ? ` class="language-${esc(fenceLanguage)}"` : ''}>${renderCode(fenceLines.join('\n'), fenceLanguage)}</code></pre>`);
         fence = null;
         fenceLanguage = '';
         fenceLines = [];
@@ -170,15 +176,15 @@ async function buildChallengeWriteup(challenge) {
   const pointsLine = challenge.points ? `${esc(challenge.points)} points` : 'archived challenge';
   const pointsFact = challenge.points ? esc(challenge.points) : 'Archived';
   const body = `<article class="wrap article-page writeup-page">
-    <a class="text-link" href="/blog/?collection=${encodeURIComponent(challenge.collection)}">← Back to the archive</a>
+    <a class="text-link" href="${esc(archiveUrl(challenge))}">← Back to archive · ${esc(challenge.category)}</a>
     <header class="article-heading"><p class="eyebrow">${esc(challenge.collection)} <span>/</span> ${esc(challenge.category)} WRITEUP</p><h1>${esc(challenge.title)}</h1><p>${esc(challenge.description)}</p>
       <div class="article-author"><img src="/static/img/ghaith.webp" alt="" width="44" height="44"><span><strong>${esc(challenge.author)}</strong><small>${esc(challenge.date)} · ${pointsLine} · ${difficultyLabel(challenge.difficulty)}</small></span><a class="button" href="#solver">Jump to solver ↓</a></div>
     </header>
     <div class="writeup-facts" aria-label="Challenge metadata"><span><small>EVENT</small>${esc(challenge.collection)}</span><span><small>CATEGORY</small>${esc(challenge.category)}</span><span><small>DIFFICULTY</small>${difficultyLabel(challenge.difficulty)}</span><span><small>POINTS</small>${pointsFact}</span></div>
     <div class="writeup-tags">${tags}</div>
     <div class="article-layout">
-      <div class="prose writeup-prose"><h2 id="summary">Summary</h2><p class="lead">${esc(challenge.description)}</p><h2 id="walkthrough">Walkthrough</h2>${walkThrough}<h2 id="solver">Reference solver</h2><p>The complete solver used to validate the challenge:</p><pre><code class="language-${challenge.solverLanguage}">${esc(challenge.solver.trim().replace(/[ \t]+$/gm, ''))}</code></pre><h2 id="flag">Flag</h2><pre class="flag-output"><code>${esc(challenge.flag)}</code></pre>
-      <div class="article-end"><span>Published ${esc(challenge.date)} · by ${esc(challenge.author)}</span><a class="text-link" href="/blog/?collection=${encodeURIComponent(challenge.collection)}">More ${esc(challenge.collection)} writeups ↗</a></div></div>
+      <div class="prose writeup-prose"><h2 id="walkthrough">Walkthrough</h2>${walkThrough}<h2 id="solver">Reference solver</h2><p>The reference solver supplied with the writeup:</p><pre><code class="language-${challenge.solverLanguage}">${renderCode(challenge.solver.trim().replace(/[ \t]+$/gm, ''), challenge.solverLanguage)}</code></pre><h2 id="flag">Flag</h2><pre class="flag-output"><code>${esc(challenge.flag)}</code></pre>
+      <div class="article-end"><span>Published ${esc(challenge.date)} · by ${esc(challenge.author)}</span><a class="text-link" href="${esc(archiveUrl(challenge))}">← Back to archive · ${esc(challenge.category)}</a></div></div>
     </div>
   </article>`;
   const directory = challenge.url.slice(1).replace(/\/index\.html$/, '');
@@ -241,10 +247,9 @@ function challengeCard(c, i) {
   const categoryClass = c.category.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   return `<article class="archive-entry challenge-card" data-index="${i}" data-title="${esc(c.title)}" data-category="${esc(c.category)}" data-collection="${esc(c.collection)}" data-search="${esc(c.description)}" data-address="${address}" data-difficulty="${c.difficulty}" data-level="${tier}">
     <a href="${c.url}" aria-labelledby="challenge-title-${i}">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>${address}</b></span><span class="card-collection">#${String(i+1).padStart(2,'0')}</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag ${categoryClass}">${esc(c.category)}</span><span>${detail}</span></div>
-      <h2 id="challenge-title-${i}">${esc(c.title)}<span class="function-suffix">()</span></h2>
-      <p>${esc(c.description)}</p>
+      <h3 id="challenge-title-${i}">${esc(c.title)}</h3>
+      <p>${esc(summarize(c.description))}</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
   </article>`;
@@ -260,7 +265,7 @@ const collectionDescriptions = {
   'MOJO-JOJO CTF': 'Original pwn challenges authored for the MOJO-JOJO CTF collection.',
   'Securinets Friendly CTF 2026': 'Official misc and pwn walkthroughs from Securinets Friendly CTF 2026.'
 };
-const challengeCollections = [...new Set(challenges.map(challenge => challenge.collection))].map((collection, collectionIndex) => {
+const challengeCollections = collectionOrder.map((collection, collectionIndex) => {
   const entries = challenges.map((challenge, index) => ({challenge, index})).filter(item => item.challenge.collection === collection);
   const slug = collection.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   const categories = [...new Set(entries.map(({ challenge }) => challenge.category))];
@@ -273,13 +278,18 @@ const challengeCollections = [...new Set(challenges.map(challenge => challenge.c
   return `<section class="challenge-collection" data-collection-group="${esc(collection)}" aria-labelledby="collection-${slug}"><header class="collection-heading"><div><p>COLLECTION // ${String(collectionIndex + 1).padStart(2,'0')}</p><h2 id="collection-${slug}">${esc(collection)}</h2></div><p>${collectionDescriptions[collection] || 'CTF challenge writeups and reference solvers.'}</p><span data-collection-count>${entries.length} challenges</span></header>${grids}</section>`;
 }).join('');
 const categoryOptions = [...new Set(challenges.map(challenge => challenge.category))].sort().map(category => `<option>${esc(category)}</option>`).join('');
-const collectionOptions = [...new Set(challenges.map(challenge => challenge.collection))].map(collection => `<option>${esc(collection)}</option>`).join('');
+const eventTabs = [...collectionOrder, 'All'].map(collection => {
+  const label = collection === 'All' ? 'All events' : collection.replace('Securinets ', '');
+  const count = challenges.filter(challenge => collection === 'All' || challenge.collection === collection).length;
+  return `<a href="/blog/?collection=${encodeURIComponent(collection)}" data-event="${esc(collection)}">${esc(label)}<span>${count}</span></a>`;
+}).join('');
 const archiveBody = `<div class="wrap archive-page">
   <a class="text-link" href="/">← Back to home</a>
   <div class="archive-hero"><div><p class="eyebrow">~/ARCHIVE <span>/</span> MEMORY MAP</p><h1>Challenge<br>archive<span class="red">.</span></h1><p class="archive-lede">CTF writeups, complete solvers, and original labs organized by event, category, and difficulty.</p></div><div class="archive-sigil" aria-hidden="true"><img src="/static/img/mangekyou.png" alt="" width="180" height="180"></div></div>
-  <form class="archive-toolbar" id="archive-form" role="search"><label class="archive-search"><span class="archive-opcode" aria-hidden="true">jmp *</span><span class="sr-only">Search by challenge name or memory address</span><input type="search" id="archive-search" name="q" placeholder="0x00401000 or challenge name" autocomplete="off" spellcheck="false"><kbd>ENTER</kbd></label><label class="sort-control"><span>SORT //</span><select id="archive-sort" name="sort"><option value="default">Memory order</option><option value="difficulty-asc">Difficulty: low first</option><option value="difficulty-desc">Difficulty: high first</option><option value="az">Title: A–Z</option><option value="za">Title: Z–A</option></select></label></form>
-  <div class="archive-filterbar"><div class="archive-filters" role="group" aria-label="Filter difficulty"><span>Difficulty</span>${difficultyFilters.map(([id,label,count],i)=>`<button type="button" data-level="${id}" aria-pressed="${i===0}">${label}<span>${count}</span></button>`).join('')}</div><div class="archive-selects"><label class="collection-control"><span>Category</span><select id="category-filter"><option value="All">All categories</option>${categoryOptions}</select></label><label class="collection-control"><span>Collection</span><select id="collection-filter"><option value="All">All collections</option>${collectionOptions}</select></label></div></div>
-  <div class="archive-readout"><span id="result-hint">TYPE ADDRESS + ENTER TO JMP</span><b id="result-count" role="status">${challenges.length} challenges</b></div>
+  <nav class="event-tabs" aria-label="Choose CTF event">${eventTabs}</nav>
+  <form class="archive-toolbar" id="archive-form" role="search"><label class="archive-search"><span class="archive-opcode" aria-hidden="true">⌕</span><span class="sr-only">Search challenges</span><input type="search" id="archive-search" name="q" placeholder="Search challenges…" autocomplete="off" spellcheck="false"><kbd>ENTER</kbd></label><label class="sort-control"><span>Sort</span><select id="archive-sort" name="sort"><option value="default">Default order</option><option value="difficulty-asc">Difficulty: low first</option><option value="difficulty-desc">Difficulty: high first</option><option value="az">Title: A–Z</option><option value="za">Title: Z–A</option></select></label></form>
+  <div class="archive-filterbar"><div class="archive-filters" role="group" aria-label="Filter difficulty"><span>Difficulty</span>${difficultyFilters.map(([id,label,count],i)=>`<button type="button" data-level="${id}" aria-pressed="${i===0}">${label}<span>${count}</span></button>`).join('')}</div><div class="archive-selects"><label class="collection-control"><span>Category</span><select id="category-filter"><option value="All">All categories</option>${categoryOptions}</select></label></div></div>
+  <div class="archive-readout"><span id="result-hint">Choose an event or search its writeups.</span><b id="result-count" role="status">${challenges.length} challenges</b></div>
   <div id="archive-results" class="archive-collections">${challengeCollections}</div>
   <div id="archive-empty" hidden><span class="red">0x00000000</span><h2>No matching bytes.</h2><p>Try another search or reset the filters.</p><button class="button" id="reset-filters">Reset filters ↺</button></div>
 </div>`;

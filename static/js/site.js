@@ -18,18 +18,55 @@ const copyText = async (value, success) => {
   try {
     await navigator.clipboard.writeText(value);
   } catch {
+    const focused = document.activeElement;
     const input = document.createElement('textarea');
     input.value = value;
     input.style.position = 'fixed';
     input.style.opacity = '0';
     document.body.appendChild(input);
     input.select();
-    const copied = document.execCommand('copy');
+    let copied = false;
+    try { copied = document.execCommand('copy'); } catch { /* Manual selection remains available. */ }
     input.remove();
-    if (!copied) { toast('Copy unavailable. Please select the email address or page URL.'); return; }
+    focused?.focus({ preventScroll: true });
+    if (!copied) { toast('Copy unavailable. Please select and copy the text.'); return false; }
   }
   toast(success);
+  return true;
 };
+
+// Keep controls outside the scrollable code, so copying never includes UI labels.
+$$('.writeup-prose pre').forEach((pre) => {
+  const code = $('code', pre) || pre;
+  const source = code.textContent;
+  const language = code.className.match(/language-([\w+-]+)/)?.[1];
+  const block = document.createElement('div');
+  block.className = 'code-block-tools';
+  const toolbar = document.createElement('div');
+  toolbar.className = 'code-toolbar';
+  const label = document.createElement('span');
+  label.textContent = pre.classList.contains('flag-output') ? 'Flag' : language || 'Code';
+  const copy = document.createElement('button');
+  copy.type = 'button';
+  copy.textContent = 'Copy code';
+  copy.setAttribute('aria-label', `Copy ${label.textContent.toLowerCase()}`);
+  const status = document.createElement('span');
+  status.className = 'sr-only';
+  status.setAttribute('role', 'status');
+  let resetTimer;
+  copy.addEventListener('click', async () => {
+    clearTimeout(resetTimer);
+    const copied = await copyText(source, 'Code copied.');
+    copy.textContent = copied ? 'Copied ✓' : 'Try again';
+    status.textContent = copied ? 'Copied to clipboard.' : 'Copy failed. Select the code and copy it manually.';
+    resetTimer = setTimeout(() => { copy.textContent = 'Copy code'; status.textContent = ''; }, 2400);
+  });
+  toolbar.append(label, copy, status);
+  pre.before(block);
+  block.append(toolbar, pre);
+  pre.tabIndex = 0;
+  pre.setAttribute('aria-label', `${label.textContent} block; scroll horizontally for long lines`);
+});
 
 // UTC clock and debugger-like reading address.
 const clock = $('#clock');
@@ -224,7 +261,9 @@ terminalForm?.addEventListener('submit', (event) => {
 const archiveEntries = $$('.archive-entry');
 const archiveSearch = $('#archive-search');
 const archiveSort = $('#archive-sort');
-const collectionFilter = $('#collection-filter');
+const eventTabs = $$('.event-tabs [data-event]');
+const defaultCollection = eventTabs[0]?.dataset.event || 'All';
+let activeCollection = defaultCollection;
 const categoryFilter = $('#category-filter');
 const levelButtons = $$('.archive-filters [data-level]');
 const resultCount = $('#result-count');
@@ -242,7 +281,7 @@ const filterArchive = ({ updateUrl = true } = {}) => {
   if (!archiveEntries.length) return [];
   const query = (archiveSearch?.value || '').trim().toLowerCase();
   const queryAddress = normalizeMemoryAddress(query);
-  const collection = collectionFilter?.value || 'All';
+  const collection = activeCollection;
   const category = categoryFilter?.value || 'All';
   let visible = archiveEntries.filter((entry) => {
     const levelMatch = activeLevel === 'All' || entry.dataset.level === activeLevel;
@@ -250,7 +289,7 @@ const filterArchive = ({ updateUrl = true } = {}) => {
     const categoryMatch = category === 'All' || entry.dataset.category === category;
     const text = `${entry.dataset.title} ${entry.dataset.search} ${entry.dataset.collection} ${entry.dataset.address}`.toLowerCase();
     const searchMatch = !query || text.includes(query) || (queryAddress && entry.dataset.address === queryAddress);
-    const filterMatch = queryAddress ? true : levelMatch && collectionMatch && categoryMatch;
+    const filterMatch = levelMatch && collectionMatch && categoryMatch;
     entry.hidden = !(filterMatch && searchMatch);
     return !entry.hidden;
   });
@@ -277,11 +316,22 @@ const filterArchive = ({ updateUrl = true } = {}) => {
       if (trackLabel) trackLabel.textContent = `${trackCount} ${trackCount === 1 ? 'writeup' : 'writeups'}`;
     });
   });
+  eventTabs.forEach((tab) => {
+    if (tab.dataset.event === collection) tab.setAttribute('aria-current', 'page');
+    else tab.removeAttribute('aria-current');
+  });
+  levelButtons.forEach((button) => {
+    const count = archiveEntries.filter((entry) =>
+      (collection === 'All' || entry.dataset.collection === collection) &&
+      (category === 'All' || entry.dataset.category === category) &&
+      (button.dataset.level === 'All' || entry.dataset.level === button.dataset.level)
+    ).length;
+    $('span', button).textContent = count;
+  });
   if (resultCount) resultCount.textContent = `${visible.length} ${visible.length === 1 ? 'challenge' : 'challenges'}`;
   if (resultHint) {
-    const exact = queryAddress && archiveEntries.find((entry) => entry.dataset.address === queryAddress);
-    resultHint.textContent = exact ? 'EXACT ADDRESS · ENTER TO JMP' : query && visible.length === 1 ? 'ONE TARGET · ENTER TO OPEN' : 'TYPE ADDRESS + ENTER TO JMP';
-    resultHint.classList.toggle('is-match', Boolean(exact || (query && visible.length === 1)));
+    resultHint.textContent = query && visible.length === 1 ? 'Press Enter to open this writeup.' : 'Choose an event or search its writeups.';
+    resultHint.classList.toggle('is-match', Boolean(query && visible.length === 1));
   }
   if (archiveEmpty) archiveEmpty.hidden = visible.length !== 0;
   if (updateUrl) {
@@ -289,20 +339,38 @@ const filterArchive = ({ updateUrl = true } = {}) => {
     if (query) params.set('q', archiveSearch.value.trim());
     if (activeLevel !== 'All') params.set('level', activeLevel);
     if (category !== 'All') params.set('category', category);
-    if (collection !== 'All') params.set('collection', collection);
+    params.set('collection', collection);
     if (sort && sort !== 'default') params.set('sort', sort);
     history.replaceState({}, '', `${location.pathname}${params.size ? `?${params}` : ''}${location.hash}`);
   }
   return visible;
 };
-if (archiveEntries.length) {
+const restoreArchiveState = () => {
   const params = new URLSearchParams(location.search);
   if (archiveSearch) archiveSearch.value = params.get('q') || '';
   const requestedLevel = params.get('level');
-  if (requestedLevel && levelButtons.some((button) => button.dataset.level === requestedLevel)) activeLevel = requestedLevel;
-  if (categoryFilter && [...categoryFilter.options].some((option) => option.value === params.get('category'))) categoryFilter.value = params.get('category');
-  if (collectionFilter && [...collectionFilter.options].some((option) => option.value === params.get('collection'))) collectionFilter.value = params.get('collection');
-  if (archiveSort && [...archiveSort.options].some((option) => option.value === params.get('sort'))) archiveSort.value = params.get('sort');
+  activeLevel = levelButtons.some((button) => button.dataset.level === requestedLevel) ? requestedLevel : 'All';
+  const requestedCollection = params.get('collection') === 'MOJO-JOJO' ? 'MOJO-JOJO CTF' : params.get('collection');
+  activeCollection = eventTabs.some((tab) => tab.dataset.event === requestedCollection) ? requestedCollection : defaultCollection;
+  if (categoryFilter) categoryFilter.value = [...categoryFilter.options].some((option) => option.value === params.get('category')) ? params.get('category') : 'All';
+  if (archiveSort) archiveSort.value = [...archiveSort.options].some((option) => option.value === params.get('sort')) ? params.get('sort') : 'default';
+  levelButtons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.level === activeLevel)));
+  filterArchive({ updateUrl: false });
+};
+if (archiveEntries.length) {
+  restoreArchiveState();
+  addEventListener('popstate', restoreArchiveState);
+  eventTabs.forEach((tab) => tab.addEventListener('click', (event) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    if (activeCollection === tab.dataset.event) return;
+    activeCollection = tab.dataset.event;
+    if (categoryFilter && activeCollection !== 'All' && !archiveEntries.some((entry) => entry.dataset.collection === activeCollection && entry.dataset.category === categoryFilter.value)) categoryFilter.value = 'All';
+    const params = new URLSearchParams(location.search);
+    params.set('collection', activeCollection);
+    history.pushState({}, '', `${location.pathname}?${params}`);
+    filterArchive();
+  }));
   levelButtons.forEach((button) => {
     button.setAttribute('aria-pressed', String(button.dataset.level === activeLevel));
     button.addEventListener('click', () => {
@@ -314,24 +382,21 @@ if (archiveEntries.length) {
   archiveSearch?.addEventListener('input', () => filterArchive());
   archiveSort?.addEventListener('change', () => filterArchive());
   categoryFilter?.addEventListener('change', () => filterArchive());
-  collectionFilter?.addEventListener('change', () => filterArchive());
   $('#reset-filters')?.addEventListener('click', () => {
     activeLevel = 'All';
     if (archiveSearch) archiveSearch.value = '';
     if (archiveSort) archiveSort.value = 'default';
     if (categoryFilter) categoryFilter.value = 'All';
-    if (collectionFilter) collectionFilter.value = 'All';
     levelButtons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.level === 'All')));
     filterArchive();
   });
-  filterArchive({ updateUrl: false });
 }
 $('#archive-form')?.addEventListener('submit', (event) => {
   event.preventDefault();
   const query = (archiveSearch?.value || '').trim();
   const address = normalizeMemoryAddress(query);
-  const exact = address && archiveEntries.find((entry) => entry.dataset.address === address);
   const visible = filterArchive();
+  const exact = address && visible.find((entry) => entry.dataset.address === address);
   const target = exact || (query && visible.length === 1 ? visible[0] : null);
   target?.querySelector('a')?.click();
 });

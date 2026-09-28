@@ -1,17 +1,17 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>POSTMORTEM · Misc writeup — r3t0x</title><meta name="description" content="One byte was wrong. The process has prepared several megabytes of excuses."><link rel="canonical" href="https://ghaith-amdouni.github.io/challenge/securinets-friendly-ctf-2026/misc/postmortem/"><meta property="og:type" content="article"><meta property="og:title" content="POSTMORTEM · Misc writeup — r3t0x"><meta property="og:description" content="One byte was wrong. The process has prepared several megabytes of excuses."><meta property="og:url" content="https://ghaith-amdouni.github.io/challenge/securinets-friendly-ctf-2026/misc/postmortem/"><meta property="og:image" content="https://ghaith-amdouni.github.io/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=c3965b3600e8"><link rel="stylesheet" href="/static/css/akatsuki.css?v=c3965b3600e8"><script src="/static/js/site.js?v=c3965b3600e8" defer></script></head><body class="veil-open">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>POSTMORTEM · Misc writeup — r3t0x</title><meta name="description" content="One byte was wrong. The process has prepared several megabytes of excuses."><link rel="canonical" href="https://ghaith-amdouni.github.io/challenge/securinets-friendly-ctf-2026/misc/postmortem/"><meta property="og:type" content="article"><meta property="og:title" content="POSTMORTEM · Misc writeup — r3t0x"><meta property="og:description" content="One byte was wrong. The process has prepared several megabytes of excuses."><meta property="og:url" content="https://ghaith-amdouni.github.io/challenge/securinets-friendly-ctf-2026/misc/postmortem/"><meta property="og:image" content="https://ghaith-amdouni.github.io/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=b0b7e08b9fc0"><link rel="stylesheet" href="/static/css/akatsuki.css?v=b0b7e08b9fc0"><script src="/static/js/site.js?v=b0b7e08b9fc0" defer></script></head><body class="veil-open">
   <a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div>
   <div class="systembar"><div><span class="arch-mini" aria-hidden="true">Λ</span> archlinux <span class="bar-sep">/</span> r3t0x@portfolio <span class="system-workspaces" aria-hidden="true"><b>01</b> 02 03</span></div><div><span class="online-dot"></span> ALL SYSTEMS NOMINAL <span class="bar-sep">/</span> <time id="clock">UTC</time></div></div>
   <header class="site-header"><a class="brand" href="/" aria-label="r3t0x home"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><nav aria-label="Main navigation"><a href="/" >~/home</a><a href="/blog/" aria-current="page">~/archive</a><a href="/projects/" >~/projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>CV ↓</a></nav><button class="search-trigger" data-open-search aria-label="Search site"><span>⌕</span><kbd>Ctrl K</kbd></button></header>
   <div class="archive-transition" id="archive-transition" aria-hidden="true"><div class="route-eyelid route-eyelid-top"></div><div class="route-eyelid route-eyelid-bottom"></div><div class="vault-coordinates"><span>00:00:01</span><span>0x00401337</span></div><div class="vault-eye"><span class="vault-symbol"></span><span class="vault-reticle"></span><i></i><i></i><i></i></div><div class="vault-caption"><p><small>TSUKUYOMI ROUTE SHIFT</small><b id="transition-label">ENTERING THE MEMORY VAULT</b><span id="transition-address">~/archive</span></p></div></div>
   <div class="ambient-clouds" aria-hidden="true"><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg></div><div class="scroll-address" aria-hidden="true"><b>RIP</b><span id="scroll-address">0x00000000</span><i><em></em></i><small>PTR</small></div><div class="route-veil" id="route-veil" aria-hidden="true"><div class="veil-lid veil-lid-top"></div><div class="veil-lid veil-lid-bottom"></div><div class="veil-eye"><svg viewBox="0 0 200 200"><defs><clipPath id="veilClip"><circle cx="100" cy="100" r="98"/></clipPath></defs><circle cx="100" cy="100" r="94" fill="var(--red)" stroke="#000" stroke-width="10"/><g class="veil-base"><circle cx="100" cy="100" r="90" fill="var(--red)"/><circle cx="100" cy="100" r="16" fill="#000"/><circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/><g class="veil-tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g><g class="veil-tomoe" style="transform:rotate(120deg)"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g><g class="veil-tomoe" style="transform:rotate(240deg)"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g></g><image class="veil-mangekyo" href="/static/img/mangekyou.png" x="0" y="0" width="200" height="200" clip-path="url(#veilClip)"/></svg></div></div><div class="kamui-veil" id="kamui-veil" aria-hidden="true"></div><main id="main"><article class="wrap article-page writeup-page">
-    <a class="text-link" href="/blog/?collection=Securinets%20Friendly%20CTF%202026">← Back to the archive</a>
+    <a class="text-link" href="/blog/?collection=Securinets+Friendly+CTF+2026&amp;category=Misc">← Back to archive · Misc</a>
     <header class="article-heading"><p class="eyebrow">Securinets Friendly CTF 2026 <span>/</span> Misc WRITEUP</p><h1>POSTMORTEM</h1><p>One byte was wrong. The process has prepared several megabytes of excuses.</p>
       <div class="article-author"><img src="/static/img/ghaith.webp" alt="" width="44" height="44"><span><strong>r3t0x</strong><small>2026-09-28 · 999 points · hard</small></span><a class="button" href="#solver">Jump to solver ↓</a></div>
     </header>
     <div class="writeup-facts" aria-label="Challenge metadata"><span><small>EVENT</small>Securinets Friendly CTF 2026</span><span><small>CATEGORY</small>Misc</span><span><small>DIFFICULTY</small>hard</span><span><small>POINTS</small>999</span></div>
     <div class="writeup-tags"><span>misc</span></div>
     <div class="article-layout">
-      <div class="prose writeup-prose"><h2 id="summary">Summary</h2><p class="lead">One byte was wrong. The process has prepared several megabytes of excuses.</p><h2 id="walkthrough">Walkthrough</h2><h3 id="challenge">Challenge</h3>
+      <div class="prose writeup-prose"><h2 id="walkthrough">Walkthrough</h2><h3 id="challenge">Challenge</h3>
 <p>The player receives a stripped PIE executable, an ELF core dump, and a raw encrypted receipt. There is no remote service. The core was captured while a damaged SROP payload was executing inside <code>runner</code>.</p>
 <p>The public prompt is intentionally limited to:</p>
 <blockquote><p>One byte was wrong. The process has prepared several megabytes of excuses.</p></blockquote>
@@ -52,297 +52,297 @@ RSP = address of the next SROP preamble</code></pre>
 <p>Run the organizer solver from this directory:</p>
 <pre><code class="language-bash">python3 solver.py --audit</code></pre>
 <p>It reports one structurally valid repair and prints:</p>
-<pre><code class="language-text">Securinets{you_repaired_a_dead_process_and_it_still_had_better_stack_discipline_than_you}</code></pre><h2 id="solver">Reference solver</h2><p>The complete solver used to validate the challenge:</p><pre><code class="language-python">#!/usr/bin/env python3
+<pre><code class="language-text">Securinets{you_repaired_a_dead_process_and_it_still_had_better_stack_discipline_than_you}</code></pre><h2 id="solver">Reference solver</h2><p>The reference solver supplied with the writeup:</p><pre><code class="language-python"><span class="hljs-comment">#!/usr/bin/env python3</span>
 
-import argparse
-import struct
-from dataclasses import dataclass
-from pathlib import Path
+<span class="hljs-keyword">import</span> argparse
+<span class="hljs-keyword">import</span> struct
+<span class="hljs-keyword">from</span> dataclasses <span class="hljs-keyword">import</span> dataclass
+<span class="hljs-keyword">from</span> pathlib <span class="hljs-keyword">import</span> Path
 
-from elftools.elf.elffile import ELFFile
-
-
-FRAME_SIZE = 248
-PREAMBLE_SIZE = 24
-MASK64 = (1 &lt;&lt; 64) - 1
-POP_PATTERN = b&quot;\x58\xc3&quot;
-SYSCALL_PATTERN = b&quot;\x0f\x05\xc3&quot;
-MIX_PATTERN = b&quot;\x48\x8b\x07\x48\x31\xf0\x48\xd3\xc8\x48\x89\x02\xc3&quot;
+<span class="hljs-keyword">from</span> elftools.elf.elffile <span class="hljs-keyword">import</span> ELFFile
 
 
-def u64(data, offset=0):
-    return struct.unpack_from(&quot;&lt;Q&quot;, data, offset)[0]
+FRAME_SIZE = <span class="hljs-number">248</span>
+PREAMBLE_SIZE = <span class="hljs-number">24</span>
+MASK64 = (<span class="hljs-number">1</span> &lt;&lt; <span class="hljs-number">64</span>) - <span class="hljs-number">1</span>
+POP_PATTERN = <span class="hljs-string">b&quot;\x58\xc3&quot;</span>
+SYSCALL_PATTERN = <span class="hljs-string">b&quot;\x0f\x05\xc3&quot;</span>
+MIX_PATTERN = <span class="hljs-string">b&quot;\x48\x8b\x07\x48\x31\xf0\x48\xd3\xc8\x48\x89\x02\xc3&quot;</span>
 
 
-def ror64(value, count):
-    count &amp;= 63
-    if not count:
-        return value &amp; MASK64
-    return ((value &gt;&gt; count) | (value &lt;&lt; (64 - count))) &amp; MASK64
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">u64</span>(<span class="hljs-params">data, offset=<span class="hljs-number">0</span></span>):
+    <span class="hljs-keyword">return</span> struct.unpack_from(<span class="hljs-string">&quot;&lt;Q&quot;</span>, data, offset)[<span class="hljs-number">0</span>]
 
 
-@dataclass(frozen=True)
-class Segment:
-    address: int
-    data: bytes
-    flags: int
-
-    @property
-    def end(self):
-        return self.address + len(self.data)
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">ror64</span>(<span class="hljs-params">value, count</span>):
+    count &amp;= <span class="hljs-number">63</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> count:
+        <span class="hljs-keyword">return</span> value &amp; MASK64
+    <span class="hljs-keyword">return</span> ((value &gt;&gt; count) | (value &lt;&lt; (<span class="hljs-number">64</span> - count))) &amp; MASK64
 
 
-class CoreMemory:
-    def __init__(self, path):
-        self.segments = []
-        with open(path, &quot;rb&quot;) as handle:
+<span class="hljs-meta">@dataclass(<span class="hljs-params">frozen=<span class="hljs-literal">True</span></span>)</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Segment</span>:
+    address: <span class="hljs-built_in">int</span>
+    data: <span class="hljs-built_in">bytes</span>
+    flags: <span class="hljs-built_in">int</span>
+
+<span class="hljs-meta">    @property</span>
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">end</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">return</span> <span class="hljs-variable language_">self</span>.address + <span class="hljs-built_in">len</span>(<span class="hljs-variable language_">self</span>.data)
+
+
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">CoreMemory</span>:
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self, path</span>):
+        <span class="hljs-variable language_">self</span>.segments = []
+        <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(path, <span class="hljs-string">&quot;rb&quot;</span>) <span class="hljs-keyword">as</span> handle:
             elf = ELFFile(handle)
-            if elf.header[&quot;e_type&quot;] != &quot;ET_CORE&quot;:
-                raise ValueError(&quot;the supplied file is not an ELF core&quot;)
-            for segment in elf.iter_segments():
-                if segment[&quot;p_type&quot;] != &quot;PT_LOAD&quot; or not segment[&quot;p_filesz&quot;]:
-                    continue
-                self.segments.append(
-                    Segment(int(segment[&quot;p_vaddr&quot;]), segment.data(), int(segment[&quot;p_flags&quot;]))
+            <span class="hljs-keyword">if</span> elf.header[<span class="hljs-string">&quot;e_type&quot;</span>] != <span class="hljs-string">&quot;ET_CORE&quot;</span>:
+                <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">&quot;the supplied file is not an ELF core&quot;</span>)
+            <span class="hljs-keyword">for</span> segment <span class="hljs-keyword">in</span> elf.iter_segments():
+                <span class="hljs-keyword">if</span> segment[<span class="hljs-string">&quot;p_type&quot;</span>] != <span class="hljs-string">&quot;PT_LOAD&quot;</span> <span class="hljs-keyword">or</span> <span class="hljs-keyword">not</span> segment[<span class="hljs-string">&quot;p_filesz&quot;</span>]:
+                    <span class="hljs-keyword">continue</span>
+                <span class="hljs-variable language_">self</span>.segments.append(
+                    Segment(<span class="hljs-built_in">int</span>(segment[<span class="hljs-string">&quot;p_vaddr&quot;</span>]), segment.data(), <span class="hljs-built_in">int</span>(segment[<span class="hljs-string">&quot;p_flags&quot;</span>]))
                 )
 
-    def read(self, address, size):
-        for segment in self.segments:
-            if segment.address &lt;= address and address + size &lt;= segment.end:
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">read</span>(<span class="hljs-params">self, address, size</span>):
+        <span class="hljs-keyword">for</span> segment <span class="hljs-keyword">in</span> <span class="hljs-variable language_">self</span>.segments:
+            <span class="hljs-keyword">if</span> segment.address &lt;= address <span class="hljs-keyword">and</span> address + size &lt;= segment.end:
                 offset = address - segment.address
-                return segment.data[offset : offset + size]
-        raise KeyError(f&quot;unmapped core range {address:#x}+{size:#x}&quot;)
+                <span class="hljs-keyword">return</span> segment.data[offset : offset + size]
+        <span class="hljs-keyword">raise</span> KeyError(<span class="hljs-string">f&quot;unmapped core range <span class="hljs-subst">{address:#x}</span>+<span class="hljs-subst">{size:#x}</span>&quot;</span>)
 
-    def writable_segments(self):
-        return [segment for segment in self.segments if segment.flags &amp; 2]
-
-
-@dataclass(frozen=True)
-class Frame:
-    address: int
-    rdi: int
-    rsi: int
-    rdx: int
-    rax: int
-    rcx: int
-    rsp: int
-    rip: int
+    <span class="hljs-keyword">def</span> <span class="hljs-title function_">writable_segments</span>(<span class="hljs-params">self</span>):
+        <span class="hljs-keyword">return</span> [segment <span class="hljs-keyword">for</span> segment <span class="hljs-keyword">in</span> <span class="hljs-variable language_">self</span>.segments <span class="hljs-keyword">if</span> segment.flags &amp; <span class="hljs-number">2</span>]
 
 
-@dataclass
-class Solution:
-    flag: bytes
-    candidate_count: int
-    pie_base: int
-    broken_frame: int
-    repaired_rsp: int
-    chain: list
+<span class="hljs-meta">@dataclass(<span class="hljs-params">frozen=<span class="hljs-literal">True</span></span>)</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Frame</span>:
+    address: <span class="hljs-built_in">int</span>
+    rdi: <span class="hljs-built_in">int</span>
+    rsi: <span class="hljs-built_in">int</span>
+    rdx: <span class="hljs-built_in">int</span>
+    rax: <span class="hljs-built_in">int</span>
+    rcx: <span class="hljs-built_in">int</span>
+    rsp: <span class="hljs-built_in">int</span>
+    rip: <span class="hljs-built_in">int</span>
 
 
-def executable_matches(path, pattern):
+<span class="hljs-meta">@dataclass</span>
+<span class="hljs-keyword">class</span> <span class="hljs-title class_">Solution</span>:
+    flag: <span class="hljs-built_in">bytes</span>
+    candidate_count: <span class="hljs-built_in">int</span>
+    pie_base: <span class="hljs-built_in">int</span>
+    broken_frame: <span class="hljs-built_in">int</span>
+    repaired_rsp: <span class="hljs-built_in">int</span>
+    chain: <span class="hljs-built_in">list</span>
+
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">executable_matches</span>(<span class="hljs-params">path, pattern</span>):
     matches = []
-    with open(path, &quot;rb&quot;) as handle:
+    <span class="hljs-keyword">with</span> <span class="hljs-built_in">open</span>(path, <span class="hljs-string">&quot;rb&quot;</span>) <span class="hljs-keyword">as</span> handle:
         elf = ELFFile(handle)
-        for segment in elf.iter_segments():
-            if segment[&quot;p_type&quot;] != &quot;PT_LOAD&quot; or not (int(segment[&quot;p_flags&quot;]) &amp; 1):
-                continue
+        <span class="hljs-keyword">for</span> segment <span class="hljs-keyword">in</span> elf.iter_segments():
+            <span class="hljs-keyword">if</span> segment[<span class="hljs-string">&quot;p_type&quot;</span>] != <span class="hljs-string">&quot;PT_LOAD&quot;</span> <span class="hljs-keyword">or</span> <span class="hljs-keyword">not</span> (<span class="hljs-built_in">int</span>(segment[<span class="hljs-string">&quot;p_flags&quot;</span>]) &amp; <span class="hljs-number">1</span>):
+                <span class="hljs-keyword">continue</span>
             data = segment.data()
-            start = 0
-            while True:
+            start = <span class="hljs-number">0</span>
+            <span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:
                 offset = data.find(pattern, start)
-                if offset &lt; 0:
-                    break
-                matches.append(int(segment[&quot;p_vaddr&quot;]) + offset)
-                start = offset + 1
-    return matches
+                <span class="hljs-keyword">if</span> offset &lt; <span class="hljs-number">0</span>:
+                    <span class="hljs-keyword">break</span>
+                matches.append(<span class="hljs-built_in">int</span>(segment[<span class="hljs-string">&quot;p_vaddr&quot;</span>]) + offset)
+                start = offset + <span class="hljs-number">1</span>
+    <span class="hljs-keyword">return</span> matches
 
 
-def aligned_qwords(segment):
-    first = (-segment.address) &amp; 7
-    for offset in range(first, len(segment.data) - PREAMBLE_SIZE + 1, 8):
-        yield segment.address + offset, u64(segment.data, offset), u64(segment.data, offset + 8), u64(segment.data, offset + 16)
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">aligned_qwords</span>(<span class="hljs-params">segment</span>):
+    first = (-segment.address) &amp; <span class="hljs-number">7</span>
+    <span class="hljs-keyword">for</span> offset <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(first, <span class="hljs-built_in">len</span>(segment.data) - PREAMBLE_SIZE + <span class="hljs-number">1</span>, <span class="hljs-number">8</span>):
+        <span class="hljs-keyword">yield</span> segment.address + offset, u64(segment.data, offset), u64(segment.data, offset + <span class="hljs-number">8</span>), u64(segment.data, offset + <span class="hljs-number">16</span>)
 
 
-def identify_layout(binary_path, memory):
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">identify_layout</span>(<span class="hljs-params">binary_path, memory</span>):
     pop_offsets = executable_matches(binary_path, POP_PATTERN)
     syscall_offsets = executable_matches(binary_path, SYSCALL_PATTERN)
     mix_offsets = executable_matches(binary_path, MIX_PATTERN)
-    if not pop_offsets or not syscall_offsets or not mix_offsets:
-        raise ValueError(&quot;required instruction sequences were not found&quot;)
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> pop_offsets <span class="hljs-keyword">or</span> <span class="hljs-keyword">not</span> syscall_offsets <span class="hljs-keyword">or</span> <span class="hljs-keyword">not</span> mix_offsets:
+        <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">&quot;required instruction sequences were not found&quot;</span>)
 
     observations = []
-    for segment in memory.writable_segments():
-        for address, first, middle, third in aligned_qwords(segment):
-            if middle == 15:
+    <span class="hljs-keyword">for</span> segment <span class="hljs-keyword">in</span> memory.writable_segments():
+        <span class="hljs-keyword">for</span> address, first, middle, third <span class="hljs-keyword">in</span> aligned_qwords(segment):
+            <span class="hljs-keyword">if</span> middle == <span class="hljs-number">15</span>:
                 observations.append((address, first, third))
 
     layouts = {}
-    for _, runtime_pop, runtime_syscall in observations:
-        for pop_offset in pop_offsets:
+    <span class="hljs-keyword">for</span> _, runtime_pop, runtime_syscall <span class="hljs-keyword">in</span> observations:
+        <span class="hljs-keyword">for</span> pop_offset <span class="hljs-keyword">in</span> pop_offsets:
             base = runtime_pop - pop_offset
-            if base &lt;= 0 or base &amp; 0xFFF:
-                continue
-            for syscall_offset in syscall_offsets:
-                if base + syscall_offset == runtime_syscall:
-                    layouts[(base, runtime_pop, runtime_syscall)] = 0
+            <span class="hljs-keyword">if</span> base &lt;= <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> base &amp; <span class="hljs-number">0xFFF</span>:
+                <span class="hljs-keyword">continue</span>
+            <span class="hljs-keyword">for</span> syscall_offset <span class="hljs-keyword">in</span> syscall_offsets:
+                <span class="hljs-keyword">if</span> base + syscall_offset == runtime_syscall:
+                    layouts[(base, runtime_pop, runtime_syscall)] = <span class="hljs-number">0</span>
 
-    for layout in list(layouts):
+    <span class="hljs-keyword">for</span> layout <span class="hljs-keyword">in</span> <span class="hljs-built_in">list</span>(layouts):
         _, runtime_pop, runtime_syscall = layout
-        layouts[layout] = sum(
-            first == runtime_pop and third == runtime_syscall
-            for _, first, third in observations
+        layouts[layout] = <span class="hljs-built_in">sum</span>(
+            first == runtime_pop <span class="hljs-keyword">and</span> third == runtime_syscall
+            <span class="hljs-keyword">for</span> _, first, third <span class="hljs-keyword">in</span> observations
         )
 
-    if not layouts:
-        raise ValueError(&quot;no SROP preamble layout was recovered&quot;)
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> layouts:
+        <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">&quot;no SROP preamble layout was recovered&quot;</span>)
 
-    base, runtime_pop, runtime_syscall = max(layouts, key=layouts.get)
-    if layouts[(base, runtime_pop, runtime_syscall)] &lt; 4:
-        raise ValueError(&quot;not enough matching SROP preambles&quot;)
+    base, runtime_pop, runtime_syscall = <span class="hljs-built_in">max</span>(layouts, key=layouts.get)
+    <span class="hljs-keyword">if</span> layouts[(base, runtime_pop, runtime_syscall)] &lt; <span class="hljs-number">4</span>:
+        <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">&quot;not enough matching SROP preambles&quot;</span>)
 
-    best_mix = max(
-        (base + offset for offset in mix_offsets),
-        key=lambda address: sum(
-            memory.read(stage + PREAMBLE_SIZE + 168, 8) == struct.pack(&quot;&lt;Q&quot;, address)
-            for stage, first, third in observations
-            if first == runtime_pop and third == runtime_syscall
-            and _readable(memory, stage + PREAMBLE_SIZE, FRAME_SIZE)
+    best_mix = <span class="hljs-built_in">max</span>(
+        (base + offset <span class="hljs-keyword">for</span> offset <span class="hljs-keyword">in</span> mix_offsets),
+        key=<span class="hljs-keyword">lambda</span> address: <span class="hljs-built_in">sum</span>(
+            memory.read(stage + PREAMBLE_SIZE + <span class="hljs-number">168</span>, <span class="hljs-number">8</span>) == struct.pack(<span class="hljs-string">&quot;&lt;Q&quot;</span>, address)
+            <span class="hljs-keyword">for</span> stage, first, third <span class="hljs-keyword">in</span> observations
+            <span class="hljs-keyword">if</span> first == runtime_pop <span class="hljs-keyword">and</span> third == runtime_syscall
+            <span class="hljs-keyword">and</span> _readable(memory, stage + PREAMBLE_SIZE, FRAME_SIZE)
         ),
     )
-    return base, runtime_pop, runtime_syscall, best_mix
+    <span class="hljs-keyword">return</span> base, runtime_pop, runtime_syscall, best_mix
 
 
-def _readable(memory, address, size):
-    try:
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">_readable</span>(<span class="hljs-params">memory, address, size</span>):
+    <span class="hljs-keyword">try</span>:
         memory.read(address, size)
-        return True
-    except KeyError:
-        return False
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span>
+    <span class="hljs-keyword">except</span> KeyError:
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span>
 
 
-def collect_frames(memory, runtime_pop, runtime_syscall, runtime_mix):
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">collect_frames</span>(<span class="hljs-params">memory, runtime_pop, runtime_syscall, runtime_mix</span>):
     frames = {}
-    for segment in memory.writable_segments():
-        for address, first, middle, third in aligned_qwords(segment):
-            if (first, middle, third) != (runtime_pop, 15, runtime_syscall):
-                continue
-            try:
+    <span class="hljs-keyword">for</span> segment <span class="hljs-keyword">in</span> memory.writable_segments():
+        <span class="hljs-keyword">for</span> address, first, middle, third <span class="hljs-keyword">in</span> aligned_qwords(segment):
+            <span class="hljs-keyword">if</span> (first, middle, third) != (runtime_pop, <span class="hljs-number">15</span>, runtime_syscall):
+                <span class="hljs-keyword">continue</span>
+            <span class="hljs-keyword">try</span>:
                 raw = memory.read(address + PREAMBLE_SIZE, FRAME_SIZE)
-            except KeyError:
-                continue
+            <span class="hljs-keyword">except</span> KeyError:
+                <span class="hljs-keyword">continue</span>
             frame = Frame(
                 address=address,
-                rdi=u64(raw, 104),
-                rsi=u64(raw, 112),
-                rdx=u64(raw, 136),
-                rax=u64(raw, 144),
-                rcx=u64(raw, 152),
-                rsp=u64(raw, 160),
-                rip=u64(raw, 168),
+                rdi=u64(raw, <span class="hljs-number">104</span>),
+                rsi=u64(raw, <span class="hljs-number">112</span>),
+                rdx=u64(raw, <span class="hljs-number">136</span>),
+                rax=u64(raw, <span class="hljs-number">144</span>),
+                rcx=u64(raw, <span class="hljs-number">152</span>),
+                rsp=u64(raw, <span class="hljs-number">160</span>),
+                rip=u64(raw, <span class="hljs-number">168</span>),
             )
-            if frame.rip == runtime_mix or (
-                frame.rip == runtime_syscall and frame.rax in (1, 60)
+            <span class="hljs-keyword">if</span> frame.rip == runtime_mix <span class="hljs-keyword">or</span> (
+                frame.rip == runtime_syscall <span class="hljs-keyword">and</span> frame.rax <span class="hljs-keyword">in</span> (<span class="hljs-number">1</span>, <span class="hljs-number">60</span>)
             ):
                 frames[address] = frame
-    return frames
+    <span class="hljs-keyword">return</span> frames
 
 
-def one_byte_apart(first, second):
-    return sum(a != b for a, b in zip(first.to_bytes(8, &quot;little&quot;), second.to_bytes(8, &quot;little&quot;))) == 1
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">one_byte_apart</span>(<span class="hljs-params">first, second</span>):
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">sum</span>(a != b <span class="hljs-keyword">for</span> a, b <span class="hljs-keyword">in</span> <span class="hljs-built_in">zip</span>(first.to_bytes(<span class="hljs-number">8</span>, <span class="hljs-string">&quot;little&quot;</span>), second.to_bytes(<span class="hljs-number">8</span>, <span class="hljs-string">&quot;little&quot;</span>))) == <span class="hljs-number">1</span>
 
 
-def walk(frames, start, broken, replacement):
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">walk</span>(<span class="hljs-params">frames, start, broken, replacement</span>):
     chain = []
-    seen = set()
+    seen = <span class="hljs-built_in">set</span>()
     current = start
-    while current in frames and current not in seen and len(chain) &lt;= len(frames):
+    <span class="hljs-keyword">while</span> current <span class="hljs-keyword">in</span> frames <span class="hljs-keyword">and</span> current <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> seen <span class="hljs-keyword">and</span> <span class="hljs-built_in">len</span>(chain) &lt;= <span class="hljs-built_in">len</span>(frames):
         seen.add(current)
         frame = frames[current]
         chain.append(frame)
-        current = replacement if current == broken else frame.rsp
-    return chain
+        current = replacement <span class="hljs-keyword">if</span> current == broken <span class="hljs-keyword">else</span> frame.rsp
+    <span class="hljs-keyword">return</span> chain
 
 
-def validate_chain(chain, receipt_size, runtime_mix, runtime_syscall):
-    block_count = receipt_size // 8
-    if len(chain) != block_count + 2:
-        return None
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">validate_chain</span>(<span class="hljs-params">chain, receipt_size, runtime_mix, runtime_syscall</span>):
+    block_count = receipt_size // <span class="hljs-number">8</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(chain) != block_count + <span class="hljs-number">2</span>:
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span>
 
     mixes = chain[:block_count]
     writer = chain[block_count]
-    exiter = chain[block_count + 1]
-    if any(frame.rip != runtime_mix for frame in mixes):
-        return None
-    if not (writer.rip == runtime_syscall and writer.rax == 1 and writer.rdi == 1):
-        return None
-    if not (exiter.rip == runtime_syscall and exiter.rax == 60 and exiter.rdi == 0):
-        return None
-    if writer.rsp != exiter.address:
-        return None
+    exiter = chain[block_count + <span class="hljs-number">1</span>]
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">any</span>(frame.rip != runtime_mix <span class="hljs-keyword">for</span> frame <span class="hljs-keyword">in</span> mixes):
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> (writer.rip == runtime_syscall <span class="hljs-keyword">and</span> writer.rax == <span class="hljs-number">1</span> <span class="hljs-keyword">and</span> writer.rdi == <span class="hljs-number">1</span>):
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> (exiter.rip == runtime_syscall <span class="hljs-keyword">and</span> exiter.rax == <span class="hljs-number">60</span> <span class="hljs-keyword">and</span> exiter.rdi == <span class="hljs-number">0</span>):
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span>
+    <span class="hljs-keyword">if</span> writer.rsp != exiter.address:
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span>
 
-    cipher_base = min(frame.rdi for frame in mixes)
-    output_base = min(frame.rdx for frame in mixes)
-    expected_cipher = [cipher_base + index * 8 for index in range(block_count)]
-    expected_output = [output_base + index * 8 for index in range(block_count)]
-    if sorted(frame.rdi for frame in mixes) != expected_cipher:
-        return None
-    if sorted(frame.rdx for frame in mixes) != expected_output:
-        return None
-    if writer.rsi != output_base:
-        return None
-    if not ((block_count - 1) * 8 &lt; writer.rdx &lt;= block_count * 8):
-        return None
-    if any(not (1 &lt;= (frame.rcx &amp; MASK64) &lt;= 63) for frame in mixes):
-        return None
-    return cipher_base, output_base, writer.rdx
+    cipher_base = <span class="hljs-built_in">min</span>(frame.rdi <span class="hljs-keyword">for</span> frame <span class="hljs-keyword">in</span> mixes)
+    output_base = <span class="hljs-built_in">min</span>(frame.rdx <span class="hljs-keyword">for</span> frame <span class="hljs-keyword">in</span> mixes)
+    expected_cipher = [cipher_base + index * <span class="hljs-number">8</span> <span class="hljs-keyword">for</span> index <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(block_count)]
+    expected_output = [output_base + index * <span class="hljs-number">8</span> <span class="hljs-keyword">for</span> index <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(block_count)]
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">sorted</span>(frame.rdi <span class="hljs-keyword">for</span> frame <span class="hljs-keyword">in</span> mixes) != expected_cipher:
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">sorted</span>(frame.rdx <span class="hljs-keyword">for</span> frame <span class="hljs-keyword">in</span> mixes) != expected_output:
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span>
+    <span class="hljs-keyword">if</span> writer.rsi != output_base:
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> ((block_count - <span class="hljs-number">1</span>) * <span class="hljs-number">8</span> &lt; writer.rdx &lt;= block_count * <span class="hljs-number">8</span>):
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span>
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">any</span>(<span class="hljs-keyword">not</span> (<span class="hljs-number">1</span> &lt;= (frame.rcx &amp; MASK64) &lt;= <span class="hljs-number">63</span>) <span class="hljs-keyword">for</span> frame <span class="hljs-keyword">in</span> mixes):
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">None</span>
+    <span class="hljs-keyword">return</span> cipher_base, output_base, writer.rdx
 
 
-def solve(binary_path, core_path, receipt_path):
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">solve</span>(<span class="hljs-params">binary_path, core_path, receipt_path</span>):
     receipt = Path(receipt_path).read_bytes()
-    if not receipt or len(receipt) % 8:
-        raise ValueError(&quot;receipt length must be a non-zero multiple of eight&quot;)
+    <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> receipt <span class="hljs-keyword">or</span> <span class="hljs-built_in">len</span>(receipt) % <span class="hljs-number">8</span>:
+        <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">&quot;receipt length must be a non-zero multiple of eight&quot;</span>)
 
     memory = CoreMemory(core_path)
     pie_base, runtime_pop, runtime_syscall, runtime_mix = identify_layout(binary_path, memory)
     frames = collect_frames(memory, runtime_pop, runtime_syscall, runtime_mix)
-    if len(frames) &lt; len(receipt) // 8 + 2:
-        raise ValueError(&quot;too few candidate signal frames&quot;)
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(frames) &lt; <span class="hljs-built_in">len</span>(receipt) // <span class="hljs-number">8</span> + <span class="hljs-number">2</span>:
+        <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">&quot;too few candidate signal frames&quot;</span>)
 
     candidates = []
-    addresses = list(frames)
-    for broken_address, broken in frames.items():
-        if broken.rip != runtime_mix or broken.rsp in frames:
-            continue
-        for replacement in addresses:
-            if not one_byte_apart(broken.rsp, replacement):
-                continue
-            for start in addresses:
+    addresses = <span class="hljs-built_in">list</span>(frames)
+    <span class="hljs-keyword">for</span> broken_address, broken <span class="hljs-keyword">in</span> frames.items():
+        <span class="hljs-keyword">if</span> broken.rip != runtime_mix <span class="hljs-keyword">or</span> broken.rsp <span class="hljs-keyword">in</span> frames:
+            <span class="hljs-keyword">continue</span>
+        <span class="hljs-keyword">for</span> replacement <span class="hljs-keyword">in</span> addresses:
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> one_byte_apart(broken.rsp, replacement):
+                <span class="hljs-keyword">continue</span>
+            <span class="hljs-keyword">for</span> start <span class="hljs-keyword">in</span> addresses:
                 chain = walk(frames, start, broken_address, replacement)
-                layout = validate_chain(chain, len(receipt), runtime_mix, runtime_syscall)
-                if layout is not None:
+                layout = validate_chain(chain, <span class="hljs-built_in">len</span>(receipt), runtime_mix, runtime_syscall)
+                <span class="hljs-keyword">if</span> layout <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:
                     candidates.append((broken_address, replacement, chain, layout))
 
     unique = {}
-    for candidate in candidates:
-        identity = (candidate[0], candidate[1], tuple(frame.address for frame in candidate[2]))
+    <span class="hljs-keyword">for</span> candidate <span class="hljs-keyword">in</span> candidates:
+        identity = (candidate[<span class="hljs-number">0</span>], candidate[<span class="hljs-number">1</span>], <span class="hljs-built_in">tuple</span>(frame.address <span class="hljs-keyword">for</span> frame <span class="hljs-keyword">in</span> candidate[<span class="hljs-number">2</span>]))
         unique[identity] = candidate
-    candidates = list(unique.values())
-    if len(candidates) != 1:
-        raise ValueError(f&quot;expected exactly one structural repair, found {len(candidates)}&quot;)
+    candidates = <span class="hljs-built_in">list</span>(unique.values())
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(candidates) != <span class="hljs-number">1</span>:
+        <span class="hljs-keyword">raise</span> ValueError(<span class="hljs-string">f&quot;expected exactly one structural repair, found <span class="hljs-subst">{<span class="hljs-built_in">len</span>(candidates)}</span>&quot;</span>)
 
-    broken_address, replacement, chain, layout = candidates[0]
+    broken_address, replacement, chain, layout = candidates[<span class="hljs-number">0</span>]
     cipher_base, output_base, flag_length = layout
-    output = bytearray(len(receipt))
-    for frame in chain[: len(receipt) // 8]:
-        source_index = (frame.rdi - cipher_base) // 8
-        destination_index = (frame.rdx - output_base) // 8
-        ciphertext = u64(receipt, source_index * 8)
+    output = <span class="hljs-built_in">bytearray</span>(<span class="hljs-built_in">len</span>(receipt))
+    <span class="hljs-keyword">for</span> frame <span class="hljs-keyword">in</span> chain[: <span class="hljs-built_in">len</span>(receipt) // <span class="hljs-number">8</span>]:
+        source_index = (frame.rdi - cipher_base) // <span class="hljs-number">8</span>
+        destination_index = (frame.rdx - output_base) // <span class="hljs-number">8</span>
+        ciphertext = u64(receipt, source_index * <span class="hljs-number">8</span>)
         plaintext = ror64(ciphertext ^ frame.rsi, frame.rcx)
-        struct.pack_into(&quot;&lt;Q&quot;, output, destination_index * 8, plaintext)
+        struct.pack_into(<span class="hljs-string">&quot;&lt;Q&quot;</span>, output, destination_index * <span class="hljs-number">8</span>, plaintext)
 
-    return Solution(
-        flag=bytes(output[:flag_length]),
-        candidate_count=len(candidates),
+    <span class="hljs-keyword">return</span> Solution(
+        flag=<span class="hljs-built_in">bytes</span>(output[:flag_length]),
+        candidate_count=<span class="hljs-built_in">len</span>(candidates),
         pie_base=pie_base,
         broken_frame=broken_address,
         repaired_rsp=replacement,
@@ -350,27 +350,27 @@ def solve(binary_path, core_path, receipt_path):
     )
 
 
-def main():
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">main</span>():
     parser = argparse.ArgumentParser()
-    parser.add_argument(&quot;--binary&quot;, default=&quot;attachments/runner&quot;)
-    parser.add_argument(&quot;--core&quot;, default=&quot;attachments/crash.core&quot;)
-    parser.add_argument(&quot;--receipt&quot;, default=&quot;attachments/receipt.enc&quot;)
-    parser.add_argument(&quot;--audit&quot;, action=&quot;store_true&quot;)
+    parser.add_argument(<span class="hljs-string">&quot;--binary&quot;</span>, default=<span class="hljs-string">&quot;attachments/runner&quot;</span>)
+    parser.add_argument(<span class="hljs-string">&quot;--core&quot;</span>, default=<span class="hljs-string">&quot;attachments/crash.core&quot;</span>)
+    parser.add_argument(<span class="hljs-string">&quot;--receipt&quot;</span>, default=<span class="hljs-string">&quot;attachments/receipt.enc&quot;</span>)
+    parser.add_argument(<span class="hljs-string">&quot;--audit&quot;</span>, action=<span class="hljs-string">&quot;store_true&quot;</span>)
     arguments = parser.parse_args()
 
     result = solve(arguments.binary, arguments.core, arguments.receipt)
-    if arguments.audit:
-        print(f&quot;PIE base:       {result.pie_base:#x}&quot;)
-        print(f&quot;broken frame:   {result.broken_frame:#x}&quot;)
-        print(f&quot;repaired RSP:   {result.repaired_rsp:#x}&quot;)
-        print(f&quot;chain frames:   {len(result.chain)}&quot;)
-        print(f&quot;valid repairs:  {result.candidate_count}&quot;)
-    print(result.flag.decode(&quot;ascii&quot;))
+    <span class="hljs-keyword">if</span> arguments.audit:
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;PIE base:       <span class="hljs-subst">{result.pie_base:#x}</span>&quot;</span>)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;broken frame:   <span class="hljs-subst">{result.broken_frame:#x}</span>&quot;</span>)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;repaired RSP:   <span class="hljs-subst">{result.repaired_rsp:#x}</span>&quot;</span>)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;chain frames:   <span class="hljs-subst">{<span class="hljs-built_in">len</span>(result.chain)}</span>&quot;</span>)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f&quot;valid repairs:  <span class="hljs-subst">{result.candidate_count}</span>&quot;</span>)
+    <span class="hljs-built_in">print</span>(result.flag.decode(<span class="hljs-string">&quot;ascii&quot;</span>))
 
 
-if __name__ == &quot;__main__&quot;:
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:
     main()</code></pre><h2 id="flag">Flag</h2><pre class="flag-output"><code>Securinets{you_repaired_a_dead_process_and_it_still_had_better_stack_discipline_than_you}</code></pre>
-      <div class="article-end"><span>Published 2026-09-28 · by r3t0x</span><a class="text-link" href="/blog/?collection=Securinets%20Friendly%20CTF%202026">More Securinets Friendly CTF 2026 writeups ↗</a></div></div>
+      <div class="article-end"><span>Published 2026-09-28 · by r3t0x</span><a class="text-link" href="/blog/?collection=Securinets+Friendly+CTF+2026&amp;category=Misc">← Back to archive · Misc</a></div></div>
     </div>
   </article></main>
   <footer class="site-footer"><div class="footer-top"><a class="brand" href="/"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><p>Always curious. Always one layer deeper.</p><a href="#main" class="text-link">Back to top ↑</a></div><div class="footer-bottom"><span>© 2026 Ghaith Amdouni <span class="red">·</span> Made with curiosity & caffeine.</span><div><a href="/projects/">Projects ↗</a><a href="https://github.com/Ghaith-amdouni">GitHub ↗</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn ↗</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>Résumé ↗</a><a href="/feed.xml">RSS ↗</a><button id="motion-toggle" aria-pressed="false">Motion: on</button></div></div></footer>

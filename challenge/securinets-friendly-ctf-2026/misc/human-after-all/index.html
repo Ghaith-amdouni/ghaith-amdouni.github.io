@@ -1,106 +1,106 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>Human After All · Misc writeup — r3t0x</title><meta name="description" content="Haters gonna say it s AI…"><link rel="canonical" href="https://ghaith-amdouni.github.io/challenge/securinets-friendly-ctf-2026/misc/human-after-all/"><meta property="og:type" content="article"><meta property="og:title" content="Human After All · Misc writeup — r3t0x"><meta property="og:description" content="Haters gonna say it s AI…"><meta property="og:url" content="https://ghaith-amdouni.github.io/challenge/securinets-friendly-ctf-2026/misc/human-after-all/"><meta property="og:image" content="https://ghaith-amdouni.github.io/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=c3965b3600e8"><link rel="stylesheet" href="/static/css/akatsuki.css?v=c3965b3600e8"><script src="/static/js/site.js?v=c3965b3600e8" defer></script></head><body class="veil-open">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>Human After All · Misc writeup — r3t0x</title><meta name="description" content="Haters gonna say it s AI"><link rel="canonical" href="https://ghaith-amdouni.github.io/challenge/securinets-friendly-ctf-2026/misc/human-after-all/"><meta property="og:type" content="article"><meta property="og:title" content="Human After All · Misc writeup — r3t0x"><meta property="og:description" content="Haters gonna say it s AI"><meta property="og:url" content="https://ghaith-amdouni.github.io/challenge/securinets-friendly-ctf-2026/misc/human-after-all/"><meta property="og:image" content="https://ghaith-amdouni.github.io/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=b0b7e08b9fc0"><link rel="stylesheet" href="/static/css/akatsuki.css?v=b0b7e08b9fc0"><script src="/static/js/site.js?v=b0b7e08b9fc0" defer></script></head><body class="veil-open">
   <a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div>
   <div class="systembar"><div><span class="arch-mini" aria-hidden="true">Λ</span> archlinux <span class="bar-sep">/</span> r3t0x@portfolio <span class="system-workspaces" aria-hidden="true"><b>01</b> 02 03</span></div><div><span class="online-dot"></span> ALL SYSTEMS NOMINAL <span class="bar-sep">/</span> <time id="clock">UTC</time></div></div>
   <header class="site-header"><a class="brand" href="/" aria-label="r3t0x home"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><nav aria-label="Main navigation"><a href="/" >~/home</a><a href="/blog/" aria-current="page">~/archive</a><a href="/projects/" >~/projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>CV ↓</a></nav><button class="search-trigger" data-open-search aria-label="Search site"><span>⌕</span><kbd>Ctrl K</kbd></button></header>
   <div class="archive-transition" id="archive-transition" aria-hidden="true"><div class="route-eyelid route-eyelid-top"></div><div class="route-eyelid route-eyelid-bottom"></div><div class="vault-coordinates"><span>00:00:01</span><span>0x00401337</span></div><div class="vault-eye"><span class="vault-symbol"></span><span class="vault-reticle"></span><i></i><i></i><i></i></div><div class="vault-caption"><p><small>TSUKUYOMI ROUTE SHIFT</small><b id="transition-label">ENTERING THE MEMORY VAULT</b><span id="transition-address">~/archive</span></p></div></div>
   <div class="ambient-clouds" aria-hidden="true"><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg></div><div class="scroll-address" aria-hidden="true"><b>RIP</b><span id="scroll-address">0x00000000</span><i><em></em></i><small>PTR</small></div><div class="route-veil" id="route-veil" aria-hidden="true"><div class="veil-lid veil-lid-top"></div><div class="veil-lid veil-lid-bottom"></div><div class="veil-eye"><svg viewBox="0 0 200 200"><defs><clipPath id="veilClip"><circle cx="100" cy="100" r="98"/></clipPath></defs><circle cx="100" cy="100" r="94" fill="var(--red)" stroke="#000" stroke-width="10"/><g class="veil-base"><circle cx="100" cy="100" r="90" fill="var(--red)"/><circle cx="100" cy="100" r="16" fill="#000"/><circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/><g class="veil-tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g><g class="veil-tomoe" style="transform:rotate(120deg)"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g><g class="veil-tomoe" style="transform:rotate(240deg)"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g></g><image class="veil-mangekyo" href="/static/img/mangekyou.png" x="0" y="0" width="200" height="200" clip-path="url(#veilClip)"/></svg></div></div><div class="kamui-veil" id="kamui-veil" aria-hidden="true"></div><main id="main"><article class="wrap article-page writeup-page">
-    <a class="text-link" href="/blog/?collection=Securinets%20Friendly%20CTF%202026">← Back to the archive</a>
-    <header class="article-heading"><p class="eyebrow">Securinets Friendly CTF 2026 <span>/</span> Misc WRITEUP</p><h1>Human After All</h1><p>Haters gonna say it s AI…</p>
+    <a class="text-link" href="/blog/?collection=Securinets+Friendly+CTF+2026&amp;category=Misc">← Back to archive · Misc</a>
+    <header class="article-heading"><p class="eyebrow">Securinets Friendly CTF 2026 <span>/</span> Misc WRITEUP</p><h1>Human After All</h1><p>Haters gonna say it s AI</p>
       <div class="article-author"><img src="/static/img/ghaith.webp" alt="" width="44" height="44"><span><strong>r3t0x</strong><small>2026-09-28 · 400 points · medium</small></span><a class="button" href="#solver">Jump to solver ↓</a></div>
     </header>
     <div class="writeup-facts" aria-label="Challenge metadata"><span><small>EVENT</small>Securinets Friendly CTF 2026</span><span><small>CATEGORY</small>Misc</span><span><small>DIFFICULTY</small>medium</span><span><small>POINTS</small>400</span></div>
     <div class="writeup-tags"><span>misc</span></div>
     <div class="article-layout">
-      <div class="prose writeup-prose"><h2 id="summary">Summary</h2><p class="lead">Haters gonna say it s AI…</p><h2 id="walkthrough">Walkthrough</h2><p>The service puts the player's note in the last comment of <code>Submission.java</code> and runs the supplied byte classifier. Notes are printable ASCII, at most 72 bytes, and cannot contain <code>*/</code>.</p>
+      <div class="prose writeup-prose"><h2 id="walkthrough">Walkthrough</h2><p>The service puts the player's note in the last comment of <code>Submission.java</code> and runs the supplied byte classifier. Notes are printable ASCII, at most 72 bytes, and cannot contain <code>*/</code>.</p>
 <p>The model has a byte embedding, four convolution widths (3, 5, 7, 11), ReLU, global max pooling, and one linear output. The source, model, threshold and weights given to players are the exact files used by the server.</p>
 <p>The local detector, threshold, preprocessing, source template, and weights are all public and deterministic.</p>
 <h3 id="intended-solution">Intended solution</h3>
 <p>Look at channels with negative output weights. For each position in one of those filters, try every printable byte and keep the embedding with the largest dot product. This gives one good string per filter.</p>
 <p>Not every recovered n-gram is useful:</p>
 <ul><li>several negative channels are already saturated by <code>Submission.java</code>;</li><li>some attractive negative channels also activate positive channels;</li><li>all recovered strings do not fit in the note.</li></ul>
-<p>Score those strings locally and keep the best score reduction per byte. Some negative filters are already active in the Java file, and a few candidate strings also activate positive filters, so blindly joining all of them does not work. See <code>solver.py</code> for the short reference implementation.</p><h2 id="solver">Reference solver</h2><p>The complete solver used to validate the challenge:</p><pre><code class="language-python">#!/usr/bin/env python3
-import socket
-import sys
+<p>Score those strings locally and keep the best score reduction per byte. Some negative filters are already active in the Java file, and a few candidate strings also activate positive filters, so blindly joining all of them does not work. See <code>solver.py</code> for the short reference implementation.</p><h2 id="solver">Reference solver</h2><p>The reference solver supplied with the writeup:</p><pre><code class="language-python"><span class="hljs-comment">#!/usr/bin/env python3</span>
+<span class="hljs-keyword">import</span> socket
+<span class="hljs-keyword">import</span> sys
 
-from attachments.detector import Detector, PRINTABLE
+<span class="hljs-keyword">from</span> attachments.detector <span class="hljs-keyword">import</span> Detector, PRINTABLE
 
 
-def solve():
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">solve</span>():
     detector = Detector()
     words = []
 
-    for branch in detector.branches:
-        for channel, head in zip(branch[&quot;weight&quot;], branch[&quot;head&quot;]):
-            if head &gt;= 0:
-                continue
-            word = bytes(
-                max(
+    <span class="hljs-keyword">for</span> branch <span class="hljs-keyword">in</span> detector.branches:
+        <span class="hljs-keyword">for</span> channel, head <span class="hljs-keyword">in</span> <span class="hljs-built_in">zip</span>(branch[<span class="hljs-string">&quot;weight&quot;</span>], branch[<span class="hljs-string">&quot;head&quot;</span>]):
+            <span class="hljs-keyword">if</span> head &gt;= <span class="hljs-number">0</span>:
+                <span class="hljs-keyword">continue</span>
+            word = <span class="hljs-built_in">bytes</span>(
+                <span class="hljs-built_in">max</span>(
                     PRINTABLE,
-                    key=lambda char: sum(
-                        a * b for a, b in zip(detector.embedding[char], weights)
+                    key=<span class="hljs-keyword">lambda</span> char: <span class="hljs-built_in">sum</span>(
+                        a * b <span class="hljs-keyword">for</span> a, b <span class="hljs-keyword">in</span> <span class="hljs-built_in">zip</span>(detector.embedding[char], weights)
                     ),
                 )
-                for weights in channel
+                <span class="hljs-keyword">for</span> weights <span class="hljs-keyword">in</span> channel
             )
-            if b&quot;*/&quot; not in word and word not in words:
+            <span class="hljs-keyword">if</span> <span class="hljs-string">b&quot;*/&quot;</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> word <span class="hljs-keyword">and</span> word <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> words:
                 words.append(word)
 
-    payload = b&quot;&quot;
+    payload = <span class="hljs-string">b&quot;&quot;</span>
     score = detector.score(payload)
 
-    while score &gt;= detector.threshold:
-        best = None
-        for word in words:
-            for separator in ((b&quot;&quot;,) if not payload else (b&quot; &quot;, b&quot;_&quot;, b&quot;~&quot;, b&quot;|&quot;)):
+    <span class="hljs-keyword">while</span> score &gt;= detector.threshold:
+        best = <span class="hljs-literal">None</span>
+        <span class="hljs-keyword">for</span> word <span class="hljs-keyword">in</span> words:
+            <span class="hljs-keyword">for</span> separator <span class="hljs-keyword">in</span> ((<span class="hljs-string">b&quot;&quot;</span>,) <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> payload <span class="hljs-keyword">else</span> (<span class="hljs-string">b&quot; &quot;</span>, <span class="hljs-string">b&quot;_&quot;</span>, <span class="hljs-string">b&quot;~&quot;</span>, <span class="hljs-string">b&quot;|&quot;</span>)):
                 extra = separator + word
                 trial = payload + extra
-                if len(trial) &gt; detector.max_note or b&quot;*/&quot; in trial:
-                    continue
+                <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(trial) &gt; detector.max_note <span class="hljs-keyword">or</span> <span class="hljs-string">b&quot;*/&quot;</span> <span class="hljs-keyword">in</span> trial:
+                    <span class="hljs-keyword">continue</span>
                 new_score = detector.score(trial)
                 gain = score - new_score
-                if gain &lt;= 0:
-                    continue
-                key = (gain / len(extra), gain)
-                if best is None or key &gt; best[0]:
+                <span class="hljs-keyword">if</span> gain &lt;= <span class="hljs-number">0</span>:
+                    <span class="hljs-keyword">continue</span>
+                key = (gain / <span class="hljs-built_in">len</span>(extra), gain)
+                <span class="hljs-keyword">if</span> best <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span> <span class="hljs-keyword">or</span> key &gt; best[<span class="hljs-number">0</span>]:
                     best = (key, word, trial, new_score)
-        if best is None:
-            raise RuntimeError(&quot;no payload found&quot;)
+        <span class="hljs-keyword">if</span> best <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:
+            <span class="hljs-keyword">raise</span> RuntimeError(<span class="hljs-string">&quot;no payload found&quot;</span>)
         _, word, payload, score = best
         words.remove(word)
 
-    return detector, payload
+    <span class="hljs-keyword">return</span> detector, payload
 
 
-def send(host, port, payload):
-    with socket.create_connection((host, port)) as sock:
-        data = b&quot;&quot;
-        while b&quot;note&gt; &quot; not in data:
-            data += sock.recv(4096)
-        sock.sendall(payload + b&quot;\n&quot;)
-        while True:
-            block = sock.recv(4096)
-            if not block:
-                break
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">send</span>(<span class="hljs-params">host, port, payload</span>):
+    <span class="hljs-keyword">with</span> socket.create_connection((host, port)) <span class="hljs-keyword">as</span> sock:
+        data = <span class="hljs-string">b&quot;&quot;</span>
+        <span class="hljs-keyword">while</span> <span class="hljs-string">b&quot;note&gt; &quot;</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> data:
+            data += sock.recv(<span class="hljs-number">4096</span>)
+        sock.sendall(payload + <span class="hljs-string">b&quot;\n&quot;</span>)
+        <span class="hljs-keyword">while</span> <span class="hljs-literal">True</span>:
+            block = sock.recv(<span class="hljs-number">4096</span>)
+            <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> block:
+                <span class="hljs-keyword">break</span>
             sys.stdout.buffer.write(block)
 
 
-def main():
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">main</span>():
     detector, payload = solve()
-    print(payload.decode(), flush=True)
-    print(
-        f&quot;{len(payload)}/{detector.max_note} bytes, logit {detector.score(payload):.4f}&quot;,
-        flush=True,
+    <span class="hljs-built_in">print</span>(payload.decode(), flush=<span class="hljs-literal">True</span>)
+    <span class="hljs-built_in">print</span>(
+        <span class="hljs-string">f&quot;<span class="hljs-subst">{<span class="hljs-built_in">len</span>(payload)}</span>/<span class="hljs-subst">{detector.max_note}</span> bytes, logit <span class="hljs-subst">{detector.score(payload):<span class="hljs-number">.4</span>f}</span>&quot;</span>,
+        flush=<span class="hljs-literal">True</span>,
     )
 
-    if len(sys.argv) == 3:
-        send(sys.argv[1], int(sys.argv[2]), payload)
-    elif len(sys.argv) != 1:
-        raise SystemExit(f&quot;usage: {sys.argv[0]} [host port]&quot;)
+    <span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(sys.argv) == <span class="hljs-number">3</span>:
+        send(sys.argv[<span class="hljs-number">1</span>], <span class="hljs-built_in">int</span>(sys.argv[<span class="hljs-number">2</span>]), payload)
+    <span class="hljs-keyword">elif</span> <span class="hljs-built_in">len</span>(sys.argv) != <span class="hljs-number">1</span>:
+        <span class="hljs-keyword">raise</span> SystemExit(<span class="hljs-string">f&quot;usage: <span class="hljs-subst">{sys.argv[<span class="hljs-number">0</span>]}</span> [host port]&quot;</span>)
 
 
-if __name__ == &quot;__main__&quot;:
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&quot;__main__&quot;</span>:
     main()</code></pre><h2 id="flag">Flag</h2><pre class="flag-output"><code>Securinets{c0mm3nts_4r3_f34tur3s_t00}</code></pre>
-      <div class="article-end"><span>Published 2026-09-28 · by r3t0x</span><a class="text-link" href="/blog/?collection=Securinets%20Friendly%20CTF%202026">More Securinets Friendly CTF 2026 writeups ↗</a></div></div>
+      <div class="article-end"><span>Published 2026-09-28 · by r3t0x</span><a class="text-link" href="/blog/?collection=Securinets+Friendly+CTF+2026&amp;category=Misc">← Back to archive · Misc</a></div></div>
     </div>
   </article></main>
   <footer class="site-footer"><div class="footer-top"><a class="brand" href="/"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><p>Always curious. Always one layer deeper.</p><a href="#main" class="text-link">Back to top ↑</a></div><div class="footer-bottom"><span>© 2026 Ghaith Amdouni <span class="red">·</span> Made with curiosity & caffeine.</span><div><a href="/projects/">Projects ↗</a><a href="https://github.com/Ghaith-amdouni">GitHub ↗</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn ↗</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>Résumé ↗</a><a href="/feed.xml">RSS ↗</a><button id="motion-toggle" aria-pressed="false">Motion: on</button></div></div></footer>

@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>The challenge archive — r3t0x</title><meta name="description" content="Explore Ghaith Amdouni’s CTF writeups, reference solvers, and original challenge collections."><link rel="canonical" href="https://ghaith-amdouni.github.io/blog/"><meta property="og:type" content="website"><meta property="og:title" content="The challenge archive — r3t0x"><meta property="og:description" content="Explore Ghaith Amdouni’s CTF writeups, reference solvers, and original challenge collections."><meta property="og:url" content="https://ghaith-amdouni.github.io/blog/"><meta property="og:image" content="https://ghaith-amdouni.github.io/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=c3965b3600e8"><link rel="stylesheet" href="/static/css/akatsuki.css?v=c3965b3600e8"><script src="/static/js/site.js?v=c3965b3600e8" defer></script></head><body>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>The challenge archive — r3t0x</title><meta name="description" content="Explore Ghaith Amdouni’s CTF writeups, reference solvers, and original challenge collections."><link rel="canonical" href="https://ghaith-amdouni.github.io/blog/"><meta property="og:type" content="website"><meta property="og:title" content="The challenge archive — r3t0x"><meta property="og:description" content="Explore Ghaith Amdouni’s CTF writeups, reference solvers, and original challenge collections."><meta property="og:url" content="https://ghaith-amdouni.github.io/blog/"><meta property="og:image" content="https://ghaith-amdouni.github.io/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=b0b7e08b9fc0"><link rel="stylesheet" href="/static/css/akatsuki.css?v=b0b7e08b9fc0"><script src="/static/js/site.js?v=b0b7e08b9fc0" defer></script></head><body>
   <a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div>
   <div class="systembar"><div><span class="arch-mini" aria-hidden="true">Λ</span> archlinux <span class="bar-sep">/</span> r3t0x@portfolio <span class="system-workspaces" aria-hidden="true"><b>01</b> 02 03</span></div><div><span class="online-dot"></span> ALL SYSTEMS NOMINAL <span class="bar-sep">/</span> <time id="clock">UTC</time></div></div>
   <header class="site-header"><a class="brand" href="/" aria-label="r3t0x home"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><nav aria-label="Main navigation"><a href="/" >~/home</a><a href="/blog/" aria-current="page">~/archive</a><a href="/projects/" >~/projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>CV ↓</a></nav><button class="search-trigger" data-open-search aria-label="Search site"><span>⌕</span><kbd>Ctrl K</kbd></button></header>
@@ -6,394 +6,347 @@
   <div class="ambient-clouds" aria-hidden="true"><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg></div><div class="scroll-address" aria-hidden="true"><b>RIP</b><span id="scroll-address">0x00000000</span><i><em></em></i><small>PTR</small></div><div class="route-veil" id="route-veil" aria-hidden="true"><div class="veil-lid veil-lid-top"></div><div class="veil-lid veil-lid-bottom"></div><div class="veil-eye"><svg viewBox="0 0 200 200"><defs><clipPath id="veilClip"><circle cx="100" cy="100" r="98"/></clipPath></defs><circle cx="100" cy="100" r="94" fill="var(--red)" stroke="#000" stroke-width="10"/><g class="veil-base"><circle cx="100" cy="100" r="90" fill="var(--red)"/><circle cx="100" cy="100" r="16" fill="#000"/><circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/><g class="veil-tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g><g class="veil-tomoe" style="transform:rotate(120deg)"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g><g class="veil-tomoe" style="transform:rotate(240deg)"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g></g><image class="veil-mangekyo" href="/static/img/mangekyou.png" x="0" y="0" width="200" height="200" clip-path="url(#veilClip)"/></svg></div></div><div class="kamui-veil" id="kamui-veil" aria-hidden="true"></div><main id="main"><div class="wrap archive-page">
   <a class="text-link" href="/">← Back to home</a>
   <div class="archive-hero"><div><p class="eyebrow">~/ARCHIVE <span>/</span> MEMORY MAP</p><h1>Challenge<br>archive<span class="red">.</span></h1><p class="archive-lede">CTF writeups, complete solvers, and original labs organized by event, category, and difficulty.</p></div><div class="archive-sigil" aria-hidden="true"><img src="/static/img/mangekyou.png" alt="" width="180" height="180"></div></div>
-  <form class="archive-toolbar" id="archive-form" role="search"><label class="archive-search"><span class="archive-opcode" aria-hidden="true">jmp *</span><span class="sr-only">Search by challenge name or memory address</span><input type="search" id="archive-search" name="q" placeholder="0x00401000 or challenge name" autocomplete="off" spellcheck="false"><kbd>ENTER</kbd></label><label class="sort-control"><span>SORT //</span><select id="archive-sort" name="sort"><option value="default">Memory order</option><option value="difficulty-asc">Difficulty: low first</option><option value="difficulty-desc">Difficulty: high first</option><option value="az">Title: A–Z</option><option value="za">Title: Z–A</option></select></label></form>
-  <div class="archive-filterbar"><div class="archive-filters" role="group" aria-label="Filter difficulty"><span>Difficulty</span><button type="button" data-level="All" aria-pressed="true">All levels<span>48</span></button><button type="button" data-level="entry" aria-pressed="false">Entry<span>28</span></button><button type="button" data-level="intermediate" aria-pressed="false">Intermediate<span>15</span></button><button type="button" data-level="advanced" aria-pressed="false">Advanced<span>5</span></button></div><div class="archive-selects"><label class="collection-control"><span>Category</span><select id="category-filter"><option value="All">All categories</option><option>Misc</option><option>Pwn</option></select></label><label class="collection-control"><span>Collection</span><select id="collection-filter"><option value="All">All collections</option><option>FST Bootcamp</option><option>MOJO-JOJO CTF</option><option>Securinets Friendly CTF 2026</option></select></label></div></div>
-  <div class="archive-readout"><span id="result-hint">TYPE ADDRESS + ENTER TO JMP</span><b id="result-count" role="status">48 challenges</b></div>
-  <div id="archive-results" class="archive-collections"><section class="challenge-collection" data-collection-group="FST Bootcamp" aria-labelledby="collection-fst-bootcamp"><header class="collection-heading"><div><p>COLLECTION // 01</p><h2 id="collection-fst-bootcamp">FST Bootcamp</h2></div><p>Binary-exploitation training labs created for the FST Bootcamp.</p><span data-collection-count>7 challenges</span></header><div class="archive-card-grid" data-collection-grid data-category-grid="Pwn"><article class="archive-entry challenge-card" data-index="0" data-title="b0f" data-category="Pwn" data-collection="FST Bootcamp" data-search="Buffer overflow 101. A straightforward stack smashing exercise — overflow the input buffer and take control of EIP/RIP. Your entry ticket…" data-address="0x00401000" data-difficulty="2" data-level="entry">
-    <a href="/challenge/fst-bootcamp/b0f/index.html" aria-labelledby="challenge-title-0">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00401000</b></span><span class="card-collection">#01</span></div>
-      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>50-100 pts · Getting started</span></div>
-      <h2 id="challenge-title-0">b0f<span class="function-suffix">()</span></h2>
-      <p>Buffer overflow 101. A straightforward stack smashing exercise — overflow the input buffer and take control of EIP/RIP. Your entry ticket…</p>
-      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
-    </a>
-  </article><article class="archive-entry challenge-card" data-index="1" data-title="captchahell" data-category="Pwn" data-collection="FST Bootcamp" data-search="Bypass a CAPTCHA-protected service by exploiting a binary vulnerability lurking behind the verification layer. Solve the puzzle, find the…" data-address="0x00401100" data-difficulty="3" data-level="intermediate">
-    <a href="/challenge/fst-bootcamp/captchahell/index.html" aria-labelledby="challenge-title-1">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00401100</b></span><span class="card-collection">#02</span></div>
-      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Intermediate</span></div>
-      <h2 id="challenge-title-1">captchahell<span class="function-suffix">()</span></h2>
-      <p>Bypass a CAPTCHA-protected service by exploiting a binary vulnerability lurking behind the verification layer. Solve the puzzle, find the…</p>
-      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
-    </a>
-  </article><article class="archive-entry challenge-card" data-index="2" data-title="Expertly Secured" data-category="Pwn" data-collection="FST Bootcamp" data-search="Our system is so secure, it's actually insulting that you're even trying to look at it. We've implemented the latest &quot;Trust Me Bro&quot;…" data-address="0x00401200" data-difficulty="3" data-level="intermediate">
-    <a href="/challenge/fst-bootcamp/expertly_secured/index.html" aria-labelledby="challenge-title-2">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00401200</b></span><span class="card-collection">#03</span></div>
-      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Intermediate</span></div>
-      <h2 id="challenge-title-2">Expertly Secured<span class="function-suffix">()</span></h2>
-      <p>Our system is so secure, it's actually insulting that you're even trying to look at it. We've implemented the latest &quot;Trust Me Bro&quot;…</p>
-      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
-    </a>
-  </article><article class="archive-entry challenge-card" data-index="3" data-title="please" data-category="Pwn" data-collection="FST Bootcamp" data-search="Sometimes all you have to do is ask nicely... or exploit the binary's trust. Manipulate the input to satisfy conditions and trick the…" data-address="0x00401300" data-difficulty="2" data-level="entry">
-    <a href="/challenge/fst-bootcamp/please/index.html" aria-labelledby="challenge-title-3">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00401300</b></span><span class="card-collection">#04</span></div>
-      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Getting started</span></div>
-      <h2 id="challenge-title-3">please<span class="function-suffix">()</span></h2>
-      <p>Sometimes all you have to do is ask nicely... or exploit the binary's trust. Manipulate the input to satisfy conditions and trick the…</p>
-      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
-    </a>
-  </article><article class="archive-entry challenge-card" data-index="4" data-title="ret2shellcode" data-category="Pwn" data-collection="FST Bootcamp" data-search="NX is off — the stack is executable. Inject your shellcode, find the buffer address, and redirect execution straight into your payload." data-address="0x00401400" data-difficulty="2" data-level="entry">
-    <a href="/challenge/fst-bootcamp/ret2shellcode/index.html" aria-labelledby="challenge-title-4">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00401400</b></span><span class="card-collection">#05</span></div>
-      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Getting started</span></div>
-      <h2 id="challenge-title-4">ret2shellcode<span class="function-suffix">()</span></h2>
-      <p>NX is off — the stack is executable. Inject your shellcode, find the buffer address, and redirect execution straight into your payload.</p>
-      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
-    </a>
-  </article><article class="archive-entry challenge-card" data-index="5" data-title="ret2vault" data-category="Pwn" data-collection="FST Bootcamp" data-search="The vault function holds the treasure but no direct path leads there. Overflow the buffer, chain your gadgets, and return straight into…" data-address="0x00401500" data-difficulty="3" data-level="intermediate">
-    <a href="/challenge/fst-bootcamp/ret2vault/index.html" aria-labelledby="challenge-title-5">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00401500</b></span><span class="card-collection">#06</span></div>
-      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Intermediate</span></div>
-      <h2 id="challenge-title-5">ret2vault<span class="function-suffix">()</span></h2>
-      <p>The vault function holds the treasure but no direct path leads there. Overflow the buffer, chain your gadgets, and return straight into…</p>
-      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
-    </a>
-  </article><article class="archive-entry challenge-card" data-index="6" data-title="The Fragmented Scribe" data-category="Pwn" data-collection="FST Bootcamp" data-search="The scribe is dying. The message is breaking. Only 100 fragments (bytes) remain. The language has been stripped of its direct commands…" data-address="0x00401600" data-difficulty="4" data-level="advanced">
-    <a href="/challenge/fst-bootcamp/fragmented_scribe/index.html" aria-labelledby="challenge-title-6">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00401600</b></span><span class="card-collection">#07</span></div>
-      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Advanced</span></div>
-      <h2 id="challenge-title-6">The Fragmented Scribe<span class="function-suffix">()</span></h2>
-      <p>The scribe is dying. The message is breaking. Only 100 fragments (bytes) remain. The language has been stripped of its direct commands…</p>
-      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
-    </a>
-  </article></div></section><section class="challenge-collection" data-collection-group="MOJO-JOJO CTF" aria-labelledby="collection-mojo-jojo-ctf"><header class="collection-heading"><div><p>COLLECTION // 02</p><h2 id="collection-mojo-jojo-ctf">MOJO-JOJO CTF</h2></div><p>Original pwn challenges authored for the MOJO-JOJO CTF collection.</p><span data-collection-count>8 challenges</span></header><div class="archive-card-grid" data-collection-grid data-category-grid="Pwn"><article class="archive-entry challenge-card" data-index="7" data-title="CS 12.06 - SYSTEM 2.0" data-category="Pwn" data-collection="MOJO-JOJO CTF" data-search="XIIVI ONCE SAID &quot;IINEK DIMA AL HOLILA&quot;…" data-address="0x00401700" data-difficulty="3" data-level="intermediate">
-    <a href="/challenge/mojo-jojo/pwn/CS_12.6/index.html" aria-labelledby="challenge-title-7">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00401700</b></span><span class="card-collection">#08</span></div>
-      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Intermediate</span></div>
-      <h2 id="challenge-title-7">CS 12.06 - SYSTEM 2.0<span class="function-suffix">()</span></h2>
-      <p>XIIVI ONCE SAID &quot;IINEK DIMA AL HOLILA&quot;…</p>
-      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
-    </a>
-  </article><article class="archive-entry challenge-card" data-index="8" data-title="dl" data-category="Pwn" data-collection="MOJO-JOJO CTF" data-search="A dynamic loader exploitation challenge. Abuse the linker's resolution mechanism to hijack control flow and redirect execution to your…" data-address="0x00401800" data-difficulty="3" data-level="intermediate">
-    <a href="/challenge/mojo-jojo/pwn/dl/index.html" aria-labelledby="challenge-title-8">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00401800</b></span><span class="card-collection">#09</span></div>
-      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Intermediate</span></div>
-      <h2 id="challenge-title-8">dl<span class="function-suffix">()</span></h2>
-      <p>A dynamic loader exploitation challenge. Abuse the linker's resolution mechanism to hijack control flow and redirect execution to your…</p>
-      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
-    </a>
-  </article><article class="archive-entry challenge-card" data-index="9" data-title="HIP-HOP" data-category="Pwn" data-collection="MOJO-JOJO CTF" data-search="MOJO-JOJO CTF binary-exploitation writeup." data-address="0x00401900" data-difficulty="3" data-level="intermediate">
-    <a href="/challenge/mojo-jojo/pwn/HIP-HOP/index.html" aria-labelledby="challenge-title-9">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00401900</b></span><span class="card-collection">#10</span></div>
-      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Intermediate</span></div>
-      <h2 id="challenge-title-9">HIP-HOP<span class="function-suffix">()</span></h2>
-      <p>MOJO-JOJO CTF binary-exploitation writeup.</p>
-      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
-    </a>
-  </article><article class="archive-entry challenge-card" data-index="10" data-title="MOJO_LAB" data-category="Pwn" data-collection="MOJO-JOJO CTF" data-search="MOJO-JOJO CTF binary-exploitation writeup." data-address="0x00401a00" data-difficulty="4" data-level="advanced">
-    <a href="/challenge/mojo-jojo/pwn/MOJO_LAB/index.html" aria-labelledby="challenge-title-10">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00401a00</b></span><span class="card-collection">#11</span></div>
-      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Advanced</span></div>
-      <h2 id="challenge-title-10">MOJO_LAB<span class="function-suffix">()</span></h2>
-      <p>MOJO-JOJO CTF binary-exploitation writeup.</p>
-      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
-    </a>
-  </article><article class="archive-entry challenge-card" data-index="11" data-title="Oracle" data-category="Pwn" data-collection="MOJO-JOJO CTF" data-search="The Oracle knows all — but can you make it speak? Exploit a format string vulnerability to leak secrets from memory and gain arbitrary…" data-address="0x00401b00" data-difficulty="3" data-level="intermediate">
-    <a href="/challenge/mojo-jojo/pwn/oracle/index.html" aria-labelledby="challenge-title-11">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00401b00</b></span><span class="card-collection">#12</span></div>
-      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Intermediate</span></div>
-      <h2 id="challenge-title-11">Oracle<span class="function-suffix">()</span></h2>
-      <p>The Oracle knows all — but can you make it speak? Exploit a format string vulnerability to leak secrets from memory and gain arbitrary…</p>
-      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
-    </a>
-  </article><article class="archive-entry challenge-card" data-index="12" data-title="ret2libc" data-category="Pwn" data-collection="MOJO-JOJO CTF" data-search="Classic return-to-libc attack. The stack is non-executable, but libc is loaded and ready. Leak a libc address, calculate offsets, and…" data-address="0x00401c00" data-difficulty="2" data-level="entry">
-    <a href="/challenge/mojo-jojo/pwn/ret2libc/index.html" aria-labelledby="challenge-title-12">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00401c00</b></span><span class="card-collection">#13</span></div>
-      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Getting started</span></div>
-      <h2 id="challenge-title-12">ret2libc<span class="function-suffix">()</span></h2>
-      <p>Classic return-to-libc attack. The stack is non-executable, but libc is loaded and ready. Leak a libc address, calculate offsets, and…</p>
-      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
-    </a>
-  </article><article class="archive-entry challenge-card" data-index="13" data-title="Two Echoes - Revenge" data-category="Pwn" data-collection="MOJO-JOJO CTF" data-search="MOJO-JOJO CTF binary-exploitation writeup." data-address="0x00401d00" data-difficulty="3" data-level="intermediate">
-    <a href="/challenge/mojo-jojo/pwn/oracle_Revenge/index.html" aria-labelledby="challenge-title-13">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00401d00</b></span><span class="card-collection">#14</span></div>
-      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Intermediate</span></div>
-      <h2 id="challenge-title-13">Two Echoes - Revenge<span class="function-suffix">()</span></h2>
-      <p>MOJO-JOJO CTF binary-exploitation writeup.</p>
-      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
-    </a>
-  </article><article class="archive-entry challenge-card" data-index="14" data-title="Warmup" data-category="Pwn" data-collection="MOJO-JOJO CTF" data-search="A beginner-friendly buffer overflow warmup. Smash the stack, overwrite the return address, and redirect execution to the win function. No…" data-address="0x00401e00" data-difficulty="2" data-level="entry">
-    <a href="/challenge/mojo-jojo/pwn/warmup/index.html" aria-labelledby="challenge-title-14">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00401e00</b></span><span class="card-collection">#15</span></div>
-      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Getting started</span></div>
-      <h2 id="challenge-title-14">Warmup<span class="function-suffix">()</span></h2>
-      <p>A beginner-friendly buffer overflow warmup. Smash the stack, overwrite the return address, and redirect execution to the win function. No…</p>
-      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
-    </a>
-  </article></div></section><section class="challenge-collection" data-collection-group="Securinets Friendly CTF 2026" aria-labelledby="collection-securinets-friendly-ctf-2026"><header class="collection-heading"><div><p>COLLECTION // 03</p><h2 id="collection-securinets-friendly-ctf-2026">Securinets Friendly CTF 2026</h2></div><p>Official misc and pwn walkthroughs from Securinets Friendly CTF 2026.</p><span data-collection-count>33 challenges</span></header><div class="archive-category-tracks"><section class="archive-category-track" data-category-track="Misc"><header class="category-track-heading"><div><p>CATEGORY // 01</p><h3>Misc</h3></div><span data-category-count>15 writeups</span></header><div class="archive-card-grid" data-collection-grid data-category-grid="Misc"><article class="archive-entry challenge-card" data-index="15" data-title="APPROVED" data-category="Misc" data-collection="Securinets Friendly CTF 2026" data-search="No further action was requested." data-address="0x00401f00" data-difficulty="3" data-level="intermediate">
+  <nav class="event-tabs" aria-label="Choose CTF event"><a href="/blog/?collection=Securinets%20Friendly%20CTF%202026" data-event="Securinets Friendly CTF 2026">Friendly CTF 2026<span>33</span></a><a href="/blog/?collection=MOJO-JOJO%20CTF" data-event="MOJO-JOJO CTF">MOJO-JOJO CTF<span>8</span></a><a href="/blog/?collection=FST%20Bootcamp" data-event="FST Bootcamp">FST Bootcamp<span>7</span></a><a href="/blog/?collection=All" data-event="All">All events<span>48</span></a></nav>
+  <form class="archive-toolbar" id="archive-form" role="search"><label class="archive-search"><span class="archive-opcode" aria-hidden="true">⌕</span><span class="sr-only">Search challenges</span><input type="search" id="archive-search" name="q" placeholder="Search challenges…" autocomplete="off" spellcheck="false"><kbd>ENTER</kbd></label><label class="sort-control"><span>Sort</span><select id="archive-sort" name="sort"><option value="default">Default order</option><option value="difficulty-asc">Difficulty: low first</option><option value="difficulty-desc">Difficulty: high first</option><option value="az">Title: A–Z</option><option value="za">Title: Z–A</option></select></label></form>
+  <div class="archive-filterbar"><div class="archive-filters" role="group" aria-label="Filter difficulty"><span>Difficulty</span><button type="button" data-level="All" aria-pressed="true">All levels<span>48</span></button><button type="button" data-level="entry" aria-pressed="false">Entry<span>28</span></button><button type="button" data-level="intermediate" aria-pressed="false">Intermediate<span>15</span></button><button type="button" data-level="advanced" aria-pressed="false">Advanced<span>5</span></button></div><div class="archive-selects"><label class="collection-control"><span>Category</span><select id="category-filter"><option value="All">All categories</option><option>Misc</option><option>Pwn</option></select></label></div></div>
+  <div class="archive-readout"><span id="result-hint">Choose an event or search its writeups.</span><b id="result-count" role="status">48 challenges</b></div>
+  <div id="archive-results" class="archive-collections"><section class="challenge-collection" data-collection-group="Securinets Friendly CTF 2026" aria-labelledby="collection-securinets-friendly-ctf-2026"><header class="collection-heading"><div><p>COLLECTION // 01</p><h2 id="collection-securinets-friendly-ctf-2026">Securinets Friendly CTF 2026</h2></div><p>Official misc and pwn walkthroughs from Securinets Friendly CTF 2026.</p><span data-collection-count>33 challenges</span></header><div class="archive-category-tracks"><section class="archive-category-track" data-category-track="Misc"><header class="category-track-heading"><div><p>CATEGORY // 01</p><h3>Misc</h3></div><span data-category-count>15 writeups</span></header><div class="archive-card-grid" data-collection-grid data-category-grid="Misc"><article class="archive-entry challenge-card" data-index="15" data-title="APPROVED" data-category="Misc" data-collection="Securinets Friendly CTF 2026" data-search="No further action was requested." data-address="0x00401f00" data-difficulty="3" data-level="intermediate">
     <a href="/challenge/securinets-friendly-ctf-2026/misc/approved/index.html" aria-labelledby="challenge-title-15">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00401f00</b></span><span class="card-collection">#16</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag misc">Misc</span><span>500 pts · Intermediate</span></div>
-      <h2 id="challenge-title-15">APPROVED<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-15">APPROVED</h3>
       <p>No further action was requested.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
   </article><article class="archive-entry challenge-card" data-index="16" data-title="are MATH D'ING" data-category="Misc" data-collection="Securinets Friendly CTF 2026" data-search="You look very confident. Adorable." data-address="0x00402000" data-difficulty="4" data-level="advanced">
     <a href="/challenge/securinets-friendly-ctf-2026/misc/are-math-ding/index.html" aria-labelledby="challenge-title-16">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00402000</b></span><span class="card-collection">#17</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag misc">Misc</span><span>999 pts · Advanced</span></div>
-      <h2 id="challenge-title-16">are MATH D'ING<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-16">are MATH D'ING</h3>
       <p>You look very confident. Adorable.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
   </article><article class="archive-entry challenge-card" data-index="17" data-title="Banned in Leonida" data-category="Misc" data-collection="Securinets Friendly CTF 2026" data-search="Rockstar banned the words responsible for the leak. The leak did not get the memo." data-address="0x00402100" data-difficulty="2" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/misc/banned-in-leonida/index.html" aria-labelledby="challenge-title-17">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00402100</b></span><span class="card-collection">#18</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag misc">Misc</span><span>200 pts · Getting started</span></div>
-      <h2 id="challenge-title-17">Banned in Leonida<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-17">Banned in Leonida</h3>
       <p>Rockstar banned the words responsible for the leak. The leak did not get the memo.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
   </article><article class="archive-entry challenge-card" data-index="18" data-title="BEGNERZZZZ MAXIING" data-category="Misc" data-collection="Securinets Friendly CTF 2026" data-search="Maxed out the LARP build and left evidence at level one." data-address="0x00402200" data-difficulty="4" data-level="advanced">
     <a href="/challenge/securinets-friendly-ctf-2026/misc/begnerzzzz-maxiing/index.html" aria-labelledby="challenge-title-18">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00402200</b></span><span class="card-collection">#19</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag misc">Misc</span><span>1000 pts · Advanced</span></div>
-      <h2 id="challenge-title-18">BEGNERZZZZ MAXIING<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-18">BEGNERZZZZ MAXIING</h3>
       <p>Maxed out the LARP build and left evidence at level one.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
   </article><article class="archive-entry challenge-card" data-index="19" data-title="Cheat Code" data-category="Misc" data-collection="Securinets Friendly CTF 2026" data-search="Rockstar left the developer console in the release build. Quality control must have been watching the trailer." data-address="0x00402300" data-difficulty="2" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/misc/cheat-code/index.html" aria-labelledby="challenge-title-19">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00402300</b></span><span class="card-collection">#20</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag misc">Misc</span><span>200 pts · Getting started</span></div>
-      <h2 id="challenge-title-19">Cheat Code<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-19">Cheat Code</h3>
       <p>Rockstar left the developer console in the release build. Quality control must have been watching the trailer.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
   </article><article class="archive-entry challenge-card" data-index="20" data-title="EMPTY THREATS" data-category="Misc" data-collection="Securinets Friendly CTF 2026" data-search="Bro wrote a whole paragraph and still said nothing." data-address="0x00402400" data-difficulty="2" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/misc/empty-threats/index.html" aria-labelledby="challenge-title-20">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00402400</b></span><span class="card-collection">#21</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag misc">Misc</span><span>200 pts · Getting started</span></div>
-      <h2 id="challenge-title-20">EMPTY THREATS<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-20">EMPTY THREATS</h3>
       <p>Bro wrote a whole paragraph and still said nothing.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
   </article><article class="archive-entry challenge-card" data-index="21" data-title="FLOATING RECEIPTS" data-category="Misc" data-collection="Securinets Friendly CTF 2026" data-search="The numbers are real. The receipts are questionable." data-address="0x00402500" data-difficulty="2" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/misc/floating-receipts/index.html" aria-labelledby="challenge-title-21">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00402500</b></span><span class="card-collection">#22</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag misc">Misc</span><span>200 pts · Getting started</span></div>
-      <h2 id="challenge-title-21">FLOATING RECEIPTS<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-21">FLOATING RECEIPTS</h3>
       <p>The numbers are real. The receipts are questionable.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
   </article><article class="archive-entry challenge-card" data-index="22" data-title="Follow Me" data-category="Misc" data-collection="Securinets Friendly CTF 2026" data-search="I asked for the file, not its life story." data-address="0x00402600" data-difficulty="2" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/misc/follow-me/index.html" aria-labelledby="challenge-title-22">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00402600</b></span><span class="card-collection">#23</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag misc">Misc</span><span>200 pts · Getting started</span></div>
-      <h2 id="challenge-title-22">Follow Me<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-22">Follow Me</h3>
       <p>I asked for the file, not its life story.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
-  </article><article class="archive-entry challenge-card" data-index="23" data-title="Human After All" data-category="Misc" data-collection="Securinets Friendly CTF 2026" data-search="Haters gonna say it s AI…" data-address="0x00402700" data-difficulty="3" data-level="intermediate">
+  </article><article class="archive-entry challenge-card" data-index="23" data-title="Human After All" data-category="Misc" data-collection="Securinets Friendly CTF 2026" data-search="Haters gonna say it s AI" data-address="0x00402700" data-difficulty="3" data-level="intermediate">
     <a href="/challenge/securinets-friendly-ctf-2026/misc/human-after-all/index.html" aria-labelledby="challenge-title-23">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00402700</b></span><span class="card-collection">#24</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag misc">Misc</span><span>400 pts · Intermediate</span></div>
-      <h2 id="challenge-title-23">Human After All<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-23">Human After All</h3>
       <p>Haters gonna say it s AI…</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
   </article><article class="archive-entry challenge-card" data-index="24" data-title="JS 1.0" data-category="Misc" data-collection="Securinets Friendly CTF 2026" data-search="Parser vs filter. We taught a regex to understand JavaScript. The language specification can retire now." data-address="0x00402800" data-difficulty="2" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/misc/js-1-0/index.html" aria-labelledby="challenge-title-24">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00402800</b></span><span class="card-collection">#25</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag misc">Misc</span><span>200 pts · Getting started</span></div>
-      <h2 id="challenge-title-24">JS 1.0<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-24">JS 1.0</h3>
       <p>Parser vs filter. We taught a regex to understand JavaScript. The language specification can retire now.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
-  </article><article class="archive-entry challenge-card" data-index="25" data-title="PAID IN FULL" data-category="Misc" data-collection="Securinets Friendly CTF 2026" data-search="Accounting insists this invoice is ordinary. It looks right, prints right, and even copy-pastes right. Still, something in the type does…" data-address="0x00402900" data-difficulty="3" data-level="intermediate">
+  </article><article class="archive-entry challenge-card" data-index="25" data-title="PAID IN FULL" data-category="Misc" data-collection="Securinets Friendly CTF 2026" data-search="Accounting insists this invoice is ordinary. It looks right, prints right, and even copy-pastes right. Still, something in the type does not add up." data-address="0x00402900" data-difficulty="3" data-level="intermediate">
     <a href="/challenge/securinets-friendly-ctf-2026/misc/ghosts-in-the-font/index.html" aria-labelledby="challenge-title-25">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00402900</b></span><span class="card-collection">#26</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag misc">Misc</span><span>500 pts · Intermediate</span></div>
-      <h2 id="challenge-title-25">PAID IN FULL<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-25">PAID IN FULL</h3>
       <p>Accounting insists this invoice is ordinary. It looks right, prints right, and even copy-pastes right. Still, something in the type does…</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
   </article><article class="archive-entry challenge-card" data-index="26" data-title="POSTMORTEM" data-category="Misc" data-collection="Securinets Friendly CTF 2026" data-search="One byte was wrong. The process has prepared several megabytes of excuses." data-address="0x00402a00" data-difficulty="4" data-level="advanced">
     <a href="/challenge/securinets-friendly-ctf-2026/misc/postmortem/index.html" aria-labelledby="challenge-title-26">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00402a00</b></span><span class="card-collection">#27</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag misc">Misc</span><span>999 pts · Advanced</span></div>
-      <h2 id="challenge-title-26">POSTMORTEM<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-26">POSTMORTEM</h3>
       <p>One byte was wrong. The process has prepared several megabytes of excuses.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
   </article><article class="archive-entry challenge-card" data-index="27" data-title="TRAFFIC LIGHTS" data-category="Misc" data-collection="Securinets Friendly CTF 2026" data-search="CyberLeek synchronized every traffic light in Vice City. The pattern was never meant for drivers." data-address="0x00402b00" data-difficulty="1" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/misc/traffic-lights/index.html" aria-labelledby="challenge-title-27">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00402b00</b></span><span class="card-collection">#28</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag misc">Misc</span><span>100 pts · Entry</span></div>
-      <h2 id="challenge-title-27">TRAFFIC LIGHTS<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-27">TRAFFIC LIGHTS</h3>
       <p>CyberLeek synchronized every traffic light in Vice City. The pattern was never meant for drivers.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
   </article><article class="archive-entry challenge-card" data-index="28" data-title="UNIX" data-category="Misc" data-collection="Securinets Friendly CTF 2026" data-search="Two codes are already on the screen. Predict the next one, Professor Probability. Go on. The machine could use a laugh." data-address="0x00402c00" data-difficulty="2" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/misc/guess-again-genius/index.html" aria-labelledby="challenge-title-28">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00402c00</b></span><span class="card-collection">#29</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag misc">Misc</span><span>200 pts · Getting started</span></div>
-      <h2 id="challenge-title-28">UNIX<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-28">UNIX</h3>
       <p>Two codes are already on the screen. Predict the next one, Professor Probability. Go on. The machine could use a laugh.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
   </article><article class="archive-entry challenge-card" data-index="29" data-title="VICE CITY FM" data-category="Misc" data-collection="Securinets Friendly CTF 2026" data-search="Vice City FM lost every song, but the playlist still remembers how long each track was supposed to last." data-address="0x00402d00" data-difficulty="1" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/misc/vice-city-fm/index.html" aria-labelledby="challenge-title-29">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00402d00</b></span><span class="card-collection">#30</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag misc">Misc</span><span>100 pts · Entry</span></div>
-      <h2 id="challenge-title-29">VICE CITY FM<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-29">VICE CITY FM</h3>
       <p>Vice City FM lost every song, but the playlist still remembers how long each track was supposed to last.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
-  </article></div></section><section class="archive-category-track" data-category-track="Pwn"><header class="category-track-heading"><div><p>CATEGORY // 02</p><h3>Pwn</h3></div><span data-category-count>18 writeups</span></header><div class="archive-card-grid" data-collection-grid data-category-grid="Pwn"><article class="archive-entry challenge-card" data-index="30" data-title="2nd_download" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="Rockstar's relay records only the beginning of every transfer before launching it. CyberLeek knows the opening fragment was never meant…" data-address="0x00402e00" data-difficulty="2" data-level="entry">
+  </article></div></section><section class="archive-category-track" data-category-track="Pwn"><header class="category-track-heading"><div><p>CATEGORY // 02</p><h3>Pwn</h3></div><span data-category-count>18 writeups</span></header><div class="archive-card-grid" data-collection-grid data-category-grid="Pwn"><article class="archive-entry challenge-card" data-index="30" data-title="2nd_download" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="Rockstar's relay records only the beginning of every transfer before launching it. CyberLeek knows the opening fragment was never meant to contain the entire build. It only needs to make room for what comes next." data-address="0x00402e00" data-difficulty="2" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/pwn/the-second-download/index.html" aria-labelledby="challenge-title-30">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00402e00</b></span><span class="card-collection">#31</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>200 pts · Getting started</span></div>
-      <h2 id="challenge-title-30">2nd_download<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-30">2nd_download</h3>
       <p>Rockstar's relay records only the beginning of every transfer before launching it. CyberLeek knows the opening fragment was never meant…</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
-  </article><article class="archive-entry challenge-card" data-index="31" data-title="BETTER CALL WAWA" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="Some names never leave the contact list. When every Rockstar line went silent, one number still answered: WAWA. CyberLeek has one call to…" data-address="0x00402f00" data-difficulty="2" data-level="entry">
+  </article><article class="archive-entry challenge-card" data-index="31" data-title="BETTER CALL WAWA" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="Some names never leave the contact list. When every Rockstar line went silent, one number still answered: WAWA. CyberLeek has one call to trace the signal, reach the archive, and bring the leak home." data-address="0x00402f00" data-difficulty="2" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/pwn/better-call-wawa/index.html" aria-labelledby="challenge-title-31">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00402f00</b></span><span class="card-collection">#32</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>200 pts · Getting started</span></div>
-      <h2 id="challenge-title-31">BETTER CALL WAWA<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-31">BETTER CALL WAWA</h3>
       <p>Some names never leave the contact list. When every Rockstar line went silent, one number still answered: WAWA. CyberLeek has one call to…</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
-  </article><article class="archive-entry challenge-card" data-index="32" data-title="Chop's Last Fetch" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="CyberLeek entrusted the final piece of the GTA VI build to the only courier in Los Santos who could never be bribed, traced, or…" data-address="0x00403000" data-difficulty="2" data-level="entry">
+  </article><article class="archive-entry challenge-card" data-index="32" data-title="Chop's Last Fetch" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="CyberLeek entrusted the final piece of the GTA VI build to the only courier in Los Santos who could never be bribed, traced, or questioned. Chop still has the drop, but he only listens to handlers who can follow every command without falling behind. Keep up, and he may return with more than a stick." data-address="0x00403000" data-difficulty="2" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/pwn/chops-last-fetch/index.html" aria-labelledby="challenge-title-32">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00403000</b></span><span class="card-collection">#33</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>200 pts · Getting started</span></div>
-      <h2 id="challenge-title-32">Chop's Last Fetch<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-32">Chop's Last Fetch</h3>
       <p>CyberLeek entrusted the final piece of the GTA VI build to the only courier in Los Santos who could never be bribed, traced, or…</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
   </article><article class="archive-entry challenge-card" data-index="33" data-title="Cyberleek Hotline" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="Cyberleek loves using netcat, so use it to cooperate with him." data-address="0x00403100" data-difficulty="1" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/pwn/cyberleek-hotline/index.html" aria-labelledby="challenge-title-33">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00403100</b></span><span class="card-collection">#34</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>100 pts · Entry</span></div>
-      <h2 id="challenge-title-33">Cyberleek Hotline<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-33">Cyberleek Hotline</h3>
       <p>Cyberleek loves using netcat, so use it to cooperate with him.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
-  </article><article class="archive-entry challenge-card" data-index="34" data-title="CyberLeek's Burner" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="CyberLeek's burner phone has started receiving fragments from somewhere inside Vice City. Every transmission disappears almost…" data-address="0x00403200" data-difficulty="2" data-level="entry">
+  </article><article class="archive-entry challenge-card" data-index="34" data-title="CyberLeek's Burner" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="CyberLeek's burner phone has started receiving fragments from somewhere inside Vice City. Every transmission disappears almost immediately, and the sender refuses to repeat anything." data-address="0x00403200" data-difficulty="2" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/pwn/cyberleeks-burner/index.html" aria-labelledby="challenge-title-34">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00403200</b></span><span class="card-collection">#35</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>200 pts · Getting started</span></div>
-      <h2 id="challenge-title-34">CyberLeek's Burner<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-34">CyberLeek's Burner</h3>
       <p>CyberLeek's burner phone has started receiving fragments from somewhere inside Vice City. Every transmission disappears almost…</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
-  </article><article class="archive-entry challenge-card" data-index="35" data-title="CyberLeek's Final Upload" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="The final GTA VI archive is already leaving Rockstar's internal network. CyberLeek reached the relay, but the interface was destroyed and…" data-address="0x00403300" data-difficulty="2" data-level="entry">
+  </article><article class="archive-entry challenge-card" data-index="35" data-title="CyberLeek's Final Upload" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="The final GTA VI archive is already leaving Rockstar's internal network. CyberLeek reached the relay, but the interface was destroyed and the upload continues as an unreadable stream. Keep the last copy of the build from disappearing!" data-address="0x00403300" data-difficulty="2" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/pwn/cyberleeks-final-upload/index.html" aria-labelledby="challenge-title-35">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00403300</b></span><span class="card-collection">#36</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>200 pts · Getting started</span></div>
-      <h2 id="challenge-title-35">CyberLeek's Final Upload<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-35">CyberLeek's Final Upload</h3>
       <p>The final GTA VI archive is already leaving Rockstar's internal network. CyberLeek reached the relay, but the interface was destroyed and…</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
-  </article><article class="archive-entry challenge-card" data-index="36" data-title="Drop a Pin" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="The getaway driver refuses to move without an exact pickup point. Give him the right location and CyberLeek's next upload is yours. Miss…" data-address="0x00403400" data-difficulty="1" data-level="entry">
+  </article><article class="archive-entry challenge-card" data-index="36" data-title="Drop a Pin" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="The getaway driver refuses to move without an exact pickup point. Give him the right location and CyberLeek's next upload is yours. Miss by one street and enjoy the wanted screen." data-address="0x00403400" data-difficulty="1" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/pwn/drop-a-pin/index.html" aria-labelledby="challenge-title-36">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00403400</b></span><span class="card-collection">#37</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>100 pts · Entry</span></div>
-      <h2 id="challenge-title-36">Drop a Pin<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-36">Drop a Pin</h3>
       <p>The getaway driver refuses to move without an exact pickup point. Give him the right location and CyberLeek's next upload is yours. Miss…</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
   </article><article class="archive-entry challenge-card" data-index="37" data-title="Full Heat" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="Rockstar put all of Leonida on lockdown. Surely that will stop CyberLeek this time." data-address="0x00403500" data-difficulty="3" data-level="intermediate">
     <a href="/challenge/securinets-friendly-ctf-2026/pwn/full-heat/index.html" aria-labelledby="challenge-title-37">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00403500</b></span><span class="card-collection">#38</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>500 pts · Intermediate</span></div>
-      <h2 id="challenge-title-37">Full Heat<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-37">Full Heat</h3>
       <p>Rockstar put all of Leonida on lockdown. Surely that will stop CyberLeek this time.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
-  </article><article class="archive-entry challenge-card" data-index="38" data-title="GATEWAY" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="A burner call exposed one live Rockstar location. CyberLeek has one shot to enter the archive, steal the build, and disappear before the…" data-address="0x00403600" data-difficulty="2" data-level="entry">
+  </article><article class="archive-entry challenge-card" data-index="38" data-title="GATEWAY" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="A burner call exposed one live Rockstar location. CyberLeek has one shot to enter the archive, steal the build, and disappear before the line goes dead." data-address="0x00403600" data-difficulty="2" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/pwn/one-star-gateway/index.html" aria-labelledby="challenge-title-38">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00403600</b></span><span class="card-collection">#39</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>200 pts · Getting started</span></div>
-      <h2 id="challenge-title-38">GATEWAY<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-38">GATEWAY</h3>
       <p>A burner call exposed one live Rockstar location. CyberLeek has one shot to enter the archive, steal the build, and disappear before the…</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
   </article><article class="archive-entry challenge-card" data-index="39" data-title="Night Shift" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="The night desk is open." data-address="0x00403700" data-difficulty="3" data-level="intermediate">
     <a href="/challenge/securinets-friendly-ctf-2026/pwn/night-shift/index.html" aria-labelledby="challenge-title-39">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00403700</b></span><span class="card-collection">#40</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>300 pts · Intermediate</span></div>
-      <h2 id="challenge-title-39">Night Shift<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-39">Night Shift</h3>
       <p>The night desk is open.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
-  </article><article class="archive-entry challenge-card" data-index="40" data-title="Off the Radar" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="Rockstar's new wanted system knows more than how many stars you have. CyberLeek is visible, identified, trapped inside the search area…" data-address="0x00403800" data-difficulty="1" data-level="entry">
+  </article><article class="archive-entry challenge-card" data-index="40" data-title="Off the Radar" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="Rockstar's new wanted system knows more than how many stars you have. CyberLeek is visible, identified, trapped inside the search area, and still carrying heat. Before the next build leaves Leonida, every trace has to disappear." data-address="0x00403800" data-difficulty="1" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/pwn/off-the-radar/index.html" aria-labelledby="challenge-title-40">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00403800</b></span><span class="card-collection">#41</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>100 pts · Entry</span></div>
-      <h2 id="challenge-title-40">Off the Radar<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-40">Off the Radar</h3>
       <p>Rockstar's new wanted system knows more than how many stars you have. CyberLeek is visible, identified, trapped inside the search area…</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
-  </article><article class="archive-entry challenge-card" data-index="41" data-title="One Street Over" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="CyberLeek's escape route was almost perfect. The final build is not across Leonida. It is only one street away from where the driver…" data-address="0x00403900" data-difficulty="2" data-level="entry">
+  </article><article class="archive-entry challenge-card" data-index="41" data-title="One Street Over" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="CyberLeek's escape route was almost perfect. The final build is not across Leonida. It is only one street away from where the driver planned to return." data-address="0x00403900" data-difficulty="2" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/pwn/one-street-over/index.html" aria-labelledby="challenge-title-41">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00403900</b></span><span class="card-collection">#42</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>200 pts · Getting started</span></div>
-      <h2 id="challenge-title-41">One Street Over<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-41">One Street Over</h3>
       <p>CyberLeek's escape route was almost perfect. The final build is not across Leonida. It is only one street away from where the driver…</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
   </article><article class="archive-entry challenge-card" data-index="42" data-title="RADIO" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="Rockstar says the signal is gone. CyberLeek disagrees." data-address="0x00403a00" data-difficulty="3" data-level="intermediate">
     <a href="/challenge/securinets-friendly-ctf-2026/pwn/radio-silence/index.html" aria-labelledby="challenge-title-42">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00403a00</b></span><span class="card-collection">#43</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>500 pts · Intermediate</span></div>
-      <h2 id="challenge-title-42">RADIO<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-42">RADIO</h3>
       <p>Rockstar says the signal is gone. CyberLeek disagrees.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
-  </article><article class="archive-entry challenge-card" data-index="43" data-title="skiiiiiip" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="Rockstar's archive always begins with one final security sequence. Anyone who watches from the first frame is immediately removed." data-address="0x00403b00" data-difficulty="2" data-level="entry">
+  </article><article class="archive-entry challenge-card" data-index="43" data-title="skiiiiiip" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="Rockstar's archive always begins with one final security sequence. Anyone who watches from the first frame is immediately removed. CyberLeek was never interested in introductions. The real leak begins afterward." data-address="0x00403b00" data-difficulty="2" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/pwn/skip-intro/index.html" aria-labelledby="challenge-title-43">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00403b00</b></span><span class="card-collection">#44</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>200 pts · Getting started</span></div>
-      <h2 id="challenge-title-43">skiiiiiip<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-43">skiiiiiip</h3>
       <p>Rockstar's archive always begins with one final security sequence. Anyone who watches from the first frame is immediately removed.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
-  </article><article class="archive-entry challenge-card" data-index="44" data-title="The First Leek" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="Rockstar called it a rumor. CyberLeek called it Tuesday. Something from GTA VI escaped into the streets of Leonida, and everyone who…" data-address="0x00403c00" data-difficulty="2" data-level="entry">
+  </article><article class="archive-entry challenge-card" data-index="44" data-title="The First Leek" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="Rockstar called it a rumor. CyberLeek called it Tuesday. Something from GTA VI escaped into the streets of Leonida, and everyone who shared it has gone silent. Before disappearing, CyberLeek left one final message: &gt; They can stop the leak. They cannot stop the leek. Recover the proof before the takedown arrives." data-address="0x00403c00" data-difficulty="2" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/pwn/the-first-leek/index.html" aria-labelledby="challenge-title-44">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00403c00</b></span><span class="card-collection">#45</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>200 pts · Getting started</span></div>
-      <h2 id="challenge-title-44">The First Leek<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-44">The First Leek</h3>
       <p>Rockstar called it a rumor. CyberLeek called it Tuesday. Something from GTA VI escaped into the streets of Leonida, and everyone who…</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
   </article><article class="archive-entry challenge-card" data-index="45" data-title="The Spill" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="Rockstar insists the situation is contained. CyberLeek recommends checking the floor." data-address="0x00403d00" data-difficulty="1" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/pwn/the-spill/index.html" aria-labelledby="challenge-title-45">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00403d00</b></span><span class="card-collection">#46</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>100 pts · Entry</span></div>
-      <h2 id="challenge-title-45">The Spill<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-45">The Spill</h3>
       <p>Rockstar insists the situation is contained. CyberLeek recommends checking the floor.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
   </article><article class="archive-entry challenge-card" data-index="46" data-title="Works on My Machine" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="It worked perfectly on the developer's laptop. If it misbehaves now, that sounds impressively like your problem." data-address="0x00403e00" data-difficulty="3" data-level="intermediate">
     <a href="/challenge/securinets-friendly-ctf-2026/pwn/one-time-inspection/index.html" aria-labelledby="challenge-title-46">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00403e00</b></span><span class="card-collection">#47</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>300 pts · Intermediate</span></div>
-      <h2 id="challenge-title-46">Works on My Machine<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-46">Works on My Machine</h3>
       <p>It worked perfectly on the developer's laptop. If it misbehaves now, that sounds impressively like your problem.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
-  </article><article class="archive-entry challenge-card" data-index="47" data-title="XYZ" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="Every time CyberLeek reconnects, Rockstar's relay broadcasts a different location. It arrives without a label, a sender, or instructions." data-address="0x00403f00" data-difficulty="2" data-level="entry">
+  </article><article class="archive-entry challenge-card" data-index="47" data-title="XYZ" data-category="Pwn" data-collection="Securinets Friendly CTF 2026" data-search="Every time CyberLeek reconnects, Rockstar's relay broadcasts a different location. It arrives without a label, a sender, or instructions. Somewhere in Leonida, the final build is waiting for the right crew." data-address="0x00403f00" data-difficulty="2" data-level="entry">
     <a href="/challenge/securinets-friendly-ctf-2026/pwn/unmarked-coordinates/index.html" aria-labelledby="challenge-title-47">
-      <div class="challenge-card-art" aria-hidden="true"><span class="card-address"><small>ENTRY</small><b>0x00403f00</b></span><span class="card-collection">#48</span></div>
       <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>200 pts · Getting started</span></div>
-      <h2 id="challenge-title-47">XYZ<span class="function-suffix">()</span></h2>
+      <h3 id="challenge-title-47">XYZ</h3>
       <p>Every time CyberLeek reconnects, Rockstar's relay broadcasts a different location. It arrives without a label, a sender, or instructions.</p>
       <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
     </a>
-  </article></div></section></div></section></div>
+  </article></div></section></div></section><section class="challenge-collection" data-collection-group="MOJO-JOJO CTF" aria-labelledby="collection-mojo-jojo-ctf"><header class="collection-heading"><div><p>COLLECTION // 02</p><h2 id="collection-mojo-jojo-ctf">MOJO-JOJO CTF</h2></div><p>Original pwn challenges authored for the MOJO-JOJO CTF collection.</p><span data-collection-count>8 challenges</span></header><div class="archive-card-grid" data-collection-grid data-category-grid="Pwn"><article class="archive-entry challenge-card" data-index="7" data-title="CS 12.06 - SYSTEM 2.0" data-category="Pwn" data-collection="MOJO-JOJO CTF" data-search="XIIVI ONCE SAID &quot;IINEK DIMA AL HOLILA&quot;…" data-address="0x00401700" data-difficulty="3" data-level="intermediate">
+    <a href="/challenge/mojo-jojo/pwn/CS_12.6/index.html" aria-labelledby="challenge-title-7">
+      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Intermediate</span></div>
+      <h3 id="challenge-title-7">CS 12.06 - SYSTEM 2.0</h3>
+      <p>XIIVI ONCE SAID &quot;IINEK DIMA AL HOLILA&quot;…</p>
+      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
+    </a>
+  </article><article class="archive-entry challenge-card" data-index="8" data-title="dl" data-category="Pwn" data-collection="MOJO-JOJO CTF" data-search="A dynamic loader exploitation challenge. Abuse the linker's resolution mechanism to hijack control flow and redirect execution to your…" data-address="0x00401800" data-difficulty="3" data-level="intermediate">
+    <a href="/challenge/mojo-jojo/pwn/dl/index.html" aria-labelledby="challenge-title-8">
+      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Intermediate</span></div>
+      <h3 id="challenge-title-8">dl</h3>
+      <p>A dynamic loader exploitation challenge. Abuse the linker's resolution mechanism to hijack control flow and redirect execution to your…</p>
+      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
+    </a>
+  </article><article class="archive-entry challenge-card" data-index="9" data-title="HIP-HOP" data-category="Pwn" data-collection="MOJO-JOJO CTF" data-search="MOJO-JOJO CTF binary-exploitation writeup." data-address="0x00401900" data-difficulty="3" data-level="intermediate">
+    <a href="/challenge/mojo-jojo/pwn/HIP-HOP/index.html" aria-labelledby="challenge-title-9">
+      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Intermediate</span></div>
+      <h3 id="challenge-title-9">HIP-HOP</h3>
+      <p>MOJO-JOJO CTF binary-exploitation writeup.</p>
+      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
+    </a>
+  </article><article class="archive-entry challenge-card" data-index="10" data-title="MOJO_LAB" data-category="Pwn" data-collection="MOJO-JOJO CTF" data-search="MOJO-JOJO CTF binary-exploitation writeup." data-address="0x00401a00" data-difficulty="4" data-level="advanced">
+    <a href="/challenge/mojo-jojo/pwn/MOJO_LAB/index.html" aria-labelledby="challenge-title-10">
+      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Advanced</span></div>
+      <h3 id="challenge-title-10">MOJO_LAB</h3>
+      <p>MOJO-JOJO CTF binary-exploitation writeup.</p>
+      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
+    </a>
+  </article><article class="archive-entry challenge-card" data-index="11" data-title="Oracle" data-category="Pwn" data-collection="MOJO-JOJO CTF" data-search="The Oracle knows all — but can you make it speak? Exploit a format string vulnerability to leak secrets from memory and gain arbitrary…" data-address="0x00401b00" data-difficulty="3" data-level="intermediate">
+    <a href="/challenge/mojo-jojo/pwn/oracle/index.html" aria-labelledby="challenge-title-11">
+      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Intermediate</span></div>
+      <h3 id="challenge-title-11">Oracle</h3>
+      <p>The Oracle knows all — but can you make it speak? Exploit a format string vulnerability to leak secrets from memory and gain arbitrary…</p>
+      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
+    </a>
+  </article><article class="archive-entry challenge-card" data-index="12" data-title="ret2libc" data-category="Pwn" data-collection="MOJO-JOJO CTF" data-search="Classic return-to-libc attack. The stack is non-executable, but libc is loaded and ready. Leak a libc address, calculate offsets, and…" data-address="0x00401c00" data-difficulty="2" data-level="entry">
+    <a href="/challenge/mojo-jojo/pwn/ret2libc/index.html" aria-labelledby="challenge-title-12">
+      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Getting started</span></div>
+      <h3 id="challenge-title-12">ret2libc</h3>
+      <p>Classic return-to-libc attack. The stack is non-executable, but libc is loaded and ready. Leak a libc address, calculate offsets, and…</p>
+      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
+    </a>
+  </article><article class="archive-entry challenge-card" data-index="13" data-title="Two Echoes - Revenge" data-category="Pwn" data-collection="MOJO-JOJO CTF" data-search="MOJO-JOJO CTF binary-exploitation writeup." data-address="0x00401d00" data-difficulty="3" data-level="intermediate">
+    <a href="/challenge/mojo-jojo/pwn/oracle_Revenge/index.html" aria-labelledby="challenge-title-13">
+      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Intermediate</span></div>
+      <h3 id="challenge-title-13">Two Echoes - Revenge</h3>
+      <p>MOJO-JOJO CTF binary-exploitation writeup.</p>
+      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
+    </a>
+  </article><article class="archive-entry challenge-card" data-index="14" data-title="Warmup" data-category="Pwn" data-collection="MOJO-JOJO CTF" data-search="A beginner-friendly buffer overflow warmup. Smash the stack, overwrite the return address, and redirect execution to the win function. No…" data-address="0x00401e00" data-difficulty="2" data-level="entry">
+    <a href="/challenge/mojo-jojo/pwn/warmup/index.html" aria-labelledby="challenge-title-14">
+      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Getting started</span></div>
+      <h3 id="challenge-title-14">Warmup</h3>
+      <p>A beginner-friendly buffer overflow warmup. Smash the stack, overwrite the return address, and redirect execution to the win function. No…</p>
+      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
+    </a>
+  </article></div></section><section class="challenge-collection" data-collection-group="FST Bootcamp" aria-labelledby="collection-fst-bootcamp"><header class="collection-heading"><div><p>COLLECTION // 03</p><h2 id="collection-fst-bootcamp">FST Bootcamp</h2></div><p>Binary-exploitation training labs created for the FST Bootcamp.</p><span data-collection-count>7 challenges</span></header><div class="archive-card-grid" data-collection-grid data-category-grid="Pwn"><article class="archive-entry challenge-card" data-index="0" data-title="b0f" data-category="Pwn" data-collection="FST Bootcamp" data-search="Buffer overflow 101. A straightforward stack smashing exercise — overflow the input buffer and take control of EIP/RIP. Your entry ticket…" data-address="0x00401000" data-difficulty="2" data-level="entry">
+    <a href="/challenge/fst-bootcamp/b0f/index.html" aria-labelledby="challenge-title-0">
+      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>50-100 pts · Getting started</span></div>
+      <h3 id="challenge-title-0">b0f</h3>
+      <p>Buffer overflow 101. A straightforward stack smashing exercise — overflow the input buffer and take control of EIP/RIP. Your entry ticket…</p>
+      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
+    </a>
+  </article><article class="archive-entry challenge-card" data-index="1" data-title="captchahell" data-category="Pwn" data-collection="FST Bootcamp" data-search="Bypass a CAPTCHA-protected service by exploiting a binary vulnerability lurking behind the verification layer. Solve the puzzle, find the…" data-address="0x00401100" data-difficulty="3" data-level="intermediate">
+    <a href="/challenge/fst-bootcamp/captchahell/index.html" aria-labelledby="challenge-title-1">
+      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Intermediate</span></div>
+      <h3 id="challenge-title-1">captchahell</h3>
+      <p>Bypass a CAPTCHA-protected service by exploiting a binary vulnerability lurking behind the verification layer. Solve the puzzle, find the…</p>
+      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
+    </a>
+  </article><article class="archive-entry challenge-card" data-index="2" data-title="Expertly Secured" data-category="Pwn" data-collection="FST Bootcamp" data-search="Our system is so secure, it's actually insulting that you're even trying to look at it. We've implemented the latest &quot;Trust Me Bro&quot;…" data-address="0x00401200" data-difficulty="3" data-level="intermediate">
+    <a href="/challenge/fst-bootcamp/expertly_secured/index.html" aria-labelledby="challenge-title-2">
+      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Intermediate</span></div>
+      <h3 id="challenge-title-2">Expertly Secured</h3>
+      <p>Our system is so secure, it's actually insulting that you're even trying to look at it. We've implemented the latest &quot;Trust Me Bro&quot;…</p>
+      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
+    </a>
+  </article><article class="archive-entry challenge-card" data-index="3" data-title="please" data-category="Pwn" data-collection="FST Bootcamp" data-search="Sometimes all you have to do is ask nicely... or exploit the binary's trust. Manipulate the input to satisfy conditions and trick the…" data-address="0x00401300" data-difficulty="2" data-level="entry">
+    <a href="/challenge/fst-bootcamp/please/index.html" aria-labelledby="challenge-title-3">
+      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Getting started</span></div>
+      <h3 id="challenge-title-3">please</h3>
+      <p>Sometimes all you have to do is ask nicely... or exploit the binary's trust. Manipulate the input to satisfy conditions and trick the…</p>
+      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
+    </a>
+  </article><article class="archive-entry challenge-card" data-index="4" data-title="ret2shellcode" data-category="Pwn" data-collection="FST Bootcamp" data-search="NX is off — the stack is executable. Inject your shellcode, find the buffer address, and redirect execution straight into your payload." data-address="0x00401400" data-difficulty="2" data-level="entry">
+    <a href="/challenge/fst-bootcamp/ret2shellcode/index.html" aria-labelledby="challenge-title-4">
+      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Getting started</span></div>
+      <h3 id="challenge-title-4">ret2shellcode</h3>
+      <p>NX is off — the stack is executable. Inject your shellcode, find the buffer address, and redirect execution straight into your payload.</p>
+      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
+    </a>
+  </article><article class="archive-entry challenge-card" data-index="5" data-title="ret2vault" data-category="Pwn" data-collection="FST Bootcamp" data-search="The vault function holds the treasure but no direct path leads there. Overflow the buffer, chain your gadgets, and return straight into…" data-address="0x00401500" data-difficulty="3" data-level="intermediate">
+    <a href="/challenge/fst-bootcamp/ret2vault/index.html" aria-labelledby="challenge-title-5">
+      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Intermediate</span></div>
+      <h3 id="challenge-title-5">ret2vault</h3>
+      <p>The vault function holds the treasure but no direct path leads there. Overflow the buffer, chain your gadgets, and return straight into…</p>
+      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
+    </a>
+  </article><article class="archive-entry challenge-card" data-index="6" data-title="The Fragmented Scribe" data-category="Pwn" data-collection="FST Bootcamp" data-search="The scribe is dying. The message is breaking. Only 100 fragments (bytes) remain. The language has been stripped of its direct commands…" data-address="0x00401600" data-difficulty="4" data-level="advanced">
+    <a href="/challenge/fst-bootcamp/fragmented_scribe/index.html" aria-labelledby="challenge-title-6">
+      <div class="challenge-card-content"><div class="entry-meta"><span class="tag pwn">Pwn</span><span>Advanced</span></div>
+      <h3 id="challenge-title-6">The Fragmented Scribe</h3>
+      <p>The scribe is dying. The message is breaking. Only 100 fragments (bytes) remain. The language has been stripped of its direct commands…</p>
+      <div class="challenge-card-footer"><span>Open writeup</span><span aria-hidden="true">↗</span></div></div>
+    </a>
+  </article></div></section></div>
   <div id="archive-empty" hidden><span class="red">0x00000000</span><h2>No matching bytes.</h2><p>Try another search or reset the filters.</p><button class="button" id="reset-filters">Reset filters ↺</button></div>
 </div></main>
   <footer class="site-footer"><div class="footer-top"><a class="brand" href="/"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><p>Always curious. Always one layer deeper.</p><a href="#main" class="text-link">Back to top ↑</a></div><div class="footer-bottom"><span>© 2026 Ghaith Amdouni <span class="red">·</span> Made with curiosity & caffeine.</span><div><a href="/projects/">Projects ↗</a><a href="https://github.com/Ghaith-amdouni">GitHub ↗</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn ↗</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>Résumé ↗</a><a href="/feed.xml">RSS ↗</a><button id="motion-toggle" aria-pressed="false">Motion: on</button></div></div></footer>

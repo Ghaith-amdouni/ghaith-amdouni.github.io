@@ -155,11 +155,7 @@ const difficultyLabel = difficulty => difficulty <= 2 ? 'easy' : difficulty === 
 
 async function buildChallengeWriteup(challenge) {
   const url = challenge.url.replace(/index\.html$/, '');
-  // Imported archive HTML uses h2 for its own sections; the generated Friendly CTF
-  // pages render walkthrough headings at h3. Shift them down so both match.
-  const walkThrough = challenge.writeupHtml
-    ? challenge.writeupHtml.replace(/<(\/?)h3\b/g, '<$1h4').replace(/<(\/?)h2\b/g, '<$1h3')
-    : renderMarkdown(challenge.writeup);
+  const walkThrough = challenge.writeupHtml || renderMarkdown(challenge.writeup);
   const tags = challenge.tags?.length ? challenge.tags.map(tag => `<span>${esc(tag)}</span>`).join('') : `<span>${esc(challenge.category.toLowerCase())}</span>`;
   const pointsLine = challenge.points ? `${esc(challenge.points)} points` : 'archived challenge';
   const pointsFact = challenge.points ? esc(challenge.points) : 'Archived';
@@ -180,9 +176,10 @@ async function buildChallengeWriteup(challenge) {
   await writeFile(`${directory}/index.html`, shell(`${challenge.title} · ${challenge.category} writeup`, challenge.description, body, { url, active: 'blog', type: 'article' }));
 }
 
-// Every collection renders through the same writeup template so the FST Bootcamp
-// and MOJO-JOJO pages match the Friendly CTF ones.
-for (const challenge of challenges) await buildChallengeWriteup(challenge);
+// Legacy FST Bootcamp and MOJO-JOJO CTF pages keep their original, hand-authored
+// source/disassembly and walkthrough layouts. Only imported Friendly CTF entries
+// are generated here.
+for (const challenge of friendlyChallenges) await buildChallengeWriteup(challenge);
 
 function art(post) {
   if(post.art==='pipeline') return `<div class="post-art pipeline-art" aria-hidden="true"><span>git push</span><i>→</i><span>build</span><i>→</i><span class="art-active">deploy <b>✓</b></span><small>STATUS: ALL CHECKS PASSED</small></div>`;

@@ -111,7 +111,7 @@ const loadSearch = async () => {
   } catch {
     searchIndex = [
       { title: 'Home', url: '/', category: 'Page', description: 'Ghaith Amdouni · r3t0x' },
-      { title: 'Challenge archive', url: '/blog/', category: 'Page', description: 'MOJO-JOJO and FST binary-exploitation challenges' },
+      { title: 'Challenge archive', url: '/blog/', category: 'Page', description: 'CTF writeups, complete solvers, and original challenge collections' },
       { title: 'Projects', url: '/projects/', category: 'Page', description: 'Security, systems, DevOps, networking, and embedded case notes' },
       { title: 'Experience', url: '/#experience', category: 'Page', description: 'SecuriNets Technical Team Instructor, certifications, and experience' }
     ];
@@ -121,7 +121,7 @@ const loadSearch = async () => {
 const renderSearch = (query = '') => {
   if (!searchResults) return;
   const needle = query.trim().toLowerCase();
-  const kindOf = (item) => item.category === 'Pwn' ? 'Challenge' : item.category || 'Page';
+  const kindOf = (item) => ['Pwn', 'Misc'].includes(item.category) ? 'Challenge' : item.category || 'Page';
   let matches = searchIndex.filter((item) => {
     const scopeMatch = activeSearchScope === 'All' || kindOf(item) === activeSearchScope;
     const textMatch = `${item.title} ${item.category} ${item.description || ''} ${item.collection || ''}`.toLowerCase().includes(needle);
@@ -134,7 +134,7 @@ const renderSearch = (query = '') => {
   searchResults.innerHTML = matches.length
     ? matches.map((item, index) => {
       const kind = kindOf(item);
-      const sigil = kind === 'Challenge' ? 'PWN' : kind === 'Project' ? 'GIT' : kind === 'PDF' ? 'CV' : 'SYS';
+      const sigil = kind === 'Challenge' ? (item.category || 'CTF').toUpperCase() : kind === 'Project' ? 'GIT' : kind === 'PDF' ? 'CV' : 'SYS';
       const address = `0x${(0x401000 + index * 0x100).toString(16)}`;
       return `<a class="search-result" data-kind="${escapeHtml(kind)}" href="${escapeHtml(item.url)}"><span class="result-address">${address}</span><span class="result-sigil">${sigil}</span><span class="result-copy"><em>${escapeHtml(kind)} // ${escapeHtml(item.collection || item.category || 'INDEX')}</em><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.description || item.collection || '')}</small></span><span class="result-arrow">↗</span></a>`;
     }).join('')
@@ -225,6 +225,7 @@ const archiveEntries = $$('.archive-entry');
 const archiveSearch = $('#archive-search');
 const archiveSort = $('#archive-sort');
 const collectionFilter = $('#collection-filter');
+const categoryFilter = $('#category-filter');
 const levelButtons = $$('.archive-filters [data-level]');
 const resultCount = $('#result-count');
 const resultHint = $('#result-hint');
@@ -242,12 +243,14 @@ const filterArchive = ({ updateUrl = true } = {}) => {
   const query = (archiveSearch?.value || '').trim().toLowerCase();
   const queryAddress = normalizeMemoryAddress(query);
   const collection = collectionFilter?.value || 'All';
+  const category = categoryFilter?.value || 'All';
   let visible = archiveEntries.filter((entry) => {
     const levelMatch = activeLevel === 'All' || entry.dataset.level === activeLevel;
     const collectionMatch = collection === 'All' || entry.dataset.collection === collection;
+    const categoryMatch = category === 'All' || entry.dataset.category === category;
     const text = `${entry.dataset.title} ${entry.dataset.search} ${entry.dataset.collection} ${entry.dataset.address}`.toLowerCase();
     const searchMatch = !query || text.includes(query) || (queryAddress && entry.dataset.address === queryAddress);
-    const filterMatch = queryAddress ? true : levelMatch && collectionMatch;
+    const filterMatch = queryAddress ? true : levelMatch && collectionMatch && categoryMatch;
     entry.hidden = !(filterMatch && searchMatch);
     return !entry.hidden;
   });
@@ -278,6 +281,7 @@ const filterArchive = ({ updateUrl = true } = {}) => {
     const params = new URLSearchParams();
     if (query) params.set('q', archiveSearch.value.trim());
     if (activeLevel !== 'All') params.set('level', activeLevel);
+    if (category !== 'All') params.set('category', category);
     if (collection !== 'All') params.set('collection', collection);
     if (sort && sort !== 'default') params.set('sort', sort);
     history.replaceState({}, '', `${location.pathname}${params.size ? `?${params}` : ''}${location.hash}`);
@@ -289,6 +293,7 @@ if (archiveEntries.length) {
   if (archiveSearch) archiveSearch.value = params.get('q') || '';
   const requestedLevel = params.get('level');
   if (requestedLevel && levelButtons.some((button) => button.dataset.level === requestedLevel)) activeLevel = requestedLevel;
+  if (categoryFilter && [...categoryFilter.options].some((option) => option.value === params.get('category'))) categoryFilter.value = params.get('category');
   if (collectionFilter && [...collectionFilter.options].some((option) => option.value === params.get('collection'))) collectionFilter.value = params.get('collection');
   if (archiveSort && [...archiveSort.options].some((option) => option.value === params.get('sort'))) archiveSort.value = params.get('sort');
   levelButtons.forEach((button) => {
@@ -301,11 +306,13 @@ if (archiveEntries.length) {
   });
   archiveSearch?.addEventListener('input', () => filterArchive());
   archiveSort?.addEventListener('change', () => filterArchive());
+  categoryFilter?.addEventListener('change', () => filterArchive());
   collectionFilter?.addEventListener('change', () => filterArchive());
   $('#reset-filters')?.addEventListener('click', () => {
     activeLevel = 'All';
     if (archiveSearch) archiveSearch.value = '';
     if (archiveSort) archiveSort.value = 'default';
+    if (categoryFilter) categoryFilter.value = 'All';
     if (collectionFilter) collectionFilter.value = 'All';
     levelButtons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.level === 'All')));
     filterArchive();

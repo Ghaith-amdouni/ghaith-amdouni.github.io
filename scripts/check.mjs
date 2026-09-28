@@ -41,7 +41,7 @@ for (const file of htmlFiles) {
 
 const required = [
   'index.html', 'blog/index.html', 'projects/index.html', 'resume/index.html', '404.html',
-  'static/css/site.css', 'static/js/site.js', 'static/img/ghaith.webp',
+  'static/css/main.css', 'static/js/main.js',
   'static/img/social-card.png', 'static/docs/Ghaith-Amdouni-CV-English.pdf',
   'static/data/search.json', 'feed.xml', 'sitemap.xml', 'robots.txt'
 ];

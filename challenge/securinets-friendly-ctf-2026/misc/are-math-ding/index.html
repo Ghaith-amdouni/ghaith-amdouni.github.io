@@ -1,373 +1,428 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>are MATH D'ING · Misc writeup — r3t0x</title><meta name="description" content="You look very confident. Adorable."><link rel="canonical" href="https://ghaith-amdouni.github.io/challenge/securinets-friendly-ctf-2026/misc/are-math-ding/"><meta property="og:type" content="article"><meta property="og:title" content="are MATH D'ING · Misc writeup — r3t0x"><meta property="og:description" content="You look very confident. Adorable."><meta property="og:url" content="https://ghaith-amdouni.github.io/challenge/securinets-friendly-ctf-2026/misc/are-math-ding/"><meta property="og:image" content="https://ghaith-amdouni.github.io/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=bf0d9f4f9c97"><link rel="stylesheet" href="/static/css/akatsuki.css?v=bf0d9f4f9c97"><script src="/static/js/site.js?v=bf0d9f4f9c97" defer></script></head><body>
-  <a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div>
-  <div class="systembar"><div><span class="arch-mini" aria-hidden="true">Λ</span> archlinux <span class="bar-sep">/</span> r3t0x@portfolio <span class="system-workspaces" aria-hidden="true"><b>01</b> 02 03</span></div><div><span class="online-dot"></span> ALL SYSTEMS NOMINAL <span class="bar-sep">/</span> <time id="clock">UTC</time></div></div>
-  <header class="site-header"><a class="brand" href="/" aria-label="r3t0x home"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><nav aria-label="Main navigation"><a href="/" >~/home</a><a href="/blog/" aria-current="page">~/archive</a><a href="/projects/" >~/projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>CV ↓</a></nav><button class="search-trigger" data-open-search aria-label="Search site"><span>⌕</span><kbd>Ctrl K</kbd></button></header>
-  <div class="archive-transition" id="archive-transition" aria-hidden="true"><div class="route-eyelid route-eyelid-top"></div><div class="route-eyelid route-eyelid-bottom"></div><div class="vault-coordinates"><span>00:00:01</span><span>0x00401337</span></div><div class="vault-eye"><span class="vault-symbol"></span><span class="vault-reticle"></span><i></i><i></i><i></i></div><div class="vault-caption"><p><small>TSUKUYOMI ROUTE SHIFT</small><b id="transition-label">ENTERING THE MEMORY VAULT</b><span id="transition-address">~/archive</span></p></div></div>
-  <div class="ambient-clouds" aria-hidden="true"><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg></div><div class="scroll-address" aria-hidden="true"><b>RIP</b><span id="scroll-address">0x00000000</span><i><em></em></i><small>PTR</small></div><main id="main"><article class="wrap article-page writeup-page">
-    <a class="text-link" href="/blog/?collection=Securinets%20Friendly%20CTF%202026">← Back to the archive</a>
-    <header class="article-heading"><p class="eyebrow">Securinets Friendly CTF 2026 <span>/</span> Misc WRITEUP</p><h1>are MATH D'ING</h1><p>You look very confident. Adorable.</p>
-      <div class="article-author"><img src="/static/img/ghaith.webp" alt="" width="44" height="44"><span><strong>r3t0x</strong><small>2026-09-28 · 999 points · hard</small></span><a class="button" href="#solver">Jump to solver ↓</a></div>
-    </header>
-    <div class="writeup-facts" aria-label="Challenge metadata"><span><small>EVENT</small>Securinets Friendly CTF 2026</span><span><small>CATEGORY</small>Misc</span><span><small>DIFFICULTY</small>hard</span><span><small>POINTS</small>999</span></div>
-    <div class="article-layout"><aside class="article-toc"><p class="eyebrow">ON THIS PAGE</p><nav><a href="#summary">Summary</a><a href="#walkthrough">Walkthrough</a><a href="#solver">Reference solver</a><a href="#flag">Flag</a></nav><div class="writeup-tags"><span>misc</span></div></aside>
-      <div class="prose writeup-prose"><h2 id="summary">Summary</h2><p class="lead">You look very confident. Adorable.</p><h2 id="walkthrough">Walkthrough</h2><h3 id="challenge-package">Challenge package</h3>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0c0c0e">
+<title>are MATH D'ING — Securinets Friendly CTF 2026 — r3t0x</title>
+<meta name="description" content="You look very confident. Adorable.">
+<meta name="author" content="Ghaith Amdouni">
+<link rel="canonical" href="https://r3t0x.me/challenge/securinets-friendly-ctf-2026/misc/are-math-ding/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="are MATH D'ING — Securinets Friendly CTF 2026 — r3t0x">
+<meta property="og:description" content="You look very confident. Adorable.">
+<meta property="og:url" content="https://r3t0x.me/challenge/securinets-friendly-ctf-2026/misc/are-math-ding/">
+<meta property="og:image" content="https://r3t0x.me/static/img/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate" type="application/rss+xml" title="r3t0x — writeups" href="/feed.xml">
+<link rel="stylesheet" href="/static/css/main.css?v=f322459a0a">
+<script src="/static/js/main.js?v=f322459a0a" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="masthead">
+  <div class="shell">
+    <a class="brand" href="/"><img class="mark" src="/static/img/mangekyou.png" alt="" width="20" height="20" loading="lazy" decoding="async"><span>r3t0x</span></a>
+    <nav aria-label="Main"><a href="/">home</a><a href="/blog/" aria-current="page">writeups</a><a href="/projects/">projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>cv</a></nav>
+    <button type="button" class="search-open" data-open-search aria-label="Search the site">search<kbd>/</kbd></button>
+  </div>
+</header>
+<main id="main"><div class="shell narrow"><article class="writeup">
+  <header class="page-head">
+    <p class="kicker"><a href="/blog/#securinets-friendly-ctf-2026">Securinets Friendly CTF 2026</a> / misc</p>
+    <h1>are MATH D'ING</h1>
+    <p class="lede">You look very confident. Adorable.</p>
+    <dl class="facts">
+      <div><dt>difficulty</dt><dd>hard</dd></div>
+      <div><dt>points</dt><dd>999</dd></div>
+      <div><dt>published</dt><dd><time datetime="2026-09-28">28 Sept 2026</time></dd></div>
+      <div><dt>author</dt><dd>r3t0x</dd></div>
+    </dl>
+    <p class="tags"><span>misc</span></p>
+  </header>
+  <nav class="toc" aria-label="On this page"><p>contents</p><ol><li><a href="#challenge-package">Challenge package</a></li><li><a href="#intended-solution">Intended solution</a></li><li><a href="#solver">Reference solver</a></li><li><a href="#flag">Flag</a></li></ol></nav>
+  <div class="prose">
+    <h2 id="challenge-package">Challenge package</h2>
 <p>Players receive only <code>chall.py</code> and the remote endpoint. The public description and every message printed by the service are intentionally sarcastic and reveal nothing about the underlying construction.</p>
 <p>The flag is 98 characters long, exactly twice the 49-character flag used by the inspiration challenge. The challenge begins at 999 points.</p>
-<h3 id="intended-solution">Intended solution</h3>
+<h2 id="intended-solution">Intended solution</h2>
 <p>The source builds a deterministic Huffman tree for the flag and returns the encoded bit string without the tree. Its second action repeatedly chooses a uniformly random flag position and returns</p>
-<pre><code class="language-text">P(ord(flag[position]))</code></pre>
+<figure class="code"><figcaption><span>text</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-text">P(ord(flag[position]))</code></pre></figure>
 <p>where <code>P</code> is a degree-five polynomial with six unknown positive integer coefficients.</p>
 <ol><li>Request the second action many times. The relative occurrence count of each returned integer reveals the corresponding character frequency. Fit positive integer frequencies whose sum is the known flag length, 98.</li><li>All polynomial coefficients are positive. On positive inputs, <code>P</code> is strictly increasing, so sorting its outputs gives the same ordering as sorting the original characters.</li><li>Assign an ordered proxy alphabet to the sorted outputs. Combine the recovered frequencies with the source's frequency-and-symbol tie break to rebuild the exact Huffman tree, then decode the bit string into proxy characters.</li><li>The first six flag characters are the distinct, known characters <code>Securi</code>. Their proxy characters identify six polynomial outputs. Solve the resulting six-by-six Vandermonde system to recover all six coefficients of <code>P</code>.</li><li>Evaluate <code>P</code> over printable ASCII, map each output back to its proxy symbol, and substitute through the decoded proxy text.</li></ol>
-<p>The supplied solver uses a constrained maximum-likelihood fit for the integer frequencies, exact rational Gaussian elimination for the polynomial, and checks that the recovered flag reproduces the original bit string.</p><h2 id="solver">Reference solver</h2><p>The complete solver used to validate the challenge:</p><pre><code class="language-python">#!/usr/bin/env python3
+<p>The supplied solver uses a constrained maximum-likelihood fit for the integer frequencies, exact rational Gaussian elimination for the polynomial, and checks that the recovered flag reproduces the original bit string.</p>
+    <h2 id="solver">Reference solver</h2>
+    <figure class="code"><figcaption><span>solve.py</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-python"><span class="t-c">#!/usr/bin/env python3</span>
 
-import argparse
-from collections import Counter
-from fractions import Fraction
-import math
-import os
-from pathlib import Path
-import re
-import socket
-import subprocess
-import sys
-
-
-FLAG_LENGTH = 98
-KNOWN = &quot;Securi&quot;
-PROMPT = b&quot;&gt; &quot;
+<span class="t-k">import</span> argparse
+<span class="t-k">from</span> collections <span class="t-k">import</span> Counter
+<span class="t-k">from</span> fractions <span class="t-k">import</span> Fraction
+<span class="t-k">import</span> math
+<span class="t-k">import</span> os
+<span class="t-k">from</span> pathlib <span class="t-k">import</span> Path
+<span class="t-k">import</span> re
+<span class="t-k">import</span> socket
+<span class="t-k">import</span> subprocess
+<span class="t-k">import</span> sys
 
 
-class Node:
-    def __init__(self, freq, symbol, left=None, right=None):
-        self.freq = freq
-        self.symbol = symbol
-        self.left = left
-        self.right = right
-
-    def __lt__(self, other):
-        if self.freq == other.freq:
-            return self.symbol &lt; other.symbol
-        return self.freq &lt; other.freq
+FLAG_LENGTH = <span class="t-m">98</span>
+KNOWN = <span class="t-s">&quot;Securi&quot;</span>
+PROMPT = b<span class="t-s">&quot;&gt; &quot;</span>
 
 
-class Channel:
-    def __init__(self, host=None, port=None):
-        self.buffer = bytearray()
-        self.process = None
-        self.socket = None
+<span class="t-k">class</span> Node:
+    <span class="t-k">def</span> <span class="t-f">__init__</span>(<span class="t-k">self</span>, freq, symbol, left=<span class="t-k">None</span>, right=<span class="t-k">None</span>):
+        <span class="t-k">self</span>.freq = freq
+        <span class="t-k">self</span>.symbol = symbol
+        <span class="t-k">self</span>.left = left
+        <span class="t-k">self</span>.right = right
 
-        if host is None:
-            root = Path(__file__).resolve().parent
-            self.process = subprocess.Popen(
-                [sys.executable, &quot;-u&quot;, &quot;chall.py&quot;],
+    <span class="t-k">def</span> <span class="t-f">__lt__</span>(<span class="t-k">self</span>, other):
+        <span class="t-k">if</span> <span class="t-k">self</span>.freq == other.freq:
+            <span class="t-k">return</span> <span class="t-k">self</span>.symbol &lt; other.symbol
+        <span class="t-k">return</span> <span class="t-k">self</span>.freq &lt; other.freq
+
+
+<span class="t-k">class</span> Channel:
+    <span class="t-k">def</span> <span class="t-f">__init__</span>(<span class="t-k">self</span>, host=<span class="t-k">None</span>, port=<span class="t-k">None</span>):
+        <span class="t-k">self</span>.buffer = <span class="t-f">bytearray</span>()
+        <span class="t-k">self</span>.process = <span class="t-k">None</span>
+        <span class="t-k">self</span>.socket = <span class="t-k">None</span>
+
+        <span class="t-k">if</span> host <span class="t-k">is</span> <span class="t-k">None</span>:
+            root = <span class="t-f">Path</span>(__file__).<span class="t-f">resolve</span>().parent
+            <span class="t-k">self</span>.process = subprocess.<span class="t-f">Popen</span>(
+                [sys.executable, <span class="t-s">&quot;-u&quot;</span>, <span class="t-s">&quot;chall.py&quot;</span>],
                 cwd=root,
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.DEVNULL,
             )
-            self.read_fd = self.process.stdout.fileno()
-            self.write_fd = self.process.stdin.fileno()
-        else:
-            self.socket = socket.create_connection((host, port), timeout=30)
-            self.socket.settimeout(30)
+            <span class="t-k">self</span>.read_fd = <span class="t-k">self</span>.process.stdout.<span class="t-f">fileno</span>()
+            <span class="t-k">self</span>.write_fd = <span class="t-k">self</span>.process.stdin.<span class="t-f">fileno</span>()
+        <span class="t-k">else</span>:
+            <span class="t-k">self</span>.socket = socket.<span class="t-f">create_connection</span>((host, port), timeout=<span class="t-m">30</span>)
+            <span class="t-k">self</span>.socket.<span class="t-f">settimeout</span>(<span class="t-m">30</span>)
 
-    def send(self, data):
-        if self.socket is not None:
-            self.socket.sendall(data)
-            return
+    <span class="t-k">def</span> <span class="t-f">send</span>(<span class="t-k">self</span>, data):
+        <span class="t-k">if</span> <span class="t-k">self</span>.socket <span class="t-k">is</span> <span class="t-k">not</span> <span class="t-k">None</span>:
+            <span class="t-k">self</span>.socket.<span class="t-f">sendall</span>(data)
+            <span class="t-k">return</span>
 
-        view = memoryview(data)
-        while view:
-            written = os.write(self.write_fd, view)
+        view = <span class="t-f">memoryview</span>(data)
+        <span class="t-k">while</span> view:
+            written = os.<span class="t-f">write</span>(<span class="t-k">self</span>.write_fd, view)
             view = view[written:]
 
-    def recv(self):
-        if self.socket is not None:
-            data = self.socket.recv(65536)
-        else:
-            data = os.read(self.read_fd, 65536)
-        if not data:
-            raise EOFError(&quot;service closed the connection&quot;)
-        return data
+    <span class="t-k">def</span> <span class="t-f">recv</span>(<span class="t-k">self</span>):
+        <span class="t-k">if</span> <span class="t-k">self</span>.socket <span class="t-k">is</span> <span class="t-k">not</span> <span class="t-k">None</span>:
+            data = <span class="t-k">self</span>.socket.<span class="t-f">recv</span>(<span class="t-m">65536</span>)
+        <span class="t-k">else</span>:
+            data = os.<span class="t-f">read</span>(<span class="t-k">self</span>.read_fd, <span class="t-m">65536</span>)
+        <span class="t-k">if</span> <span class="t-k">not</span> data:
+            <span class="t-k">raise</span> <span class="t-f">EOFError</span>(<span class="t-s">&quot;service closed the connection&quot;</span>)
+        <span class="t-k">return</span> data
 
-    def read_until(self, marker):
-        while True:
-            position = self.buffer.find(marker)
-            if position != -1:
-                end = position + len(marker)
-                result = bytes(self.buffer[:end])
-                del self.buffer[:end]
-                return result
-            self.buffer.extend(self.recv())
+    <span class="t-k">def</span> <span class="t-f">read_until</span>(<span class="t-k">self</span>, marker):
+        <span class="t-k">while</span> <span class="t-k">True</span>:
+            position = <span class="t-k">self</span>.buffer.<span class="t-f">find</span>(marker)
+            <span class="t-k">if</span> position != -<span class="t-m">1</span>:
+                end = position + <span class="t-f">len</span>(marker)
+                result = <span class="t-f">bytes</span>(<span class="t-k">self</span>.buffer[:end])
+                <span class="t-k">del</span> <span class="t-k">self</span>.buffer[:end]
+                <span class="t-k">return</span> result
+            <span class="t-k">self</span>.buffer.<span class="t-f">extend</span>(<span class="t-k">self</span>.<span class="t-f">recv</span>())
 
-    def read_prompts(self, count):
-        found = 0
-        search_from = 0
-        while found &lt; count:
-            position = self.buffer.find(PROMPT, search_from)
-            if position == -1:
-                search_from = max(0, len(self.buffer) - len(PROMPT) + 1)
-                self.buffer.extend(self.recv())
-                continue
-            found += 1
-            search_from = position + len(PROMPT)
+    <span class="t-k">def</span> <span class="t-f">read_prompts</span>(<span class="t-k">self</span>, count):
+        found = <span class="t-m">0</span>
+        search_from = <span class="t-m">0</span>
+        <span class="t-k">while</span> found &lt; count:
+            position = <span class="t-k">self</span>.buffer.<span class="t-f">find</span>(PROMPT, search_from)
+            <span class="t-k">if</span> position == -<span class="t-m">1</span>:
+                search_from = <span class="t-f">max</span>(<span class="t-m">0</span>, <span class="t-f">len</span>(<span class="t-k">self</span>.buffer) - <span class="t-f">len</span>(PROMPT) + <span class="t-m">1</span>)
+                <span class="t-k">self</span>.buffer.<span class="t-f">extend</span>(<span class="t-k">self</span>.<span class="t-f">recv</span>())
+                <span class="t-k">continue</span>
+            found += <span class="t-m">1</span>
+            search_from = position + <span class="t-f">len</span>(PROMPT)
 
-        result = bytes(self.buffer[:search_from])
-        del self.buffer[:search_from]
-        return result
+        result = <span class="t-f">bytes</span>(<span class="t-k">self</span>.buffer[:search_from])
+        <span class="t-k">del</span> <span class="t-k">self</span>.buffer[:search_from]
+        <span class="t-k">return</span> result
 
-    def close(self):
-        try:
-            self.send(b&quot;3\n&quot;)
-        except (BrokenPipeError, EOFError, OSError):
-            pass
-        if self.socket is not None:
-            self.socket.close()
-        elif self.process is not None:
-            try:
-                self.process.wait(timeout=2)
-            except subprocess.TimeoutExpired:
-                self.process.terminate()
+    <span class="t-k">def</span> <span class="t-f">close</span>(<span class="t-k">self</span>):
+        <span class="t-k">try</span>:
+            <span class="t-k">self</span>.<span class="t-f">send</span>(b<span class="t-s">&quot;3\n&quot;</span>)
+        <span class="t-k">except</span> (BrokenPipeError, EOFError, OSError):
+            <span class="t-k">pass</span>
+        <span class="t-k">if</span> <span class="t-k">self</span>.socket <span class="t-k">is</span> <span class="t-k">not</span> <span class="t-k">None</span>:
+            <span class="t-k">self</span>.socket.<span class="t-f">close</span>()
+        <span class="t-k">elif</span> <span class="t-k">self</span>.process <span class="t-k">is</span> <span class="t-k">not</span> <span class="t-k">None</span>:
+            <span class="t-k">try</span>:
+                <span class="t-k">self</span>.process.<span class="t-f">wait</span>(timeout=<span class="t-m">2</span>)
+            <span class="t-k">except</span> subprocess.TimeoutExpired:
+                <span class="t-k">self</span>.process.<span class="t-f">terminate</span>()
 
 
-def recover_frequencies(observations, total_length):
-    values = sorted(observations)
-    samples = sum(observations.values())
-    count = len(values)
-    negative_infinity = float(&quot;-inf&quot;)
+<span class="t-k">def</span> <span class="t-f">recover_frequencies</span>(observations, total_length):
+    values = <span class="t-f">sorted</span>(observations)
+    samples = <span class="t-f">sum</span>(observations.<span class="t-f">values</span>())
+    count = <span class="t-f">len</span>(values)
+    negative_infinity = <span class="t-f">float</span>(<span class="t-s">&quot;-inf&quot;</span>)
 
-    scores = [negative_infinity] * (total_length + 1)
-    scores[0] = 0.0
+    scores = [negative_infinity] * (total_length + <span class="t-m">1</span>)
+    scores[<span class="t-m">0</span>] = <span class="t-m">0.0</span>
     parents = []
 
-    for index, value in enumerate(values):
-        next_scores = [negative_infinity] * (total_length + 1)
-        next_parents = [None] * (total_length + 1)
-        remaining_symbols = count - index - 1
+    <span class="t-k">for</span> index, value <span class="t-k">in</span> <span class="t-f">enumerate</span>(values):
+        next_scores = [negative_infinity] * (total_length + <span class="t-m">1</span>)
+        next_parents = [<span class="t-k">None</span>] * (total_length + <span class="t-m">1</span>)
+        remaining_symbols = count - index - <span class="t-m">1</span>
         observed = observations[value]
 
-        for used, previous in enumerate(scores):
-            if previous == negative_infinity:
-                continue
+        <span class="t-k">for</span> used, previous <span class="t-k">in</span> <span class="t-f">enumerate</span>(scores):
+            <span class="t-k">if</span> previous == negative_infinity:
+                <span class="t-k">continue</span>
             maximum = total_length - used - remaining_symbols
-            for frequency in range(1, maximum + 1):
+            <span class="t-k">for</span> frequency <span class="t-k">in</span> <span class="t-f">range</span>(<span class="t-m">1</span>, maximum + <span class="t-m">1</span>):
                 target = used + frequency
-                score = previous + observed * math.log(frequency)
-                if score &gt; next_scores[target]:
+                score = previous + observed * math.<span class="t-f">log</span>(frequency)
+                <span class="t-k">if</span> score &gt; next_scores[target]:
                     next_scores[target] = score
                     next_parents[target] = (used, frequency)
 
         scores = next_scores
-        parents.append(next_parents)
+        parents.<span class="t-f">append</span>(next_parents)
 
-    if scores[total_length] == negative_infinity:
-        raise ValueError(&quot;could not fit the observed values to the known length&quot;)
+    <span class="t-k">if</span> scores[total_length] == negative_infinity:
+        <span class="t-k">raise</span> <span class="t-f">ValueError</span>(<span class="t-s">&quot;could not fit the observed values to the known length&quot;</span>)
 
     result = {}
     used = total_length
-    for index in range(count - 1, -1, -1):
+    <span class="t-k">for</span> index <span class="t-k">in</span> <span class="t-f">range</span>(count - <span class="t-m">1</span>, -<span class="t-m">1</span>, -<span class="t-m">1</span>):
         previous, frequency = parents[index][used]
         result[values[index]] = frequency
         used = previous
 
-    if used != 0 or sum(result.values()) != total_length:
-        raise AssertionError(&quot;frequency recovery failed&quot;)
-    if samples == 0:
-        raise ValueError(&quot;no observations&quot;)
-    return result
+    <span class="t-k">if</span> used != <span class="t-m">0</span> <span class="t-k">or</span> <span class="t-f">sum</span>(result.<span class="t-f">values</span>()) != total_length:
+        <span class="t-k">raise</span> <span class="t-f">AssertionError</span>(<span class="t-s">&quot;frequency recovery failed&quot;</span>)
+    <span class="t-k">if</span> samples == <span class="t-m">0</span>:
+        <span class="t-k">raise</span> <span class="t-f">ValueError</span>(<span class="t-s">&quot;no observations&quot;</span>)
+    <span class="t-k">return</span> result
 
 
-def build_tree(frequencies):
-    import heapq
+<span class="t-k">def</span> <span class="t-f">build_tree</span>(frequencies):
+    <span class="t-k">import</span> heapq
 
-    heap = [Node(frequency, symbol) for symbol, frequency in frequencies.items()]
-    heapq.heapify(heap)
+    heap = [<span class="t-f">Node</span>(frequency, symbol) <span class="t-k">for</span> symbol, frequency <span class="t-k">in</span> frequencies.<span class="t-f">items</span>()]
+    heapq.<span class="t-f">heapify</span>(heap)
 
-    while len(heap) &gt; 1:
-        left = heapq.heappop(heap)
-        right = heapq.heappop(heap)
-        heapq.heappush(
+    <span class="t-k">while</span> <span class="t-f">len</span>(heap) &gt; <span class="t-m">1</span>:
+        left = heapq.<span class="t-f">heappop</span>(heap)
+        right = heapq.<span class="t-f">heappop</span>(heap)
+        heapq.<span class="t-f">heappush</span>(
             heap,
-            Node(
+            <span class="t-f">Node</span>(
                 left.freq + right.freq,
-                min(left.symbol, right.symbol),
+                <span class="t-f">min</span>(left.symbol, right.symbol),
                 left,
                 right,
             ),
         )
-    return heap[0]
+    <span class="t-k">return</span> heap[<span class="t-m">0</span>]
 
 
-def decode(bits, root):
+<span class="t-k">def</span> <span class="t-f">decode</span>(bits, root):
     result = []
     node = root
-    for bit in bits:
-        node = node.left if bit == &quot;0&quot; else node.right
-        if node.left is None and node.right is None:
-            result.append(node.symbol)
+    <span class="t-k">for</span> bit <span class="t-k">in</span> bits:
+        node = node.left <span class="t-k">if</span> bit == <span class="t-s">&quot;0&quot;</span> <span class="t-k">else</span> node.right
+        <span class="t-k">if</span> node.left <span class="t-k">is</span> <span class="t-k">None</span> <span class="t-k">and</span> node.right <span class="t-k">is</span> <span class="t-k">None</span>:
+            result.<span class="t-f">append</span>(node.symbol)
             node = root
-    if node is not root:
-        raise ValueError(&quot;trailing partial symbol&quot;)
-    return &quot;&quot;.join(result)
+    <span class="t-k">if</span> node <span class="t-k">is</span> <span class="t-k">not</span> root:
+        <span class="t-k">raise</span> <span class="t-f">ValueError</span>(<span class="t-s">&quot;trailing partial symbol&quot;</span>)
+    <span class="t-k">return</span> <span class="t-s">&quot;&quot;</span>.<span class="t-f">join</span>(result)
 
 
-def make_codes(node, prefix=&quot;&quot;, result=None):
-    if result is None:
+<span class="t-k">def</span> <span class="t-f">make_codes</span>(node, prefix=<span class="t-s">&quot;&quot;</span>, result=<span class="t-k">None</span>):
+    <span class="t-k">if</span> result <span class="t-k">is</span> <span class="t-k">None</span>:
         result = {}
-    if node.left is None and node.right is None:
+    <span class="t-k">if</span> node.left <span class="t-k">is</span> <span class="t-k">None</span> <span class="t-k">and</span> node.right <span class="t-k">is</span> <span class="t-k">None</span>:
         result[node.symbol] = prefix
-    else:
-        make_codes(node.left, prefix + &quot;0&quot;, result)
-        make_codes(node.right, prefix + &quot;1&quot;, result)
-    return result
+    <span class="t-k">else</span>:
+        <span class="t-f">make_codes</span>(node.left, prefix + <span class="t-s">&quot;0&quot;</span>, result)
+        <span class="t-f">make_codes</span>(node.right, prefix + <span class="t-s">&quot;1&quot;</span>, result)
+    <span class="t-k">return</span> result
 
 
-def solve_linear_system(matrix, vector):
-    size = len(vector)
+<span class="t-k">def</span> <span class="t-f">solve_linear_system</span>(matrix, vector):
+    size = <span class="t-f">len</span>(vector)
     rows = [
-        [Fraction(value) for value in matrix[index]] + [Fraction(vector[index])]
-        for index in range(size)
+        [<span class="t-f">Fraction</span>(value) <span class="t-k">for</span> value <span class="t-k">in</span> matrix[index]] + [<span class="t-f">Fraction</span>(vector[index])]
+        <span class="t-k">for</span> index <span class="t-k">in</span> <span class="t-f">range</span>(size)
     ]
 
-    for column in range(size):
-        pivot = next(
-            (row for row in range(column, size) if rows[row][column] != 0),
-            None,
+    <span class="t-k">for</span> column <span class="t-k">in</span> <span class="t-f">range</span>(size):
+        pivot = <span class="t-f">next</span>(
+            (row <span class="t-k">for</span> row <span class="t-k">in</span> <span class="t-f">range</span>(column, size) <span class="t-k">if</span> rows[row][column] != <span class="t-m">0</span>),
+            <span class="t-k">None</span>,
         )
-        if pivot is None:
-            raise ValueError(&quot;singular system&quot;)
+        <span class="t-k">if</span> pivot <span class="t-k">is</span> <span class="t-k">None</span>:
+            <span class="t-k">raise</span> <span class="t-f">ValueError</span>(<span class="t-s">&quot;singular system&quot;</span>)
         rows[column], rows[pivot] = rows[pivot], rows[column]
 
         scale = rows[column][column]
-        rows[column] = [value / scale for value in rows[column]]
+        rows[column] = [value / scale <span class="t-k">for</span> value <span class="t-k">in</span> rows[column]]
 
-        for row in range(size):
-            if row == column:
-                continue
+        <span class="t-k">for</span> row <span class="t-k">in</span> <span class="t-f">range</span>(size):
+            <span class="t-k">if</span> row == column:
+                <span class="t-k">continue</span>
             scale = rows[row][column]
-            if scale == 0:
-                continue
+            <span class="t-k">if</span> scale == <span class="t-m">0</span>:
+                <span class="t-k">continue</span>
             rows[row] = [
                 current - scale * source
-                for current, source in zip(rows[row], rows[column])
+                <span class="t-k">for</span> current, source <span class="t-k">in</span> <span class="t-f">zip</span>(rows[row], rows[column])
             ]
 
-    return [rows[index][-1] for index in range(size)]
+    <span class="t-k">return</span> [rows[index][-<span class="t-m">1</span>] <span class="t-k">for</span> index <span class="t-k">in</span> <span class="t-f">range</span>(size)]
 
 
-def evaluate_polynomial(coefficients, value):
-    result = Fraction(0)
-    for coefficient in coefficients:
+<span class="t-k">def</span> <span class="t-f">evaluate_polynomial</span>(coefficients, value):
+    result = <span class="t-f">Fraction</span>(<span class="t-m">0</span>)
+    <span class="t-k">for</span> coefficient <span class="t-k">in</span> coefficients:
         result = result * value + coefficient
-    return result
+    <span class="t-k">return</span> result
 
 
-def collect(channel, samples, batch_size):
-    channel.read_until(PROMPT)
-    channel.send(b&quot;1\n&quot;)
-    response = channel.read_until(PROMPT)
-    match = re.search(rb&quot;([01]{32,})&quot;, response)
-    if match is None:
-        raise ValueError(&quot;could not find the long binary string&quot;)
-    bits = match.group(1).decode(&quot;ascii&quot;)
+<span class="t-k">def</span> <span class="t-f">collect</span>(channel, samples, batch_size):
+    channel.<span class="t-f">read_until</span>(PROMPT)
+    channel.<span class="t-f">send</span>(b<span class="t-s">&quot;1\n&quot;</span>)
+    response = channel.<span class="t-f">read_until</span>(PROMPT)
+    match = re.<span class="t-f">search</span>(rb<span class="t-s">&quot;([01]{32,})&quot;</span>, response)
+    <span class="t-k">if</span> match <span class="t-k">is</span> <span class="t-k">None</span>:
+        <span class="t-k">raise</span> <span class="t-f">ValueError</span>(<span class="t-s">&quot;could not find the long binary string&quot;</span>)
+    bits = match.<span class="t-f">group</span>(<span class="t-m">1</span>).<span class="t-f">decode</span>(<span class="t-s">&quot;ascii&quot;</span>)
 
-    observations = Counter()
-    completed = 0
-    while completed &lt; samples:
-        amount = min(batch_size, samples - completed)
-        channel.send(b&quot;2\n&quot; * amount)
-        block = channel.read_prompts(amount)
-        values = re.findall(rb&quot;Groundbreaking: ([0-9]+)&quot;, block)
-        if len(values) != amount:
-            raise ValueError(f&quot;expected {amount} observations, received {len(values)}&quot;)
-        observations.update(int(value) for value in values)
+    observations = <span class="t-f">Counter</span>()
+    completed = <span class="t-m">0</span>
+    <span class="t-k">while</span> completed &lt; samples:
+        amount = <span class="t-f">min</span>(batch_size, samples - completed)
+        channel.<span class="t-f">send</span>(b<span class="t-s">&quot;2\n&quot;</span> * amount)
+        block = channel.<span class="t-f">read_prompts</span>(amount)
+        values = re.<span class="t-f">findall</span>(rb<span class="t-s">&quot;Groundbreaking: ([0-9]+)&quot;</span>, block)
+        <span class="t-k">if</span> <span class="t-f">len</span>(values) != amount:
+            <span class="t-k">raise</span> <span class="t-f">ValueError</span>(f<span class="t-s">&quot;expected {amount} observations, received {len(values)}&quot;</span>)
+        observations.<span class="t-f">update</span>(<span class="t-f">int</span>(value) <span class="t-k">for</span> value <span class="t-k">in</span> values)
         completed += amount
-        if completed == samples or completed % 50_000 == 0:
-            print(f&quot;collected {completed}/{samples}&quot;, file=sys.stderr)
+        <span class="t-k">if</span> completed == samples <span class="t-k">or</span> completed % <span class="t-m">50_000</span> == <span class="t-m">0</span>:
+            <span class="t-f">print</span>(f<span class="t-s">&quot;collected {completed}/{samples}&quot;</span>, file=sys.stderr)
 
-    return bits, observations
+    <span class="t-k">return</span> bits, observations
 
 
-def recover_flag(bits, observations):
-    value_frequencies = recover_frequencies(observations, FLAG_LENGTH)
-    ordered_values = sorted(value_frequencies)
-    if len(ordered_values) &gt; 90:
-        raise ValueError(&quot;proxy alphabet is too large&quot;)
+<span class="t-k">def</span> <span class="t-f">recover_flag</span>(bits, observations):
+    value_frequencies = <span class="t-f">recover_frequencies</span>(observations, FLAG_LENGTH)
+    ordered_values = <span class="t-f">sorted</span>(value_frequencies)
+    <span class="t-k">if</span> <span class="t-f">len</span>(ordered_values) &gt; <span class="t-m">90</span>:
+        <span class="t-k">raise</span> <span class="t-f">ValueError</span>(<span class="t-s">&quot;proxy alphabet is too large&quot;</span>)
 
-    proxies = [chr(33 + index) for index in range(len(ordered_values))]
-    value_to_proxy = dict(zip(ordered_values, proxies))
-    proxy_to_value = {proxy: value for value, proxy in value_to_proxy.items()}
+    proxies = [<span class="t-f">chr</span>(<span class="t-m">33</span> + index) <span class="t-k">for</span> index <span class="t-k">in</span> <span class="t-f">range</span>(<span class="t-f">len</span>(ordered_values))]
+    value_to_proxy = <span class="t-f">dict</span>(<span class="t-f">zip</span>(ordered_values, proxies))
+    proxy_to_value = {proxy: value <span class="t-k">for</span> value, proxy <span class="t-k">in</span> value_to_proxy.<span class="t-f">items</span>()}
     proxy_frequencies = {
         value_to_proxy[value]: frequency
-        for value, frequency in value_frequencies.items()
+        <span class="t-k">for</span> value, frequency <span class="t-k">in</span> value_frequencies.<span class="t-f">items</span>()
     }
 
-    proxy_root = build_tree(proxy_frequencies)
-    proxy_text = decode(bits, proxy_root)
-    if len(proxy_text) != FLAG_LENGTH:
-        raise ValueError(&quot;decoded text has the wrong length&quot;)
+    proxy_root = <span class="t-f">build_tree</span>(proxy_frequencies)
+    proxy_text = <span class="t-f">decode</span>(bits, proxy_root)
+    <span class="t-k">if</span> <span class="t-f">len</span>(proxy_text) != FLAG_LENGTH:
+        <span class="t-k">raise</span> <span class="t-f">ValueError</span>(<span class="t-s">&quot;decoded text has the wrong length&quot;</span>)
 
     matrix = []
     vector = []
-    for proxy, actual in zip(proxy_text[: len(KNOWN)], KNOWN):
-        value = ord(actual)
-        matrix.append([value**power for power in range(5, -1, -1)])
-        vector.append(proxy_to_value[proxy])
-    coefficients = solve_linear_system(matrix, vector)
+    <span class="t-k">for</span> proxy, actual <span class="t-k">in</span> <span class="t-f">zip</span>(proxy_text[: <span class="t-f">len</span>(KNOWN)], KNOWN):
+        value = <span class="t-f">ord</span>(actual)
+        matrix.<span class="t-f">append</span>([value**power <span class="t-k">for</span> power <span class="t-k">in</span> <span class="t-f">range</span>(<span class="t-m">5</span>, -<span class="t-m">1</span>, -<span class="t-m">1</span>)])
+        vector.<span class="t-f">append</span>(proxy_to_value[proxy])
+    coefficients = <span class="t-f">solve_linear_system</span>(matrix, vector)
 
     proxy_to_actual = {}
-    for codepoint in range(32, 127):
-        output = evaluate_polynomial(coefficients, codepoint)
-        if output.denominator != 1:
-            continue
-        proxy = value_to_proxy.get(int(output))
-        if proxy is not None:
-            proxy_to_actual[proxy] = chr(codepoint)
+    <span class="t-k">for</span> codepoint <span class="t-k">in</span> <span class="t-f">range</span>(<span class="t-m">32</span>, <span class="t-m">127</span>):
+        output = <span class="t-f">evaluate_polynomial</span>(coefficients, codepoint)
+        <span class="t-k">if</span> output.denominator != <span class="t-m">1</span>:
+            <span class="t-k">continue</span>
+        proxy = value_to_proxy.<span class="t-f">get</span>(<span class="t-f">int</span>(output))
+        <span class="t-k">if</span> proxy <span class="t-k">is</span> <span class="t-k">not</span> <span class="t-k">None</span>:
+            proxy_to_actual[proxy] = <span class="t-f">chr</span>(codepoint)
 
-    missing = set(proxy_text) - set(proxy_to_actual)
-    if missing:
-        raise ValueError(f&quot;unmapped proxy symbols: {sorted(missing)!r}&quot;)
+    missing = <span class="t-f">set</span>(proxy_text) - <span class="t-f">set</span>(proxy_to_actual)
+    <span class="t-k">if</span> missing:
+        <span class="t-k">raise</span> <span class="t-f">ValueError</span>(f<span class="t-s">&quot;unmapped proxy symbols: {sorted(missing)!r}&quot;</span>)
 
-    flag = &quot;&quot;.join(proxy_to_actual[proxy] for proxy in proxy_text)
-    if not flag.startswith(&quot;Securinets{&quot;) or not flag.endswith(&quot;}&quot;):
-        raise ValueError(&quot;recovered text does not have the expected wrapper&quot;)
+    flag = <span class="t-s">&quot;&quot;</span>.<span class="t-f">join</span>(proxy_to_actual[proxy] <span class="t-k">for</span> proxy <span class="t-k">in</span> proxy_text)
+    <span class="t-k">if</span> <span class="t-k">not</span> flag.<span class="t-f">startswith</span>(<span class="t-s">&quot;Securinets{&quot;</span>) <span class="t-k">or</span> <span class="t-k">not</span> flag.<span class="t-f">endswith</span>(<span class="t-s">&quot;}&quot;</span>):
+        <span class="t-k">raise</span> <span class="t-f">ValueError</span>(<span class="t-s">&quot;recovered text does not have the expected wrapper&quot;</span>)
 
-    actual_root = build_tree(Counter(flag))
-    codes = make_codes(actual_root)
-    if &quot;&quot;.join(codes[symbol] for symbol in flag) != bits:
-        raise ValueError(&quot;recovered text does not reproduce the binary string&quot;)
-    return flag
-
-
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(&quot;host&quot;, nargs=&quot;?&quot;)
-    parser.add_argument(&quot;port&quot;, nargs=&quot;?&quot;, type=int)
-    parser.add_argument(&quot;--samples&quot;, type=int, default=220_000)
-    parser.add_argument(&quot;--batch&quot;, type=int, default=4_000)
-    args = parser.parse_args()
-    if (args.host is None) != (args.port is None):
-        parser.error(&quot;provide both host and port, or neither for a local solve&quot;)
-    if args.samples &lt; 1 or args.batch &lt; 1:
-        parser.error(&quot;sample and batch counts must be positive&quot;)
-    return args
+    actual_root = <span class="t-f">build_tree</span>(<span class="t-f">Counter</span>(flag))
+    codes = <span class="t-f">make_codes</span>(actual_root)
+    <span class="t-k">if</span> <span class="t-s">&quot;&quot;</span>.<span class="t-f">join</span>(codes[symbol] <span class="t-k">for</span> symbol <span class="t-k">in</span> flag) != bits:
+        <span class="t-k">raise</span> <span class="t-f">ValueError</span>(<span class="t-s">&quot;recovered text does not reproduce the binary string&quot;</span>)
+    <span class="t-k">return</span> flag
 
 
-def main():
-    args = parse_args()
-    channel = Channel(args.host, args.port)
-    try:
-        bits, observations = collect(channel, args.samples, args.batch)
-    finally:
-        channel.close()
-    print(recover_flag(bits, observations))
+<span class="t-k">def</span> <span class="t-f">parse_args</span>():
+    parser = argparse.<span class="t-f">ArgumentParser</span>()
+    parser.<span class="t-f">add_argument</span>(<span class="t-s">&quot;host&quot;</span>, nargs=<span class="t-s">&quot;?&quot;</span>)
+    parser.<span class="t-f">add_argument</span>(<span class="t-s">&quot;port&quot;</span>, nargs=<span class="t-s">&quot;?&quot;</span>, type=int)
+    parser.<span class="t-f">add_argument</span>(<span class="t-s">&quot;--samples&quot;</span>, type=int, default=<span class="t-m">220_000</span>)
+    parser.<span class="t-f">add_argument</span>(<span class="t-s">&quot;--batch&quot;</span>, type=int, default=<span class="t-m">4_000</span>)
+    args = parser.<span class="t-f">parse_args</span>()
+    <span class="t-k">if</span> (args.host <span class="t-k">is</span> <span class="t-k">None</span>) != (args.port <span class="t-k">is</span> <span class="t-k">None</span>):
+        parser.<span class="t-f">error</span>(<span class="t-s">&quot;provide both host and port, or neither for a local solve&quot;</span>)
+    <span class="t-k">if</span> args.samples &lt; <span class="t-m">1</span> <span class="t-k">or</span> args.batch &lt; <span class="t-m">1</span>:
+        parser.<span class="t-f">error</span>(<span class="t-s">&quot;sample and batch counts must be positive&quot;</span>)
+    <span class="t-k">return</span> args
 
 
-if __name__ == &quot;__main__&quot;:
-    main()</code></pre><h2 id="flag">Flag</h2><pre class="flag-output"><code>Securinets{you_sampled_the_same_box_forever_and_now_you_are_suddenly_a_mathematician_how_precious}</code></pre>
-      <div class="article-end"><span>Published 2026-09-28 · by r3t0x</span><a class="text-link" href="/blog/?collection=Securinets%20Friendly%20CTF%202026">More Securinets Friendly CTF 2026 writeups ↗</a></div></div>
-    </div>
-  </article></main>
-  <footer class="site-footer"><div class="footer-top"><a class="brand" href="/"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><p>Always curious. Always one layer deeper.</p><a href="#main" class="text-link">Back to top ↑</a></div><div class="footer-bottom"><span>© 2026 Ghaith Amdouni <span class="red">·</span> Made with curiosity & caffeine.</span><div><a href="/projects/">Projects ↗</a><a href="https://github.com/Ghaith-amdouni">GitHub ↗</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn ↗</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>Résumé ↗</a><a href="/feed.xml">RSS ↗</a><button id="motion-toggle" aria-pressed="false">Motion: on</button></div></div></footer>
-  <dialog id="search-dialog" class="search-vault" aria-labelledby="search-title"><div class="search-vault-mark" aria-hidden="true"><span></span><small>眼 // TRACE</small></div><div class="dialog-top"><div><span class="dialog-address">0xSEARCH_INDEX</span><h2 id="search-title">Trace a memory.</h2></div><button data-close-dialog aria-label="Close search">ESC</button></div><label for="site-search" class="search-command"><span aria-hidden="true">❯</span><span class="sr-only">Search challenges, projects, and pages</span><input id="site-search" type="search" placeholder="type a challenge, project, primitive…" autocomplete="off" spellcheck="false"></label><div class="search-scopes" role="group" aria-label="Search scope"><button type="button" data-search-scope="All" aria-pressed="true">ALL MEMORY</button><button type="button" data-search-scope="Challenge" aria-pressed="false">CHALLENGES</button><button type="button" data-search-scope="Project" aria-pressed="false">PROJECTS</button></div><div class="search-readout"><span><i></i> INDEX ONLINE</span><b id="search-count">0 addresses</b></div><div id="search-results" aria-live="polite"></div><div class="dialog-bottom"><span>↑↓ TRACE</span><span>ENTER OPEN</span><span>ESC DISMISS</span></div></dialog>
-  <div class="toast" id="toast" role="status"></div></body></html>
+<span class="t-k">def</span> <span class="t-f">main</span>():
+    args = <span class="t-f">parse_args</span>()
+    channel = <span class="t-f">Channel</span>(args.host, args.port)
+    <span class="t-k">try</span>:
+        bits, observations = <span class="t-f">collect</span>(channel, args.samples, args.batch)
+    <span class="t-k">finally</span>:
+        channel.<span class="t-f">close</span>()
+    <span class="t-f">print</span>(<span class="t-f">recover_flag</span>(bits, observations))
+
+
+<span class="t-k">if</span> __name__ == <span class="t-s">&quot;__main__&quot;</span>:
+    <span class="t-f">main</span>()</code></pre></figure>
+    <h2 id="flag">Flag</h2>
+    <p class="flag"><code>Securinets{you_sampled_the_same_box_forever_and_now_you_are_suddenly_a_mathematician_how_precious}</code><button type="button" class="copy" data-copy>copy</button></p>
+  </div>
+  <nav class="pager" aria-label="More writeups">
+    <a href="/challenge/securinets-friendly-ctf-2026/misc/ghosts-in-the-font/"><span>previous</span><strong>PAID IN FULL</strong></a>
+    <a class="next" href="/challenge/securinets-friendly-ctf-2026/misc/begnerzzzz-maxiing/"><span>next</span><strong>BEGNERZZZZ MAXIING</strong></a>
+  </nav>
+</article></div></main>
+<footer class="colophon">
+  <div class="shell">
+    <p><strong>Ghaith Amdouni</strong> · Binary exploitation &amp; systems · Tunis, Tunisia</p>
+    <nav aria-label="Elsewhere"><a href="https://github.com/Ghaith-amdouni">GitHub</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn</a><a href="https://www.credly.com/users/ghaith-amdouni">Credly</a><a href="/feed.xml">RSS</a><a href="mailto:ghaith.amdouni@insat.ucar.tn">email</a></nav>
+    <p class="fine">© 2026 Ghaith Amdouni · <a href="https://github.com/Ghaith-amdouni/ghaith-amdouni.github.io">site source</a><img class="hits" src="https://hits.sh/r3t0x.me.svg?view=total&style=flat-square&label=visits&color=161619&labelColor=0c0c0e" alt="" width="88" height="20" loading="lazy"></p>
+  </div>
+</footer>
+<dialog id="search" aria-label="Search">
+  <form method="dialog" class="search-head">
+    <label for="search-input"><span aria-hidden="true">&gt;</span><span class="sr-only">Search writeups, projects and pages</span></label>
+    <input id="search-input" type="search" placeholder="search writeups, projects, pages" autocomplete="off" spellcheck="false">
+    <button value="close" aria-label="Close search">esc</button>
+  </form>
+  <ul id="search-results"></ul>
+  <p class="search-foot"><span id="search-count">start typing</span><span>&uarr;&darr; move · enter open</span></p>
+</dialog>
+</body>
+</html>

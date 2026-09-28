@@ -1,142 +1,197 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>BEGNERZZZZ MAXIING · Misc writeup — r3t0x</title><meta name="description" content="Maxed out the LARP build and left evidence at level one."><link rel="canonical" href="https://ghaith-amdouni.github.io/challenge/securinets-friendly-ctf-2026/misc/begnerzzzz-maxiing/"><meta property="og:type" content="article"><meta property="og:title" content="BEGNERZZZZ MAXIING · Misc writeup — r3t0x"><meta property="og:description" content="Maxed out the LARP build and left evidence at level one."><meta property="og:url" content="https://ghaith-amdouni.github.io/challenge/securinets-friendly-ctf-2026/misc/begnerzzzz-maxiing/"><meta property="og:image" content="https://ghaith-amdouni.github.io/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=bf0d9f4f9c97"><link rel="stylesheet" href="/static/css/akatsuki.css?v=bf0d9f4f9c97"><script src="/static/js/site.js?v=bf0d9f4f9c97" defer></script></head><body>
-  <a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div>
-  <div class="systembar"><div><span class="arch-mini" aria-hidden="true">Λ</span> archlinux <span class="bar-sep">/</span> r3t0x@portfolio <span class="system-workspaces" aria-hidden="true"><b>01</b> 02 03</span></div><div><span class="online-dot"></span> ALL SYSTEMS NOMINAL <span class="bar-sep">/</span> <time id="clock">UTC</time></div></div>
-  <header class="site-header"><a class="brand" href="/" aria-label="r3t0x home"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><nav aria-label="Main navigation"><a href="/" >~/home</a><a href="/blog/" aria-current="page">~/archive</a><a href="/projects/" >~/projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>CV ↓</a></nav><button class="search-trigger" data-open-search aria-label="Search site"><span>⌕</span><kbd>Ctrl K</kbd></button></header>
-  <div class="archive-transition" id="archive-transition" aria-hidden="true"><div class="route-eyelid route-eyelid-top"></div><div class="route-eyelid route-eyelid-bottom"></div><div class="vault-coordinates"><span>00:00:01</span><span>0x00401337</span></div><div class="vault-eye"><span class="vault-symbol"></span><span class="vault-reticle"></span><i></i><i></i><i></i></div><div class="vault-caption"><p><small>TSUKUYOMI ROUTE SHIFT</small><b id="transition-label">ENTERING THE MEMORY VAULT</b><span id="transition-address">~/archive</span></p></div></div>
-  <div class="ambient-clouds" aria-hidden="true"><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg></div><div class="scroll-address" aria-hidden="true"><b>RIP</b><span id="scroll-address">0x00000000</span><i><em></em></i><small>PTR</small></div><main id="main"><article class="wrap article-page writeup-page">
-    <a class="text-link" href="/blog/?collection=Securinets%20Friendly%20CTF%202026">← Back to the archive</a>
-    <header class="article-heading"><p class="eyebrow">Securinets Friendly CTF 2026 <span>/</span> Misc WRITEUP</p><h1>BEGNERZZZZ MAXIING</h1><p>Maxed out the LARP build and left evidence at level one.</p>
-      <div class="article-author"><img src="/static/img/ghaith.webp" alt="" width="44" height="44"><span><strong>r3t0x</strong><small>2026-09-28 · 1000 points · hard</small></span><a class="button" href="#solver">Jump to solver ↓</a></div>
-    </header>
-    <div class="writeup-facts" aria-label="Challenge metadata"><span><small>EVENT</small>Securinets Friendly CTF 2026</span><span><small>CATEGORY</small>Misc</span><span><small>DIFFICULTY</small>hard</span><span><small>POINTS</small>1000</span></div>
-    <div class="article-layout"><aside class="article-toc"><p class="eyebrow">ON THIS PAGE</p><nav><a href="#summary">Summary</a><a href="#walkthrough">Walkthrough</a><a href="#solver">Reference solver</a><a href="#flag">Flag</a></nav><div class="writeup-tags"><span>misc</span></div></aside>
-      <div class="prose writeup-prose"><h2 id="summary">Summary</h2><p class="lead">Maxed out the LARP build and left evidence at level one.</p><h2 id="walkthrough">Walkthrough</h2><h3 id="what-players-receive">What players receive</h3>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0c0c0e">
+<title>BEGNERZZZZ MAXIING — Securinets Friendly CTF 2026 — r3t0x</title>
+<meta name="description" content="Maxed out the LARP build and left evidence at level one.">
+<meta name="author" content="Ghaith Amdouni">
+<link rel="canonical" href="https://r3t0x.me/challenge/securinets-friendly-ctf-2026/misc/begnerzzzz-maxiing/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BEGNERZZZZ MAXIING — Securinets Friendly CTF 2026 — r3t0x">
+<meta property="og:description" content="Maxed out the LARP build and left evidence at level one.">
+<meta property="og:url" content="https://r3t0x.me/challenge/securinets-friendly-ctf-2026/misc/begnerzzzz-maxiing/">
+<meta property="og:image" content="https://r3t0x.me/static/img/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate" type="application/rss+xml" title="r3t0x — writeups" href="/feed.xml">
+<link rel="stylesheet" href="/static/css/main.css?v=f322459a0a">
+<script src="/static/js/main.js?v=f322459a0a" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="masthead">
+  <div class="shell">
+    <a class="brand" href="/"><img class="mark" src="/static/img/mangekyou.png" alt="" width="20" height="20" loading="lazy" decoding="async"><span>r3t0x</span></a>
+    <nav aria-label="Main"><a href="/">home</a><a href="/blog/" aria-current="page">writeups</a><a href="/projects/">projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>cv</a></nav>
+    <button type="button" class="search-open" data-open-search aria-label="Search the site">search<kbd>/</kbd></button>
+  </div>
+</header>
+<main id="main"><div class="shell narrow"><article class="writeup">
+  <header class="page-head">
+    <p class="kicker"><a href="/blog/#securinets-friendly-ctf-2026">Securinets Friendly CTF 2026</a> / misc</p>
+    <h1>BEGNERZZZZ MAXIING</h1>
+    <p class="lede">Maxed out the LARP build and left evidence at level one.</p>
+    <dl class="facts">
+      <div><dt>difficulty</dt><dd>hard</dd></div>
+      <div><dt>points</dt><dd>1000</dd></div>
+      <div><dt>published</dt><dd><time datetime="2026-09-28">28 Sept 2026</time></dd></div>
+      <div><dt>author</dt><dd>r3t0x</dd></div>
+    </dl>
+    <p class="tags"><span>misc</span></p>
+  </header>
+  <nav class="toc" aria-label="On this page"><p>contents</p><ol><li><a href="#what-players-receive">What players receive</a></li><li><a href="#intended-solve">Intended solve</a></li><li><a href="#solver">Reference solver</a></li><li><a href="#flag">Flag</a></li></ol></nav>
+  <div class="prose">
+    <h2 id="what-players-receive">What players receive</h2>
 <ul><li><code>Main.jar</code></li><li><code>detector.py</code></li><li><code>detector_weights.json</code></li></ul>
 <p><code>Main.jar</code> contains the exact Java 21 bytecode executed by the service, without the Java source. Players can inspect it with <code>javap -p -c</code>, CFR, FernFlower, JADX, or another JVM decompiler.</p>
 <p>The service prints a fresh 16-character nonce and accepts one Base64-encoded <code>Exploit.java</code>. The submitted class must expose:</p>
-<pre><code class="language-java">public static String run(Main.LarpReview review, String nonce) throws Exception</code></pre>
+<figure class="code"><figcaption><span>java</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-java"><span class="t-k">public</span> <span class="t-k">static</span> String <span class="t-f">run</span>(Main.LarpReview review, String nonce) <span class="t-k">throws</span> Exception</code></pre></figure>
 <p>The source must finish with <code>/* maxing:... */</code>.</p>
-<h3 id="intended-solve">Intended solve</h3>
+<h2 id="intended-solve">Intended solve</h2>
 <p>The detector is a byte CNN with a nonce-gated bank of negative filters. Its weights are public. Recover a printable word for each active negative channel by choosing, at every convolution position, the byte whose embedding has the largest dot product with that position's weights. Greedily append recovered words to the final comment until the logit is negative. A note made for one nonce normally fails on another nonce.</p>
 <p>Reverse <code>Main.jar</code> to recover the submission ABI, filtered object graph, class-file blacklist, shard format, receipt stream and final proof algorithm.</p>
 <p>After <code>javac</code>, every generated class is scanned. Literal references to the raw reflection methods, accessibility helpers, file APIs, process APIs and common JVM escape primitives are rejected. String concatenation with literals does not help because <code>javac</code> folds it into the same constant pool entry. Construct the three required names from character codes at runtime.</p>
 <p>Ordinary <code>getDeclaredFields()</code> cannot see <code>LarpReview.receipts</code>. Obtain the private native <code>Class.getDeclaredFields0(false)</code> method, make it accessible through a dynamically located accessibility method, then recover the hidden root array.</p>
 <p>Walk <code>Main.Trail</code> objects by identity rather than recursively. The graph has cycles and a fresh order on every run. Save the <code>Main.Envelope</code> and inspect the other objects. Ordinary <code>getDeclaredMethods()</code> cannot see the useful method on the permit class, so repeat the raw metadata bypass with <code>Class.getDeclaredMethods0(false)</code>.</p>
 <p>Calling the private zero-argument String methods yields many decoys and four real Base64URL shards. A real shard is 13 bytes:</p>
-<pre><code class="language-text">index (1) || key bytes (8) || SHA256(nonce || first 9 bytes || &quot;MAX&quot;)[:4]</code></pre>
+<figure class="code"><figcaption><span>text</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-text">index (1) || key bytes (8) || SHA256(nonce || first 9 bytes || &quot;MAX&quot;)[:4]</code></pre></figure>
 <p>Place the four valid parts by index to rebuild the 32-byte key. The encryption stream is <code>SHA256(nonce || key)</code>, and the receipt is the envelope ciphertext XORed with that stream. Return the lowercase hexadecimal value of <code>SHA256(nonce || receipt)</code>. Python verifies it and releases the flag; the flag itself never enters the submitted JVM.</p>
 <p>The envelope is also stateful: before all four genuine <code>dropReceipts()</code> calls, its public getter returns fresh decoy bytes. Reading the graph but skipping the filtered-method stage therefore produces a bad proof.</p>
-<p><code>Solve.java</code> is the organizer implementation. <code>test.py</code> derives a new note and runs it, so no separate solver script is needed.</p><h2 id="solver">Reference solver</h2><p>The complete solver used to validate the challenge:</p><pre><code class="language-java">import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.util.ArrayDeque;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.IdentityHashMap;
-import java.util.Set;
+<p><code>Solve.java</code> is the organizer implementation. <code>test.py</code> derives a new note and runs it, so no separate solver script is needed.</p>
+    <h2 id="solver">Reference solver</h2>
+    <figure class="code"><figcaption><span>solve.java</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-java"><span class="t-k">import</span> java.lang.reflect.AccessibleObject;
+<span class="t-k">import</span> java.lang.reflect.Field;
+<span class="t-k">import</span> java.lang.reflect.Method;
+<span class="t-k">import</span> java.nio.charset.StandardCharsets;
+<span class="t-k">import</span> java.security.MessageDigest;
+<span class="t-k">import</span> java.util.ArrayDeque;
+<span class="t-k">import</span> java.util.Base64;
+<span class="t-k">import</span> java.util.Collections;
+<span class="t-k">import</span> java.util.IdentityHashMap;
+<span class="t-k">import</span> java.util.Set;
 
 
-public class Exploit {
-    private static String word(int... letters) {
-        char[] out = new char[letters.length];
-        for (int i = 0; i &lt; letters.length; i++) out[i] = (char) letters[i];
-        return new String(out);
+<span class="t-k">public</span> <span class="t-k">class</span> Exploit {
+    <span class="t-k">private</span> <span class="t-k">static</span> String <span class="t-f">word</span>(<span class="t-k">int</span>... letters) {
+        <span class="t-k">char</span>[] out = <span class="t-k">new</span> <span class="t-k">char</span>[letters.length];
+        <span class="t-k">for</span> (<span class="t-k">int</span> i = <span class="t-m">0</span>; i &lt; letters.length; i++) out[i] = (<span class="t-k">char</span>) letters[i];
+        <span class="t-k">return</span> <span class="t-k">new</span> <span class="t-f">String</span>(out);
     }
 
-    private static byte[] hash(byte[]... chunks) throws Exception {
-        MessageDigest md = MessageDigest.getInstance(&quot;SHA-256&quot;);
-        for (byte[] chunk : chunks) md.update(chunk);
-        return md.digest();
+    <span class="t-k">private</span> <span class="t-k">static</span> <span class="t-k">byte</span>[] <span class="t-f">hash</span>(<span class="t-k">byte</span>[]... chunks) <span class="t-k">throws</span> Exception {
+        MessageDigest md = MessageDigest.<span class="t-f">getInstance</span>(<span class="t-s">&quot;SHA-256&quot;</span>);
+        <span class="t-k">for</span> (<span class="t-k">byte</span>[] chunk : chunks) md.<span class="t-f">update</span>(chunk);
+        <span class="t-k">return</span> md.<span class="t-f">digest</span>();
     }
 
-    private static String hex(byte[] data) {
-        StringBuilder out = new StringBuilder();
-        for (byte value : data) out.append(String.format(&quot;%02x&quot;, value &amp; 255));
-        return out.toString();
+    <span class="t-k">private</span> <span class="t-k">static</span> String <span class="t-f">hex</span>(<span class="t-k">byte</span>[] data) {
+        StringBuilder out = <span class="t-k">new</span> <span class="t-f">StringBuilder</span>();
+        <span class="t-k">for</span> (<span class="t-k">byte</span> value : data) out.<span class="t-f">append</span>(String.<span class="t-f">format</span>(<span class="t-s">&quot;%02x&quot;</span>, value &amp; <span class="t-m">255</span>));
+        <span class="t-k">return</span> out.<span class="t-f">toString</span>();
     }
 
-    public static String run(Main.LarpReview review, String nonce) throws Exception {
-        String openName = word(115,101,116,65,99,99,101,115,115,105,98,108,101);
-        Method open = AccessibleObject.class.getMethod(openName, boolean.class);
+    <span class="t-k">public</span> <span class="t-k">static</span> String <span class="t-f">run</span>(Main.LarpReview review, String nonce) <span class="t-k">throws</span> Exception {
+        String openName = <span class="t-f">word</span>(<span class="t-m">115</span>,<span class="t-m">101</span>,<span class="t-m">116</span>,<span class="t-m">65</span>,<span class="t-m">99</span>,<span class="t-m">99</span>,<span class="t-m">101</span>,<span class="t-m">115</span>,<span class="t-m">115</span>,<span class="t-m">105</span>,<span class="t-m">98</span>,<span class="t-m">108</span>,<span class="t-m">101</span>);
+        Method open = AccessibleObject.<span class="t-k">class</span>.<span class="t-f">getMethod</span>(openName, <span class="t-k">boolean</span>.<span class="t-k">class</span>);
 
-        String fieldsName = word(103,101,116,68,101,99,108,97,114,101,100,
-                                 70,105,101,108,100,115,48);
-        Method rawFields = Class.class.getDeclaredMethod(fieldsName, boolean.class);
-        open.invoke(rawFields, true);
-        Field[] fields = (Field[]) rawFields.invoke(Main.LarpReview.class, false);
+        String fieldsName = <span class="t-f">word</span>(<span class="t-m">103</span>,<span class="t-m">101</span>,<span class="t-m">116</span>,<span class="t-m">68</span>,<span class="t-m">101</span>,<span class="t-m">99</span>,<span class="t-m">108</span>,<span class="t-m">97</span>,<span class="t-m">114</span>,<span class="t-m">101</span>,<span class="t-m">100</span>,
+                                 <span class="t-m">70</span>,<span class="t-m">105</span>,<span class="t-m">101</span>,<span class="t-m">108</span>,<span class="t-m">100</span>,<span class="t-m">115</span>,<span class="t-m">48</span>);
+        Method rawFields = Class.<span class="t-k">class</span>.<span class="t-f">getDeclaredMethod</span>(fieldsName, <span class="t-k">boolean</span>.<span class="t-k">class</span>);
+        open.<span class="t-f">invoke</span>(rawFields, <span class="t-k">true</span>);
+        Field[] fields = (Field[]) rawFields.<span class="t-f">invoke</span>(Main.LarpReview.<span class="t-k">class</span>, <span class="t-k">false</span>);
 
-        Object[] roots = null;
-        for (Field field : fields) {
-            if (field.getType() == Object[].class) {
-                open.invoke(field, true);
-                roots = (Object[]) field.get(review);
+        Object[] roots = <span class="t-k">null</span>;
+        <span class="t-k">for</span> (Field field : fields) {
+            <span class="t-k">if</span> (field.<span class="t-f">getType</span>() == Object[].<span class="t-k">class</span>) {
+                open.<span class="t-f">invoke</span>(field, <span class="t-k">true</span>);
+                roots = (Object[]) field.<span class="t-f">get</span>(review);
             }
         }
-        if (roots == null) return &quot;&quot;;
+        <span class="t-k">if</span> (roots == <span class="t-k">null</span>) <span class="t-k">return</span> <span class="t-s">&quot;&quot;</span>;
 
-        String methodsName = word(103,101,116,68,101,99,108,97,114,101,100,
-                                  77,101,116,104,111,100,115,48);
-        Method rawMethods = Class.class.getDeclaredMethod(methodsName, boolean.class);
-        open.invoke(rawMethods, true);
+        String methodsName = <span class="t-f">word</span>(<span class="t-m">103</span>,<span class="t-m">101</span>,<span class="t-m">116</span>,<span class="t-m">68</span>,<span class="t-m">101</span>,<span class="t-m">99</span>,<span class="t-m">108</span>,<span class="t-m">97</span>,<span class="t-m">114</span>,<span class="t-m">101</span>,<span class="t-m">100</span>,
+                                  <span class="t-m">77</span>,<span class="t-m">101</span>,<span class="t-m">116</span>,<span class="t-m">104</span>,<span class="t-m">111</span>,<span class="t-m">100</span>,<span class="t-m">115</span>,<span class="t-m">48</span>);
+        Method rawMethods = Class.<span class="t-k">class</span>.<span class="t-f">getDeclaredMethod</span>(methodsName, <span class="t-k">boolean</span>.<span class="t-k">class</span>);
+        open.<span class="t-f">invoke</span>(rawMethods, <span class="t-k">true</span>);
 
-        ArrayDeque&lt;Object&gt; queue = new ArrayDeque&lt;&gt;();
-        Collections.addAll(queue, roots);
-        Set&lt;Object&gt; seen = Collections.newSetFromMap(new IdentityHashMap&lt;&gt;());
-        byte[][] pieces = new byte[4][];
-        Main.Envelope envelope = null;
+        ArrayDeque&lt;Object&gt; queue = <span class="t-k">new</span> ArrayDeque&lt;&gt;();
+        Collections.<span class="t-f">addAll</span>(queue, roots);
+        Set&lt;Object&gt; seen = Collections.<span class="t-f">newSetFromMap</span>(<span class="t-k">new</span> IdentityHashMap&lt;&gt;());
+        <span class="t-k">byte</span>[][] pieces = <span class="t-k">new</span> <span class="t-k">byte</span>[<span class="t-m">4</span>][];
+        Main.Envelope envelope = <span class="t-k">null</span>;
 
-        while (!queue.isEmpty()) {
-            Object item = queue.removeFirst();
-            if (item == null || !seen.add(item)) continue;
-            if (item instanceof Main.Trail trail) {
-                Collections.addAll(queue, trail.walk());
-                continue;
+        <span class="t-k">while</span> (!queue.<span class="t-f">isEmpty</span>()) {
+            Object item = queue.<span class="t-f">removeFirst</span>();
+            <span class="t-k">if</span> (item == <span class="t-k">null</span> || !seen.<span class="t-f">add</span>(item)) <span class="t-k">continue</span>;
+            <span class="t-k">if</span> (item <span class="t-k">instanceof</span> Main.Trail trail) {
+                Collections.<span class="t-f">addAll</span>(queue, trail.<span class="t-f">walk</span>());
+                <span class="t-k">continue</span>;
             }
-            if (item instanceof Main.Envelope found) {
+            <span class="t-k">if</span> (item <span class="t-k">instanceof</span> Main.Envelope found) {
                 envelope = found;
-                continue;
+                <span class="t-k">continue</span>;
             }
 
-            Method[] methods = (Method[]) rawMethods.invoke(item.getClass(), false);
-            for (Method method : methods) {
-                if (method.getParameterCount() != 0 || method.getReturnType() != String.class)
-                    continue;
-                try {
-                    open.invoke(method, true);
-                    String value = (String) method.invoke(item);
-                    byte[] packed = Base64.getUrlDecoder().decode(value);
-                    if (packed.length != 13 || packed[0] &lt; 0 || packed[0] &gt; 3) continue;
-                    byte[] body = java.util.Arrays.copyOf(packed, 9);
-                    byte[] tag = hash(nonce.getBytes(StandardCharsets.US_ASCII), body,
-                                      &quot;MAX&quot;.getBytes(StandardCharsets.US_ASCII));
-                    boolean valid = true;
-                    for (int i = 0; i &lt; 4; i++) valid &amp;= packed[9 + i] == tag[i];
-                    if (valid) pieces[packed[0]] = java.util.Arrays.copyOfRange(packed, 1, 9);
-                } catch (Exception ignored) {
+            Method[] methods = (Method[]) rawMethods.<span class="t-f">invoke</span>(item.<span class="t-f">getClass</span>(), <span class="t-k">false</span>);
+            <span class="t-k">for</span> (Method method : methods) {
+                <span class="t-k">if</span> (method.<span class="t-f">getParameterCount</span>() != <span class="t-m">0</span> || method.<span class="t-f">getReturnType</span>() != String.<span class="t-k">class</span>)
+                    <span class="t-k">continue</span>;
+                <span class="t-k">try</span> {
+                    open.<span class="t-f">invoke</span>(method, <span class="t-k">true</span>);
+                    String value = (String) method.<span class="t-f">invoke</span>(item);
+                    <span class="t-k">byte</span>[] packed = Base64.<span class="t-f">getUrlDecoder</span>().<span class="t-f">decode</span>(value);
+                    <span class="t-k">if</span> (packed.length != <span class="t-m">13</span> || packed[<span class="t-m">0</span>] &lt; <span class="t-m">0</span> || packed[<span class="t-m">0</span>] &gt; <span class="t-m">3</span>) <span class="t-k">continue</span>;
+                    <span class="t-k">byte</span>[] body = java.util.Arrays.<span class="t-f">copyOf</span>(packed, <span class="t-m">9</span>);
+                    <span class="t-k">byte</span>[] tag = <span class="t-f">hash</span>(nonce.<span class="t-f">getBytes</span>(StandardCharsets.US_ASCII), body,
+                                      <span class="t-s">&quot;MAX&quot;</span>.<span class="t-f">getBytes</span>(StandardCharsets.US_ASCII));
+                    <span class="t-k">boolean</span> valid = <span class="t-k">true</span>;
+                    <span class="t-k">for</span> (<span class="t-k">int</span> i = <span class="t-m">0</span>; i &lt; <span class="t-m">4</span>; i++) valid &amp;= packed[<span class="t-m">9</span> + i] == tag[i];
+                    <span class="t-k">if</span> (valid) pieces[packed[<span class="t-m">0</span>]] = java.util.Arrays.<span class="t-f">copyOfRange</span>(packed, <span class="t-m">1</span>, <span class="t-m">9</span>);
+                } <span class="t-k">catch</span> (Exception ignored) {
                 }
             }
         }
 
-        if (envelope == null) return &quot;&quot;;
-        byte[] key = new byte[32];
-        for (int i = 0; i &lt; 4; i++) {
-            if (pieces[i] == null) return &quot;&quot;;
-            for (int j = 0; j &lt; 8; j++) key[i * 8 + j] = pieces[i][j];
+        <span class="t-k">if</span> (envelope == <span class="t-k">null</span>) <span class="t-k">return</span> <span class="t-s">&quot;&quot;</span>;
+        <span class="t-k">byte</span>[] key = <span class="t-k">new</span> <span class="t-k">byte</span>[<span class="t-m">32</span>];
+        <span class="t-k">for</span> (<span class="t-k">int</span> i = <span class="t-m">0</span>; i &lt; <span class="t-m">4</span>; i++) {
+            <span class="t-k">if</span> (pieces[i] == <span class="t-k">null</span>) <span class="t-k">return</span> <span class="t-s">&quot;&quot;</span>;
+            <span class="t-k">for</span> (<span class="t-k">int</span> j = <span class="t-m">0</span>; j &lt; <span class="t-m">8</span>; j++) key[i * <span class="t-m">8</span> + j] = pieces[i][j];
         }
-        byte[] stream = hash(nonce.getBytes(StandardCharsets.US_ASCII), key);
-        byte[] ciphertext = envelope.ciphertext();
-        byte[] receipt = new byte[ciphertext.length];
-        for (int i = 0; i &lt; receipt.length; i++) receipt[i] = (byte) (ciphertext[i] ^ stream[i]);
-        return hex(hash(nonce.getBytes(StandardCharsets.US_ASCII), receipt));
+        <span class="t-k">byte</span>[] stream = <span class="t-f">hash</span>(nonce.<span class="t-f">getBytes</span>(StandardCharsets.US_ASCII), key);
+        <span class="t-k">byte</span>[] ciphertext = envelope.<span class="t-f">ciphertext</span>();
+        <span class="t-k">byte</span>[] receipt = <span class="t-k">new</span> <span class="t-k">byte</span>[ciphertext.length];
+        <span class="t-k">for</span> (<span class="t-k">int</span> i = <span class="t-m">0</span>; i &lt; receipt.length; i++) receipt[i] = (<span class="t-k">byte</span>) (ciphertext[i] ^ stream[i]);
+        <span class="t-k">return</span> <span class="t-f">hex</span>(<span class="t-f">hash</span>(nonce.<span class="t-f">getBytes</span>(StandardCharsets.US_ASCII), receipt));
     }
 }
 
-/* maxing:{{NOTE}} */</code></pre><h2 id="flag">Flag</h2><pre class="flag-output"><code>Securinets{m4x1ng_th3_l4rp_d03s_n0t_m4k3_1t_r34l}</code></pre>
-      <div class="article-end"><span>Published 2026-09-28 · by r3t0x</span><a class="text-link" href="/blog/?collection=Securinets%20Friendly%20CTF%202026">More Securinets Friendly CTF 2026 writeups ↗</a></div></div>
-    </div>
-  </article></main>
-  <footer class="site-footer"><div class="footer-top"><a class="brand" href="/"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><p>Always curious. Always one layer deeper.</p><a href="#main" class="text-link">Back to top ↑</a></div><div class="footer-bottom"><span>© 2026 Ghaith Amdouni <span class="red">·</span> Made with curiosity & caffeine.</span><div><a href="/projects/">Projects ↗</a><a href="https://github.com/Ghaith-amdouni">GitHub ↗</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn ↗</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>Résumé ↗</a><a href="/feed.xml">RSS ↗</a><button id="motion-toggle" aria-pressed="false">Motion: on</button></div></div></footer>
-  <dialog id="search-dialog" class="search-vault" aria-labelledby="search-title"><div class="search-vault-mark" aria-hidden="true"><span></span><small>眼 // TRACE</small></div><div class="dialog-top"><div><span class="dialog-address">0xSEARCH_INDEX</span><h2 id="search-title">Trace a memory.</h2></div><button data-close-dialog aria-label="Close search">ESC</button></div><label for="site-search" class="search-command"><span aria-hidden="true">❯</span><span class="sr-only">Search challenges, projects, and pages</span><input id="site-search" type="search" placeholder="type a challenge, project, primitive…" autocomplete="off" spellcheck="false"></label><div class="search-scopes" role="group" aria-label="Search scope"><button type="button" data-search-scope="All" aria-pressed="true">ALL MEMORY</button><button type="button" data-search-scope="Challenge" aria-pressed="false">CHALLENGES</button><button type="button" data-search-scope="Project" aria-pressed="false">PROJECTS</button></div><div class="search-readout"><span><i></i> INDEX ONLINE</span><b id="search-count">0 addresses</b></div><div id="search-results" aria-live="polite"></div><div class="dialog-bottom"><span>↑↓ TRACE</span><span>ENTER OPEN</span><span>ESC DISMISS</span></div></dialog>
-  <div class="toast" id="toast" role="status"></div></body></html>
+<span class="t-c">/* maxing:{{NOTE}} */</span></code></pre></figure>
+    <h2 id="flag">Flag</h2>
+    <p class="flag"><code>Securinets{m4x1ng_th3_l4rp_d03s_n0t_m4k3_1t_r34l}</code><button type="button" class="copy" data-copy>copy</button></p>
+  </div>
+  <nav class="pager" aria-label="More writeups">
+    <a href="/challenge/securinets-friendly-ctf-2026/misc/are-math-ding/"><span>previous</span><strong>are MATH D'ING</strong></a>
+    <a class="next" href="/challenge/securinets-friendly-ctf-2026/misc/postmortem/"><span>next</span><strong>POSTMORTEM</strong></a>
+  </nav>
+</article></div></main>
+<footer class="colophon">
+  <div class="shell">
+    <p><strong>Ghaith Amdouni</strong> · Binary exploitation &amp; systems · Tunis, Tunisia</p>
+    <nav aria-label="Elsewhere"><a href="https://github.com/Ghaith-amdouni">GitHub</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn</a><a href="https://www.credly.com/users/ghaith-amdouni">Credly</a><a href="/feed.xml">RSS</a><a href="mailto:ghaith.amdouni@insat.ucar.tn">email</a></nav>
+    <p class="fine">© 2026 Ghaith Amdouni · <a href="https://github.com/Ghaith-amdouni/ghaith-amdouni.github.io">site source</a><img class="hits" src="https://hits.sh/r3t0x.me.svg?view=total&style=flat-square&label=visits&color=161619&labelColor=0c0c0e" alt="" width="88" height="20" loading="lazy"></p>
+  </div>
+</footer>
+<dialog id="search" aria-label="Search">
+  <form method="dialog" class="search-head">
+    <label for="search-input"><span aria-hidden="true">&gt;</span><span class="sr-only">Search writeups, projects and pages</span></label>
+    <input id="search-input" type="search" placeholder="search writeups, projects, pages" autocomplete="off" spellcheck="false">
+    <button value="close" aria-label="Close search">esc</button>
+  </form>
+  <ul id="search-results"></ul>
+  <p class="search-foot"><span id="search-count">start typing</span><span>&uarr;&darr; move · enter open</span></p>
+</dialog>
+</body>
+</html>

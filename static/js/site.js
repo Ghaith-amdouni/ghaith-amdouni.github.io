@@ -425,7 +425,8 @@ document.addEventListener('click', (event) => {
     '/blog/': ['ENTERING THE MEMORY VAULT', '~/archive'],
     '/projects/': ['LOADING PROJECT CASES', '~/projects']
   };
-  const opensThemedRoute = target.origin === location.origin && themedRoutes[targetRoute] && targetRoute !== currentRoute;
+  // Writeup pages hand their exit to the Kamui transition below.
+  const opensThemedRoute = target.origin === location.origin && themedRoutes[targetRoute] && targetRoute !== currentRoute && !document.body.classList.contains('veil-open');
   const skipTransition = event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || link.target === '_blank' || link.hasAttribute('download');
   if (!opensThemedRoute || skipTransition || reducedMotion.matches || document.body.classList.contains('motion-off')) return;
   event.preventDefault();
@@ -444,3 +445,48 @@ document.addEventListener('click', (event) => {
   clearTimeout(routeTimer);
   routeTimer = setTimeout(() => location.assign(target.href), 1480);
 });
+
+/* ===== Kamui / Mangekyo route transition ================================== */
+const routeVeil = $('#route-veil');
+const kamuiVeil = $('#kamui-veil');
+let veilTimer;
+
+const clearVeil = () => {
+  clearTimeout(veilTimer);
+  routeVeil?.classList.remove('is-closing');
+  kamuiVeil?.classList.remove('is-active');
+  document.body.classList.remove('kamui-sucking');
+};
+addEventListener('pageshow', clearVeil);
+addEventListener('popstate', clearVeil);
+
+if (routeVeil) {
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest('a[href]');
+    if (!link || event.defaultPrevented) return;
+
+    const target = new URL(link.href, location.href);
+    if (target.origin !== location.origin) return;
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (link.target === '_blank' || link.hasAttribute('download')) return;
+    if (reducedMotion.matches || document.body.classList.contains('motion-off')) return;
+
+    const onWriteup = document.body.classList.contains('veil-open');
+    const opensWriteup = target.pathname.startsWith('/challenge/') && target.pathname !== location.pathname;
+    // Leaving a writeup for the archive rewinds through Kamui; opening one closes the eye.
+    const leavesWriteup = onWriteup && !target.pathname.startsWith('/challenge/') && target.pathname !== location.pathname;
+    if (!opensWriteup && !leavesWriteup) return;
+
+    event.preventDefault();
+    if (dialog?.open) dialog.close();
+
+    if (leavesWriteup) {
+      kamuiVeil?.classList.add('is-active');
+      document.body.classList.add('kamui-sucking');
+      veilTimer = setTimeout(() => location.assign(target.href), 900);
+    } else {
+      routeVeil.classList.add('is-closing');
+      veilTimer = setTimeout(() => location.assign(target.href), 850);
+    }
+  });
+}

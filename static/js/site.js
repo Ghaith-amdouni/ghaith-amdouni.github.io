@@ -78,7 +78,7 @@ if (motionToggle) {
 }
 
 // Reveal content in small, quiet groups.
-const revealTargets = $$('.section-heading,.post-card,.award,.project-card,.project-case,.timeline-item,.certifications,.contact-section,.archive-entry,.resume-section');
+const revealTargets = $$('.section-heading,.post-card,.award,.project-card,.project-case,.timeline-item,.certifications,.contact-section,.resume-section');
 revealTargets.forEach((el) => el.setAttribute('data-reveal', ''));
 if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
   const observer = new IntersectionObserver((entries) => {
@@ -262,13 +262,20 @@ const filterArchive = ({ updateUrl = true } = {}) => {
   });
   visible.forEach((entry) => {
     const group = archiveGroups.find((item) => item.dataset.collectionGroup === entry.dataset.collection);
-    group?.querySelector('[data-collection-grid]')?.appendChild(entry);
+    const categoryGrid = group && $$('[data-category-grid]', group).find((grid) => grid.dataset.categoryGrid === entry.dataset.category);
+    (categoryGrid || group?.querySelector('[data-collection-grid]'))?.appendChild(entry);
   });
   archiveGroups.forEach((group) => {
     const groupCount = visible.filter((entry) => entry.dataset.collection === group.dataset.collectionGroup).length;
     group.hidden = groupCount === 0;
     const label = group.querySelector('[data-collection-count]');
     if (label) label.textContent = `${groupCount} ${groupCount === 1 ? 'challenge' : 'challenges'}`;
+    $$('[data-category-track]', group).forEach((track) => {
+      const trackCount = visible.filter((entry) => entry.dataset.collection === group.dataset.collectionGroup && entry.dataset.category === track.dataset.categoryTrack).length;
+      track.hidden = trackCount === 0;
+      const trackLabel = track.querySelector('[data-category-count]');
+      if (trackLabel) trackLabel.textContent = `${trackCount} ${trackCount === 1 ? 'writeup' : 'writeups'}`;
+    });
   });
   if (resultCount) resultCount.textContent = `${visible.length} ${visible.length === 1 ? 'challenge' : 'challenges'}`;
   if (resultHint) {

@@ -1,4 +1,4 @@
-import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { posts } from '../content/posts.mjs';
 import { projects } from '../content/projects.mjs';
@@ -8,39 +8,11 @@ const assetVersion = createHash('sha256')
   .update(await readFile('static/css/akatsuki.css'))
   .update(await readFile('static/js/site.js'))
   .digest('hex').slice(0, 12);
-const challengeAssetVersion = createHash('sha256')
-  .update(await readFile('static/css/style.css'))
-  .update(await readFile('static/js/main.js'))
-  .digest('hex').slice(0, 12);
 const esc = s => String(s).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
-const decode = s => s.replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n)).replaceAll('&amp;', '&').replaceAll('&quot;', '"').replaceAll('&lt;', '<').replaceAll('&gt;', '>');
 const summarize = s => {
   const clipped = s.length > 138 ? s.slice(0, 138).replace(/\s+\S*$/, '') : s;
   return clipped && !/[.!?…]$/.test(clipped) ? `${clipped.replace(/[\s,;:—-]+$/, '')}…` : clipped;
 };
-const challenges = [];
-async function walk(dir) {
-  for (const e of await readdir(dir, { withFileTypes: true })) {
-    const file = `${dir}/${e.name}`;
-    if (e.isDirectory()) {
-      if (file === 'challenge/securinets-friendly-ctf-2026') continue;
-      await walk(file);
-    }
-    else if (e.name === 'index.html') {
-      const html = await readFile(file, 'utf8');
-      let versionedHtml = html
-        .replace(/(static\/css\/style\.css)(?:\?v=[a-f0-9]+)?/g, `$1?v=${challengeAssetVersion}`)
-        .replace(/(static\/js\/main\.js)(?:\?v=[a-f0-9]+)?/g, `$1?v=${challengeAssetVersion}`);
-      if (!/<link\s+rel="icon"/i.test(versionedHtml)) versionedHtml = versionedHtml.replace('</title>', '</title>\n    <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">');
-      if (versionedHtml !== html) await writeFile(file, versionedHtml);
-      const title = decode(html.match(/<title>(.*?)\s*\/\/[^<]+<\/title>/)?.[1] || file.split('/').at(-2));
-      const collection = file.includes('mojo-jojo') ? 'MOJO-JOJO' : 'FST Bootcamp';
-      const meta = decode(html.match(/<meta\s+name="description"\s+content="([^"]*)"/i)?.[1] || '').replaceAll('**', '').replace(/\s+/g, ' ').trim();
-      challenges.push({ title, url: '/' + file, category: 'Pwn', collection, description: summarize(meta) || `${collection} binary-exploitation lab authored by r3t0x.`, difficulty: Math.min(5, (html.split('<!-- Description -->')[0].match(/diff-dot filled/g) || []).length) });
-    }
-  }
-}
-await walk('challenge');
 async function loadFriendly(category) {
   try {
     const entries = JSON.parse(await readFile(`content/friendly-ctf-2026-${category}.json`, 'utf8'));
@@ -59,7 +31,11 @@ const friendlyChallenges = [
   ...await loadFriendly('misc'),
   ...await loadFriendly('pwn'),
 ];
-challenges.push(...friendlyChallenges);
+const legacyChallenges = JSON.parse(await readFile('content/legacy-writeups.json', 'utf8')).map(entry => ({
+  ...entry,
+  description: summarize(entry.description.replace(/\s+/g, ' ').trim()) || `${entry.collection} binary-exploitation writeup.`,
+}));
+const challenges = [...legacyChallenges, ...friendlyChallenges];
 challenges.sort((a,b) => a.collection.localeCompare(b.collection) || a.category.localeCompare(b.category) || a.title.localeCompare(b.title));
 const cloud = `<svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg>`;
 const icon = `<img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32">`;
@@ -177,19 +153,21 @@ function renderMarkdown(markdown) {
 
 const difficultyLabel = difficulty => difficulty <= 2 ? 'easy' : difficulty === 3 ? 'medium' : 'hard';
 
-async function buildFriendlyWriteup(challenge) {
+async function buildChallengeWriteup(challenge) {
   const url = challenge.url.replace(/index\.html$/, '');
-  const walkThrough = renderMarkdown(challenge.writeup);
-  const tags = challenge.tags.length ? challenge.tags.map(tag => `<span>${esc(tag)}</span>`).join('') : `<span>${esc(challenge.category.toLowerCase())}</span>`;
+  const walkThrough = challenge.writeupHtml || renderMarkdown(challenge.writeup);
+  const tags = challenge.tags?.length ? challenge.tags.map(tag => `<span>${esc(tag)}</span>`).join('') : `<span>${esc(challenge.category.toLowerCase())}</span>`;
+  const pointsLine = challenge.points ? `${esc(challenge.points)} points` : 'archived challenge';
+  const pointsFact = challenge.points ? esc(challenge.points) : 'Archived';
   const body = `<article class="wrap article-page writeup-page">
     <a class="text-link" href="/blog/?collection=${encodeURIComponent(challenge.collection)}">← Back to the archive</a>
     <header class="article-heading"><p class="eyebrow">${esc(challenge.collection)} <span>/</span> ${esc(challenge.category)} WRITEUP</p><h1>${esc(challenge.title)}</h1><p>${esc(challenge.description)}</p>
-      <div class="article-author"><img src="/static/img/ghaith.webp" alt="" width="44" height="44"><span><strong>${esc(challenge.author)}</strong><small>${esc(challenge.date)} · ${challenge.points} points · ${difficultyLabel(challenge.difficulty)}</small></span><a class="button" href="#solver">Jump to solver ↓</a></div>
+      <div class="article-author"><img src="/static/img/ghaith.webp" alt="" width="44" height="44"><span><strong>${esc(challenge.author)}</strong><small>${esc(challenge.date)} · ${pointsLine} · ${difficultyLabel(challenge.difficulty)}</small></span><a class="button" href="#solver">Jump to solver ↓</a></div>
     </header>
-    <div class="writeup-facts" aria-label="Challenge metadata"><span><small>EVENT</small>${esc(challenge.collection)}</span><span><small>CATEGORY</small>${esc(challenge.category)}</span><span><small>DIFFICULTY</small>${difficultyLabel(challenge.difficulty)}</span><span><small>POINTS</small>${challenge.points}</span></div>
+    <div class="writeup-facts" aria-label="Challenge metadata"><span><small>EVENT</small>${esc(challenge.collection)}</span><span><small>CATEGORY</small>${esc(challenge.category)}</span><span><small>DIFFICULTY</small>${difficultyLabel(challenge.difficulty)}</span><span><small>POINTS</small>${pointsFact}</span></div>
     <div class="article-layout"><aside class="article-toc"><p class="eyebrow">ON THIS PAGE</p><nav><a href="#summary">Summary</a><a href="#walkthrough">Walkthrough</a><a href="#solver">Reference solver</a><a href="#flag">Flag</a></nav><div class="writeup-tags">${tags}</div></aside>
-      <div class="prose writeup-prose"><h2 id="summary">Summary</h2><p class="lead">${esc(challenge.description)}</p><h2 id="walkthrough">Walkthrough</h2>${walkThrough}<h2 id="solver">Reference solver</h2><p>The complete solver used to validate the challenge:</p><pre><code class="language-${challenge.solverLanguage}">${esc(challenge.solver.trim())}</code></pre><h2 id="flag">Flag</h2><pre class="flag-output"><code>${esc(challenge.flag)}</code></pre>
-      <div class="article-end"><span>Published ${esc(challenge.date)} · by ${esc(challenge.author)}</span><a class="text-link" href="/blog/?collection=${encodeURIComponent(challenge.collection)}">More Friendly CTF writeups ↗</a></div></div>
+      <div class="prose writeup-prose"><h2 id="summary">Summary</h2><p class="lead">${esc(challenge.description)}</p><h2 id="walkthrough">Walkthrough</h2>${walkThrough}<h2 id="solver">Reference solver</h2><p>The complete solver used to validate the challenge:</p><pre><code class="language-${challenge.solverLanguage}">${esc(challenge.solver.trim().replace(/[ \t]+$/gm, ''))}</code></pre><h2 id="flag">Flag</h2><pre class="flag-output"><code>${esc(challenge.flag)}</code></pre>
+      <div class="article-end"><span>Published ${esc(challenge.date)} · by ${esc(challenge.author)}</span><a class="text-link" href="/blog/?collection=${encodeURIComponent(challenge.collection)}">More ${esc(challenge.collection)} writeups ↗</a></div></div>
     </div>
   </article>`;
   const directory = challenge.url.slice(1).replace(/\/index\.html$/, '');
@@ -197,7 +175,10 @@ async function buildFriendlyWriteup(challenge) {
   await writeFile(`${directory}/index.html`, shell(`${challenge.title} · ${challenge.category} writeup`, challenge.description, body, { url, active: 'blog', type: 'article' }));
 }
 
-for (const challenge of friendlyChallenges) await buildFriendlyWriteup(challenge);
+// Legacy FST Bootcamp and MOJO-JOJO CTF pages keep their original, hand-authored
+// source/disassembly and walkthrough layouts. Only imported Friendly CTF entries
+// are generated here.
+for (const challenge of friendlyChallenges) await buildChallengeWriteup(challenge);
 
 function art(post) {
   if(post.art==='pipeline') return `<div class="post-art pipeline-art" aria-hidden="true"><span>git push</span><i>→</i><span>build</span><i>→</i><span class="art-active">deploy <b>✓</b></span><small>STATUS: ALL CHECKS PASSED</small></div>`;
@@ -212,7 +193,7 @@ const homeProjects = projects.filter(project => project.featured);
 const home = `<section class="hero wrap"><div class="hero-copy"><p class="eyebrow"><span class="online-dot"></span> AKATSUKI SPIRIT. DEBUGGER MIND.</p><h1><span class="hero-prefix">./</span>r3t0x<span class="cursor">_</span></h1><h2>Ghaith Amdouni<span class="red">.</span></h2><p class="hero-role">Binary exploitation <span>×</span> Systems <span>×</span> Curiosity</p><p class="hero-description">I pull things apart to understand how they work.<br>SecuriNets Technical Team Instructor, CTF player, and Networks & Telecommunications student at INSAT.</p><div class="hero-actions"><a class="button primary" href="/blog/">Explore the archive <span>↗</span></a><a class="button" href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>English CV <span>↓</span></a></div><div class="hero-links"><a href="https://github.com/Ghaith-amdouni">GitHub ↗</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn ↗</a><a href="mailto:ghaith.amdouni@insat.ucar.tn">Email ↗</a><span><span class="online-dot"></span> Tunis, Tunisia</span></div></div>
   <div class="hero-visual"><img class="hero-sharingan" src="/static/img/mangekyou.png" width="290" height="290" alt="" aria-hidden="true"><div class="orbit orbit-one" aria-hidden="true"></div><div class="orbit orbit-two" aria-hidden="true"></div><span class="visual-addr" aria-hidden="true">0x00401337 · rwx</span><div class="portrait-window"><div class="window-title"><span class="window-dots"><i></i><i></i><i></i></span><span>~/r3t0x/whoami</span><span class="red">暁</span></div><div class="portrait-image"><img src="/static/img/ghaith.webp" alt="Ghaith Amdouni working on his laptop at a technology event" width="800" height="1200" fetchpriority="high"><div class="portrait-caption"><span><i class="online-dot"></i> GHAITH AMDOUNI</span><span>aka. r3t0x</span></div></div><div class="portrait-bottom"><span><b>OS</b> Arch Linux</span><span><b>FOCUS</b> Pwn & systems</span></div></div><div class="floating-tag"><span class="red">❯</span> curiosity <span class="muted">--always</span><span class="cursor">▌</span></div></div></section>
   <div class="specialties"><div class="wrap"><span><i>01</i> BINARY EXPLOITATION</span><b>✳</b><span><i>02</i> REVERSE ENGINEERING</span><b>✳</b><span><i>03</i> NETWORKS & SYSTEMS</span><b>✳</b><span><i>04</i> ARCH LINUX</span></div></div>
-  <section class="section wrap" id="journal">${heading('01','The latest bytes.','THE JOURNAL',`<a class="text-link" href="/blog/">View the archive ${arrow}</a>`)}<div class="posts-grid">${posts.map(postCard).join('')}</div><a class="archive-callout" href="/blog/"><div><span class="red">❯</span> <strong>Looking for CTF writeups?</strong><span class="muted"> ${challenges.length} challenges across Friendly CTF, MOJO-JOJO, and FST Bootcamp.</span></div><span>Open archive ↗</span></a></section>
+  <section class="section wrap" id="journal">${heading('01','The latest bytes.','THE JOURNAL',`<a class="text-link" href="/blog/">View the archive ${arrow}</a>`)}<div class="posts-grid">${posts.map(postCard).join('')}</div><a class="archive-callout" href="/blog/"><div><span class="red">❯</span> <strong>Looking for CTF writeups?</strong><span class="muted"> ${challenges.length} challenges across Friendly CTF, MOJO-JOJO CTF, and FST Bootcamp.</span></div><span>Open archive ↗</span></a></section>
   <section class="section wrap" id="about">${heading('02','More than a handle.','WHOAMI')}<div class="about-grid"><div class="about-copy"><p class="large-copy">Somewhere between a packet trace and a debugger, <span>I feel at home.</span></p><p>I'm a SecuriNets Technical Team Instructor and a Networks & Telecommunications student at <a href="https://insat.rnu.tn/">INSAT</a>, based in Tunis. My work connects cybersecurity, Linux, networking, and software development.</p><p>I build challenges, compete in CTFs, and explore the layers underneath the interface. From network simulations to cloud-native applications, I like understanding the whole system.</p><div class="skill-tags"><span>Binary exploitation</span><span>C / C++</span><span>Python</span><span>Linux</span><span>Docker</span><span>Kubernetes</span><span>Networking</span><span>DevSecOps</span></div><a class="text-link" href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>Download my English CV ↓</a></div>
   <div class="terminal"><div class="window-title"><span class="window-dots"><i></i><i></i><i></i></span><span>r3t0x@arch: ~</span><span>zsh</span></div><div class="terminal-content"><div class="terminal-fetch"><pre class="arch-ascii" aria-hidden="true">       /\\
       /  \\
@@ -266,13 +247,20 @@ const difficultyFilters = [
 ];
 const collectionDescriptions = {
   'FST Bootcamp': 'Binary-exploitation training labs created for the FST Bootcamp.',
-  'MOJO-JOJO': 'Original pwn challenges authored for the MOJO-JOJO collection.',
+  'MOJO-JOJO CTF': 'Original pwn challenges authored for the MOJO-JOJO CTF collection.',
   'Securinets Friendly CTF 2026': 'Official misc and pwn walkthroughs from Securinets Friendly CTF 2026.'
 };
 const challengeCollections = [...new Set(challenges.map(challenge => challenge.collection))].map((collection, collectionIndex) => {
   const entries = challenges.map((challenge, index) => ({challenge, index})).filter(item => item.challenge.collection === collection);
   const slug = collection.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  return `<section class="challenge-collection" data-collection-group="${esc(collection)}" aria-labelledby="collection-${slug}"><header class="collection-heading"><div><p>COLLECTION // ${String(collectionIndex + 1).padStart(2,'0')}</p><h2 id="collection-${slug}">${esc(collection)}</h2></div><p>${collectionDescriptions[collection] || 'CTF challenge writeups and reference solvers.'}</p><span data-collection-count>${entries.length} challenges</span></header><div class="archive-card-grid" data-collection-grid>${entries.map(({challenge,index}) => challengeCard(challenge,index)).join('')}</div></section>`;
+  const categories = [...new Set(entries.map(({ challenge }) => challenge.category))];
+  const grids = categories.length === 1
+    ? `<div class="archive-card-grid" data-collection-grid data-category-grid="${esc(categories[0])}">${entries.map(({challenge,index}) => challengeCard(challenge,index)).join('')}</div>`
+    : `<div class="archive-category-tracks">${categories.map((category, categoryIndex) => {
+      const categoryEntries = entries.filter(({ challenge }) => challenge.category === category);
+      return `<section class="archive-category-track" data-category-track="${esc(category)}"><header class="category-track-heading"><div><p>CATEGORY // ${String(categoryIndex + 1).padStart(2, '0')}</p><h3>${esc(category)}</h3></div><span data-category-count>${categoryEntries.length} writeups</span></header><div class="archive-card-grid" data-collection-grid data-category-grid="${esc(category)}">${categoryEntries.map(({challenge,index}) => challengeCard(challenge,index)).join('')}</div></section>`;
+    }).join('')}</div>`;
+  return `<section class="challenge-collection" data-collection-group="${esc(collection)}" aria-labelledby="collection-${slug}"><header class="collection-heading"><div><p>COLLECTION // ${String(collectionIndex + 1).padStart(2,'0')}</p><h2 id="collection-${slug}">${esc(collection)}</h2></div><p>${collectionDescriptions[collection] || 'CTF challenge writeups and reference solvers.'}</p><span data-collection-count>${entries.length} challenges</span></header>${grids}</section>`;
 }).join('');
 const categoryOptions = [...new Set(challenges.map(challenge => challenge.category))].sort().map(category => `<option>${esc(category)}</option>`).join('');
 const collectionOptions = [...new Set(challenges.map(challenge => challenge.collection))].map(collection => `<option>${esc(collection)}</option>`).join('');
@@ -294,7 +282,7 @@ for (const p of posts) {
   await writeFile(`blog/${p.slug}/index.html`, `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0;url=${target}"><link rel="canonical" href="${site}${target}"><title>${esc(p.title)}</title></head><body><a href="${target}">Continue to ${esc(p.title)}</a></body></html>`);
 }
 await writeFile('404.html',shell('404 · Address not mapped','This address is not mapped. Return to the r3t0x archive.',`<section class="wrap error-page"><p class="eyebrow">SEGMENT NOT FOUND</p><h1>0x<span class="red">404</span></h1><h2>This address isn't mapped.</h2><p>The page may have moved. Let's get you back to a known location.</p><div class="hero-actions"><a class="button primary" href="/">Return home ↗</a><a class="button" href="/blog/">Browse the archive</a></div></section>`,{url:'/404.html'}));
-const pages=[{title:'Home',url:'/',category:'Page',description:'Ghaith Amdouni · r3t0x'},{title:'About Ghaith',url:'/#about',category:'Page',description:'Biography and interactive terminal'},{title:'Projects',url:'/projects/',category:'Page',description:'Security, systems, DevOps, networking, and embedded project notes'},{title:'SecuriNets · Experience',url:'/#experience',category:'Page',description:'Technical Team Instructor · experience and certifications'},{title:'English CV · Download',url:'/static/docs/Ghaith-Amdouni-CV-English.pdf',category:'PDF',description:'Ghaith Amdouni’s English résumé'},{title:'Challenge archive',url:'/blog/',category:'Page',description:'Browse CTF writeups, complete solvers, and original challenge collections'},...projects.map(project=>({title:project.title,url:`/projects/#${project.slug}`,category:'Project',description:project.description})),...posts.map(p=>({...p,body:undefined,url:postUrl(p)})),...challenges];
+const pages=[{title:'Home',url:'/',category:'Page',description:'Ghaith Amdouni · r3t0x'},{title:'About Ghaith',url:'/#about',category:'Page',description:'Biography and interactive terminal'},{title:'Projects',url:'/projects/',category:'Page',description:'Security, systems, DevOps, networking, and embedded project notes'},{title:'SecuriNets · Experience',url:'/#experience',category:'Page',description:'Technical Team Instructor · experience and certifications'},{title:'English CV · Download',url:'/static/docs/Ghaith-Amdouni-CV-English.pdf',category:'PDF',description:'Ghaith Amdouni’s English résumé'},{title:'Challenge archive',url:'/blog/',category:'Page',description:'Browse CTF writeups, complete solvers, and original challenge collections'},...projects.map(project=>({title:project.title,url:`/projects/#${project.slug}`,category:'Project',description:project.description})),...posts.map(p=>({...p,body:undefined,url:postUrl(p)})),...challenges.map(({title,url,category,collection,description,difficulty})=>({title,url,category,collection,description,difficulty}))];
 await mkdir('static/data',{recursive:true}); await writeFile('static/data/search.json',JSON.stringify(pages));
 await writeFile('feed.xml',`<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>r3t0x · Ghaith Amdouni</title><link>${site}</link><description>Notes on systems, networking, and projects.</description><language>en</language><atom:link href="${site}/feed.xml" rel="self" type="application/rss+xml"/>${posts.map(p=>`<item><title>${esc(p.title)}</title><link>${site}${postUrl(p)}</link><guid>${site}${postUrl(p)}</guid><pubDate>${new Date(p.date).toUTCString()}</pubDate><description>${esc(p.description)}</description></item>`).join('')}</channel></rss>`);
 await writeFile('sitemap.xml',`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${['/','/blog/','/projects/',...challenges.map(c=>c.url)].map(u=>`<url><loc>${site}${esc(u)}</loc></url>`).join('')}</urlset>`);

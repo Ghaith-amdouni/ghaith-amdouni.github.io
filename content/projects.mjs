@@ -17,7 +17,7 @@ export const projects = [
     body: `<p class="lead">MOJO-JOJO is where exploit ideas become complete CTF challenges.</p>
       <h2>What it explores</h2><p>The collection covers stack pivoting, ret2libc, SROP, heap corruption, dynamic-linker abuse, and oracle-style primitives. Each problem is designed around an exploitation insight instead of a hidden trick.</p>
       <h2>Challenge engineering</h2><p>The work includes vulnerable native targets, deployment containers, solvers, and the surrounding player experience. The published archive keeps each challenge page and writeup reachable.</p>
-      <a class="button" href="/blog/?collection=MOJO-JOJO">Open the MOJO-JOJO cards ↗</a>`
+      <a class="button" href="/blog/?collection=MOJO-JOJO+CTF">Open the MOJO-JOJO CTF cards ↗</a>`
   },
   {
     slug: 'taskpilot-devops', title: 'TaskPilot DevOps', kicker: 'CLOUD NATIVE', icon: '▧', featured: true,

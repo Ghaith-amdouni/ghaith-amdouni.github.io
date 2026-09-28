@@ -242,7 +242,8 @@ body.vault-opening { overflow: hidden; }
 .writeup-facts > span { min-width:0; padding:16px 18px; border-left:1px solid #302d33; color:#cbc5c4; font:10px var(--mono); text-transform:uppercase; overflow-wrap:anywhere; }
 .writeup-facts > span:first-child { border-left:0; }
 .writeup-facts small { display:block; margin-bottom:5px; color:#6f6870; font:7px var(--mono); letter-spacing:.13em; }
-.writeup-page .article-layout { grid-template-columns:210px minmax(0,820px); }
+.writeup-page .article-layout { grid-template-columns:minmax(0,820px); gap:0; padding-top:26px; }
+.writeup-page .writeup-tags { margin-top:22px; }
 .writeup-tags { display:flex; flex-wrap:wrap; gap:6px; }
 .writeup-tags span { max-width:100%; padding:5px 7px; border:1px solid #353138; color:#8a8289; font:7px/1.5 var(--mono); text-transform:uppercase; overflow-wrap:anywhere; }
 .writeup-prose h3 { scroll-margin-top:115px; margin:42px 0 14px; color:#e7e3df; font-size:22px; line-height:1.25; letter-spacing:-.025em; }

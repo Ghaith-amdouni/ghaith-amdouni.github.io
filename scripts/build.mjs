@@ -155,7 +155,11 @@ const difficultyLabel = difficulty => difficulty <= 2 ? 'easy' : difficulty === 
 
 async function buildChallengeWriteup(challenge) {
   const url = challenge.url.replace(/index\.html$/, '');
-  const walkThrough = challenge.writeupHtml || renderMarkdown(challenge.writeup);
+  // Imported archive HTML uses h2 for its own sections; the generated Friendly CTF
+  // pages render walkthrough headings at h3. Shift them down so both match.
+  const walkThrough = challenge.writeupHtml
+    ? challenge.writeupHtml.replace(/<(\/?)h3\b/g, '<$1h4').replace(/<(\/?)h2\b/g, '<$1h3')
+    : renderMarkdown(challenge.writeup);
   const tags = challenge.tags?.length ? challenge.tags.map(tag => `<span>${esc(tag)}</span>`).join('') : `<span>${esc(challenge.category.toLowerCase())}</span>`;
   const pointsLine = challenge.points ? `${esc(challenge.points)} points` : 'archived challenge';
   const pointsFact = challenge.points ? esc(challenge.points) : 'Archived';
@@ -165,7 +169,8 @@ async function buildChallengeWriteup(challenge) {
       <div class="article-author"><img src="/static/img/ghaith.webp" alt="" width="44" height="44"><span><strong>${esc(challenge.author)}</strong><small>${esc(challenge.date)} · ${pointsLine} · ${difficultyLabel(challenge.difficulty)}</small></span><a class="button" href="#solver">Jump to solver ↓</a></div>
     </header>
     <div class="writeup-facts" aria-label="Challenge metadata"><span><small>EVENT</small>${esc(challenge.collection)}</span><span><small>CATEGORY</small>${esc(challenge.category)}</span><span><small>DIFFICULTY</small>${difficultyLabel(challenge.difficulty)}</span><span><small>POINTS</small>${pointsFact}</span></div>
-    <div class="article-layout"><aside class="article-toc"><p class="eyebrow">ON THIS PAGE</p><nav><a href="#summary">Summary</a><a href="#walkthrough">Walkthrough</a><a href="#solver">Reference solver</a><a href="#flag">Flag</a></nav><div class="writeup-tags">${tags}</div></aside>
+    <div class="writeup-tags">${tags}</div>
+    <div class="article-layout">
       <div class="prose writeup-prose"><h2 id="summary">Summary</h2><p class="lead">${esc(challenge.description)}</p><h2 id="walkthrough">Walkthrough</h2>${walkThrough}<h2 id="solver">Reference solver</h2><p>The complete solver used to validate the challenge:</p><pre><code class="language-${challenge.solverLanguage}">${esc(challenge.solver.trim().replace(/[ \t]+$/gm, ''))}</code></pre><h2 id="flag">Flag</h2><pre class="flag-output"><code>${esc(challenge.flag)}</code></pre>
       <div class="article-end"><span>Published ${esc(challenge.date)} · by ${esc(challenge.author)}</span><a class="text-link" href="/blog/?collection=${encodeURIComponent(challenge.collection)}">More ${esc(challenge.collection)} writeups ↗</a></div></div>
     </div>
@@ -175,10 +180,9 @@ async function buildChallengeWriteup(challenge) {
   await writeFile(`${directory}/index.html`, shell(`${challenge.title} · ${challenge.category} writeup`, challenge.description, body, { url, active: 'blog', type: 'article' }));
 }
 
-// Legacy FST Bootcamp and MOJO-JOJO CTF pages keep their original, hand-authored
-// source/disassembly and walkthrough layouts. Only imported Friendly CTF entries
-// are generated here.
-for (const challenge of friendlyChallenges) await buildChallengeWriteup(challenge);
+// Every collection renders through the same writeup template so the FST Bootcamp
+// and MOJO-JOJO pages match the Friendly CTF ones.
+for (const challenge of challenges) await buildChallengeWriteup(challenge);
 
 function art(post) {
   if(post.art==='pipeline') return `<div class="post-art pipeline-art" aria-hidden="true"><span>git push</span><i>→</i><span>build</span><i>→</i><span class="art-active">deploy <b>✓</b></span><small>STATUS: ALL CHECKS PASSED</small></div>`;

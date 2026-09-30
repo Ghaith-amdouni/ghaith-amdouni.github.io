@@ -463,17 +463,19 @@ dialog[open].search-vault { display: grid; grid-template-columns: 138px minmax(0
   .project-case-copy { padding: 20px; }
   .project-case-copy h2 { font-size: 24px; }
   .project-note-body { padding: 40px 20px 30px; }
-.writeup-page { padding-top:38px; }
+  .writeup-page { padding-top:38px; }
   .writeup-page { width:min(calc(100% - 24px),820px); }
   .writeup-page .article-heading { width:100%; }
   .writeup-page .article-layout { width:100%; padding-top:28px; }
   .writeup-facts > span { padding:13px; font-size:11px; }
-  .writeup-prose { font-size:15px; }
+  .writeup-prose { font-size:14px; line-height:1.65; }
+  .writeup-prose h2 { margin:48px 0 14px; font-size:24px; }
+  .writeup-prose h3 { margin-top:34px; font-size:18px; }
   .writeup-prose pre { margin:18px 0 24px; }
-  .writeup-prose pre code { min-width:0; width:max-content; max-width:none; padding:12px; font-size:10px; line-height:1.55; }
+  .writeup-prose pre code { min-width:0; width:max-content; max-width:none; padding:10px; font-size:8.5px; line-height:1.5; }
   .code-block-tools { width:100%; margin:18px 0 24px; }
-  .code-toolbar { padding-left:12px; }
-  .code-toolbar button { font-size:10px; }
+  .code-toolbar { min-height:40px; padding-left:10px; font-size:9px; }
+  .code-toolbar button { min-height:40px; font-size:9px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-sharingan, .archive-sigil img, .ambient-clouds .akatsuki-cloud, .radar-eye img, .radar-eye i { animation: none; }

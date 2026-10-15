@@ -14,7 +14,7 @@ const renderCode = (code, language = '') => hljs.getLanguage(language)
   ? hljs.highlight(code, { language, ignoreIllegals: true }).value
   : esc(code);
 const archiveUrl = challenge => `/blog/?${new URLSearchParams({ collection: challenge.collection, category: challenge.category })}`;
-const collectionOrder = ['Securinets Friendly CTF 2026', 'MOJO-JOJO CTF', 'FST Bootcamp'];
+const collectionOrder = ['Securinets ENIT Friendly 2026', 'Securinets Friendly CTF 2026', 'MOJO-JOJO CTF', 'FST Bootcamp'];
 const summarize = s => {
   const clipped = s.length > 138 ? s.slice(0, 138).replace(/\s+\S*$/, '') : s;
   return clipped && !/[.!?…]$/.test(clipped) ? `${clipped.replace(/[\s,;:—-]+$/, '')}…` : clipped;
@@ -37,11 +37,26 @@ const friendlyChallenges = [
   ...await loadFriendly('misc'),
   ...await loadFriendly('pwn'),
 ];
+async function loadEnitFriendlyPwn() {
+  try {
+    const entries = JSON.parse(await readFile('content/securinets-enit-friendly-2026-pwn.json', 'utf8'));
+    return entries.map(entry => ({
+      ...entry,
+      description: entry.description.replace(/\s+/g, ' ').trim(),
+      url: `/challenge/securinets-enit-friendly-2026/pwn/${entry.slug}/index.html`,
+      source: 'enit-friendly',
+    }));
+  } catch (error) {
+    if (error.code === 'ENOENT') return [];
+    throw error;
+  }
+}
+const enitFriendlyChallenges = await loadEnitFriendlyPwn();
 const legacyChallenges = JSON.parse(await readFile('content/legacy-writeups.json', 'utf8')).map(entry => ({
   ...entry,
   description: summarize(entry.description.replace(/\s+/g, ' ').trim()) || `${entry.collection} binary-exploitation writeup.`,
 }));
-const challenges = [...legacyChallenges, ...friendlyChallenges];
+const challenges = [...legacyChallenges, ...friendlyChallenges, ...enitFriendlyChallenges];
 challenges.sort((a,b) => a.collection.localeCompare(b.collection) || a.category.localeCompare(b.category) || a.title.localeCompare(b.title));
 const cloud = `<svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg>`;
 const icon = `<img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32">`;
@@ -209,7 +224,7 @@ const homeProjects = projects.filter(project => project.featured);
 const home = `<section class="hero wrap"><div class="hero-copy"><p class="eyebrow"><span class="online-dot"></span> AKATSUKI SPIRIT. DEBUGGER MIND.</p><h1><span class="hero-prefix">./</span>r3t0x<span class="cursor">_</span></h1><h2>Ghaith Amdouni<span class="red">.</span></h2><p class="hero-role">Binary exploitation <span>×</span> Systems <span>×</span> Curiosity</p><p class="hero-description">I pull things apart to understand how they work.<br>SecuriNets Technical Team Instructor, CTF player, and Networks & Telecommunications student at INSAT.</p><div class="hero-actions"><a class="button primary" href="/blog/">Explore the archive <span>↗</span></a><a class="button" href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>English CV <span>↓</span></a></div><div class="hero-links"><a href="https://github.com/Ghaith-amdouni">GitHub ↗</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn ↗</a><a href="mailto:ghaith.amdouni@insat.ucar.tn">Email ↗</a><span><span class="online-dot"></span> Tunis, Tunisia</span></div></div>
   <div class="hero-visual"><img class="hero-sharingan" src="/static/img/mangekyou.png" width="290" height="290" alt="" aria-hidden="true"><div class="orbit orbit-one" aria-hidden="true"></div><div class="orbit orbit-two" aria-hidden="true"></div><span class="visual-addr" aria-hidden="true">0x00401337 · rwx</span><div class="portrait-window"><div class="window-title"><span class="window-dots"><i></i><i></i><i></i></span><span>~/r3t0x/whoami</span><span class="red">暁</span></div><div class="portrait-image"><img src="/static/img/ghaith.webp" alt="Ghaith Amdouni working on his laptop at a technology event" width="800" height="1200" fetchpriority="high"><div class="portrait-caption"><span><i class="online-dot"></i> GHAITH AMDOUNI</span><span>aka. r3t0x</span></div></div><div class="portrait-bottom"><span><b>OS</b> Arch Linux</span><span><b>FOCUS</b> Pwn & systems</span></div></div><div class="floating-tag"><span class="red">❯</span> curiosity <span class="muted">--always</span><span class="cursor">▌</span></div></div></section>
   <div class="specialties"><div class="wrap"><span><i>01</i> BINARY EXPLOITATION</span><b>✳</b><span><i>02</i> REVERSE ENGINEERING</span><b>✳</b><span><i>03</i> NETWORKS & SYSTEMS</span><b>✳</b><span><i>04</i> ARCH LINUX</span></div></div>
-  <section class="section wrap" id="journal">${heading('01','The latest bytes.','THE JOURNAL',`<a class="text-link" href="/blog/">View the archive ${arrow}</a>`)}<div class="posts-grid">${posts.map(postCard).join('')}</div><a class="archive-callout" href="/blog/"><div><span class="red">❯</span> <strong>Looking for CTF writeups?</strong><span class="muted"> ${challenges.length} challenges across Friendly CTF, MOJO-JOJO CTF, and FST Bootcamp.</span></div><span>Open archive ↗</span></a></section>
+  <section class="section wrap" id="journal">${heading('01','The latest bytes.','THE JOURNAL',`<a class="text-link" href="/blog/">View the archive ${arrow}</a>`)}<div class="posts-grid">${posts.map(postCard).join('')}</div><a class="archive-callout" href="/blog/"><div><span class="red">❯</span> <strong>Looking for CTF writeups?</strong><span class="muted"> ${challenges.length} challenges across ENIT Friendly, Friendly CTF, MOJO-JOJO CTF, and FST Bootcamp.</span></div><span>Open archive ↗</span></a></section>
   <section class="section wrap" id="about">${heading('02','More than a handle.','WHOAMI')}<div class="about-grid"><div class="about-copy"><p class="large-copy">Somewhere between a packet trace and a debugger, <span>I feel at home.</span></p><p>I'm a SecuriNets Technical Team Instructor and a Networks & Telecommunications student at <a href="https://insat.rnu.tn/">INSAT</a>, based in Tunis. My work connects cybersecurity, Linux, networking, and software development.</p><p>I build challenges, compete in CTFs, and explore the layers underneath the interface. From network simulations to cloud-native applications, I like understanding the whole system.</p><div class="skill-tags"><span>Binary exploitation</span><span>C / C++</span><span>Python</span><span>Linux</span><span>Docker</span><span>Kubernetes</span><span>Networking</span><span>DevSecOps</span></div><a class="text-link" href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>Download my English CV ↓</a></div>
   <div class="terminal"><div class="window-title"><span class="window-dots"><i></i><i></i><i></i></span><span>r3t0x@arch: ~</span><span>zsh</span></div><div class="terminal-content"><div class="terminal-fetch"><pre class="arch-ascii" aria-hidden="true">       /\\
       /  \\
@@ -263,6 +278,7 @@ const difficultyFilters = [
 const collectionDescriptions = {
   'FST Bootcamp': 'Binary-exploitation training labs created for the FST Bootcamp.',
   'MOJO-JOJO CTF': 'Original pwn challenges authored for the MOJO-JOJO CTF collection.',
+  'Securinets ENIT Friendly 2026': 'Pwn challenges authored by r3t0x for Securinets ENIT Friendly 2026.',
   'Securinets Friendly CTF 2026': 'Official misc and pwn walkthroughs from Securinets Friendly CTF 2026.'
 };
 const challengeCollections = collectionOrder.map((collection, collectionIndex) => {

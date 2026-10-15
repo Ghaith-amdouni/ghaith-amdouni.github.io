@@ -7,7 +7,7 @@ if (!sourceRoot) {
 }
 
 const output = 'content/securinets-enit-friendly-2026-pwn.json';
-const collection = 'Securinets ENIT Friendly 2026';
+const collection = 'Securinets ENIT Friendly CTF 2026';
 const publicationDate = '2026-10-15';
 
 const scalar = (yaml, key) => {
